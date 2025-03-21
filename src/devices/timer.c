@@ -17,7 +17,7 @@
 #error TIMER_FREQ <= 1000 recommended
 #endif
 
-/* Number of timer ticks since OS booted. */
+/* Number of timer ticks since OS booted. */      // ticks 출력 : %lld
 static int64_t ticks;
 
 /* Number of loops per timer tick.
@@ -91,10 +91,14 @@ void
 timer_sleep (int64_t ticks) 
 {
   int64_t start = timer_ticks ();   // sleep에 들어온 순간 기록.
-
+  int64_t checker = 0;
+  printf("this is start : %lld, %lld\n", start, ticks);
   ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks)   // 
+  while (timer_elapsed (start) < ticks) {
+    printf("check how it works : %lld < %lld, %lldth times\n", timer_elapsed (start), ticks, checker++);
     thread_yield ();
+  }
+  // maybe not busy waiting...?
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -167,7 +171,7 @@ timer_print_stats (void)
   printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
   
-/* Timer interrupt handler. */
+/* Timer interrupt handler. */      // 여기서만 ticks가 증가함.
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
