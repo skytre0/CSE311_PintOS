@@ -10,7 +10,7 @@
   
 /* See [8254] for hardware details of the 8254 timer chip. */
 
-#if TIMER_FREQ < 19
+#if TIMER_FREQ < 19    // : 100 ticks / 1 sec -> 여기서 ticks는 하단의 ticks 변수가 측정으로 보임.
 #error 8254 timer requires TIMER_FREQ >= 19
 #endif
 #if TIMER_FREQ > 1000
@@ -90,10 +90,10 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks) 
 {
-  int64_t start = timer_ticks ();
+  int64_t start = timer_ticks ();   // sleep에 들어온 순간 기록.
 
   ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
+  while (timer_elapsed (start) < ticks)   // 
     thread_yield ();
 }
 
