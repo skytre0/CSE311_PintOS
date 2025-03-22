@@ -1,0 +1,85 @@
+PiLo hda1
+Loading.........
+Kernel command line: -q run alarm-simultaneous
+Pintos booting with 4,096 kB RAM...
+383 pages available in kernel pool.
+383 pages available in user pool.
+Calibrating timer...  204,600 loops/s.
+Boot complete.
+Executing 'alarm-simultaneous':
+(alarm-simultaneous) begin
+(alarm-simultaneous) Creating 3 threads to sleep 5 times each.
+(alarm-simultaneous) Each thread sleeps 10 ticks each time.
+(alarm-simultaneous) Within an iteration, all threads should wake up on the same tick.
+this is start : 57, 1
+this is start : 60, 104
+check how it works : 8 < 104, 0th times
+this is start : 68, 1
+this is start : 77, 87
+this is start : 68, 1
+this is start : 84, 80
+check how it works : 4 < 80, 0th times
+check how it works : 8 < 87, 0th times
+check how it works : 17 < 104, 1th times
+this is start : 64, 250
+check how it works : 44 < 250, 0th times
+check how it works : 26 < 87, 1th times
+check how it works : 48 < 104, 2th times
+check how it works : 13 < 80, 1th times
+check how it works : 54 < 250, 1th times
+check how it works : 46 < 87, 2th times
+check how it works : 69 < 104, 3th times
+check how it works : 51 < 80, 2th times
+check how it works : 76 < 250, 2th times
+check how it works : 69 < 87, 3th times
+check how it works : 92 < 104, 4th times
+this is start : 170, 4
+this is start : 174, 0
+check how it works : 99 < 250, 3th times
+this is start : 181, 3
+check how it works : 73 < 80, 3th times
+this is start : 181, 3
+check how it works : 123 < 250, 4th times
+this is start : 191, 3
+this is start : 200, -6
+this is start : 200, -26
+check how it works : 142 < 250, 5th times
+this is start : 210, -6
+check how it works : 159 < 250, 6th times
+this is start : 218, -34
+this is start : 214, -10
+check how it works : 171 < 250, 7th times
+this is start : 239, -45
+check how it works : 186 < 250, 8th times
+this is start : 254, -50
+check how it works : 196 < 250, 9th times
+check how it works : 203 < 250, 10th times
+check how it works : 209 < 250, 11th times
+check how it works : 215 < 250, 12th times
+check how it works : 221 < 250, 13th times
+check how it works : 227 < 250, 14th times
+check how it works : 233 < 250, 15th times
+check how it works : 239 < 250, 16th times
+check how it works : 244 < 250, 17th times
+(alarm-simultaneous) iteration 0, thread 0: woke up after 14 ticks
+(alarm-simultaneous) iteration 0, thread 1: woke up 6 ticks later
+(alarm-simultaneous) iteration 0, thread 2: woke up 0 ticks later
+(alarm-simultaneous) iteration 1, thread 0: woke up 3 ticks later
+(alarm-simultaneous) iteration 1, thread 1: woke up 10 ticks later
+(alarm-simultaneous) iteration 1, thread 2: woke up 9 ticks later
+(alarm-simultaneous) iteration 2, thread 0: woke up 0 ticks later
+(alarm-simultaneous) iteration 2, thread 1: woke up 10 ticks later
+(alarm-simultaneous) iteration 2, thread 2: woke up 4 ticks later
+(alarm-simultaneous) iteration 3, thread 0: woke up 4 ticks later
+(alarm-simultaneous) iteration 3, thread 1: woke up 9 ticks later
+(alarm-simultaneous) iteration 3, thread 2: woke up 12 ticks later
+(alarm-simultaneous) iteration 4, thread 0: woke up 4 ticks later
+(alarm-simultaneous) iteration 4, thread 1: woke up 11 ticks later
+(alarm-simultaneous) iteration 4, thread 2: woke up 10 ticks later
+(alarm-simultaneous) end
+Execution of 'alarm-simultaneous' complete.
+Timer: 451 ticks
+Thread: 0 idle ticks, 454 kernel ticks, 0 user ticks
+Console: 3341 characters output
+Keyboard: 0 keys pressed
+Powering off...

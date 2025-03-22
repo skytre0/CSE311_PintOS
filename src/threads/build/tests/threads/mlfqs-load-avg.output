@@ -1,0 +1,1420 @@
+PiLo hda1
+Loading.........
+Kernel command line: -q -mlfqs run mlfqs-load-avg
+Pintos booting with 4,096 kB RAM...
+383 pages available in kernel pool.
+383 pages available in user pool.
+Calibrating timer...  204,600 loops/s.
+Boot complete.
+Executing 'mlfqs-load-avg':
+(mlfqs-load-avg) begin
+(mlfqs-load-avg) Starting 60 load threads...
+this is start : 37, 989
+check how it works : 3 < 989, 0th times
+this is start : 54, 1372
+check how it works : 8 < 1372, 0th times
+this is start : 71, 1755
+check how it works : 8 < 1755, 0th times
+this is start : 88, 2038
+check how it works : 8 < 2038, 0th times
+this is start : 105, 2421
+check how it works : 8 < 2421, 0th times
+this is start : 122, 2704
+check how it works : 8 < 2704, 0th times
+this is start : 139, 2987
+check how it works : 8 < 2987, 0th times
+this is start : 156, 3370
+check how it works : 8 < 3370, 0th times
+this is start : 173, 3653
+check how it works : 8 < 3653, 0th times
+this is start : 190, 3936
+check how it works : 8 < 3936, 0th times
+this is start : 207, 4219
+check how it works : 8 < 4219, 0th times
+this is start : 224, 4502
+check how it works : 8 < 4502, 0th times
+this is start : 241, 4885
+check how it works : 8 < 4885, 0th times
+this is start : 258, 5168
+check how it works : 8 < 5168, 0th times
+this is start : 275, 5451
+check how it works : 8 < 5451, 0th times
+this is start : 292, 5734
+check how it works : 8 < 5734, 0th times
+this is start : 309, 6017
+check how it works : 8 < 6017, 0th times
+this is start : 326, 6300
+check how it works : 8 < 6300, 0th times
+this is start : 341, 6585
+check how it works : 4 < 6585, 0th times
+this is start : 83, 1943
+check how it works : 272 < 1943, 0th times
+this is start : 168, 3458
+check how it works : 197 < 3458, 0th times
+this is start : 58, 1468
+check how it works : 317 < 1468, 0th times
+this is start : 92, 2134
+check how it works : 293 < 2134, 0th times
+this is start : 185, 3841
+check how it works : 210 < 3841, 0th times
+this is start : 194, 4032
+check how it works : 211 < 4032, 0th times
+check how it works : 25 < 3653, 1th times
+this is start : 202, 4124
+check how it works : 219 < 4124, 0th times
+this is start : 211, 4315
+check how it works : 220 < 4315, 0th times
+check how it works : 25 < 3936, 1th times
+this is start : 219, 4407
+check how it works : 228 < 4407, 0th times
+this is start : 228, 4598
+check how it works : 229 < 4598, 0th times
+check how it works : 25 < 4219, 1th times
+this is start : 236, 4690
+check how it works : 237 < 4690, 0th times
+check how it works : 25 < 2038, 1th times
+this is start : 117, 2509
+check how it works : 371 < 2509, 0th times
+this is start : 253, 4973
+check how it works : 245 < 4973, 0th times
+this is start : 117, 2609
+check how it works : 391 < 2609, 0th times
+check how it works : 25 < 4885, 1th times
+this is start : 270, 5256
+check how it works : 254 < 5256, 0th times
+this is start : 126, 2800
+check how it works : 408 < 2800, 0th times
+this is start : 49, 1177
+check how it works : 495 < 1177, 0th times
+this is start : 287, 5639
+check how it works : 267 < 5639, 0th times
+this is start : 296, 5830
+check how it works : 268 < 5830, 0th times
+check how it works : 25 < 5451, 1th times
+this is start : 304, 5922
+check how it works : 276 < 5922, 0th times
+this is start : 313, 6113
+check how it works : 277 < 6113, 0th times
+check how it works : 25 < 5734, 1th times
+this is start : 321, 6205
+check how it works : 284 < 6205, 0th times
+this is start : 330, 6396
+check how it works : 285 < 6396, 0th times
+check how it works : 25 < 6017, 1th times
+this is start : 338, 6488
+check how it works : 293 < 6488, 0th times
+this is start : 151, 3175
+check how it works : 490 < 3175, 0th times
+check how it works : 19 < 6300, 1th times
+this is start : 83, 1843
+check how it works : 331 < 6300, 2th times
+check how it works : 25 < 2987, 1th times
+check how it works : 282 < 1943, 1th times
+this is start : 168, 3558
+check how it works : 510 < 3558, 0th times
+this is start : 177, 3749
+check how it works : 511 < 3749, 0th times
+check how it works : 25 < 3370, 1th times
+check how it works : 303 < 2134, 1th times
+this is start : 41, 1085
+check how it works : 669 < 1085, 0th times
+check how it works : 25 < 1755, 1th times
+check how it works : 221 < 4032, 1th times
+check how it works : 248 < 3653, 2th times
+this is start : 100, 2226
+check how it works : 639 < 2226, 0th times
+this is start : 100, 2326
+check how it works : 648 < 2326, 0th times
+check how it works : 257 < 3936, 2th times
+check how it works : 25 < 989, 1th times
+check how it works : 238 < 4407, 1th times
+this is start : 66, 1560
+check how it works : 710 < 1560, 0th times
+check how it works : 265 < 4219, 2th times
+this is start : 236, 4790
+check how it works : 556 < 4790, 0th times
+check how it works : 400 < 2038, 2th times
+check how it works : 25 < 4502, 1th times
+check how it works : 381 < 2509, 1th times
+this is start : 253, 5073
+check how it works : 567 < 5073, 0th times
+this is start : 66, 1660
+check how it works : 764 < 1660, 0th times
+check how it works : 283 < 4885, 2th times
+this is start : 270, 5356
+check how it works : 576 < 5356, 0th times
+this is start : 279, 5547
+check how it works : 577 < 5547, 0th times
+check how it works : 25 < 5168, 1th times
+check how it works : 505 < 1177, 1th times
+check how it works : 25 < 2421, 1th times
+check how it works : 277 < 5639, 1th times
+this is start : 134, 2892
+check how it works : 756 < 2892, 0th times
+check how it works : 304 < 5451, 2th times
+this is start : 49, 1277
+check how it works : 856 < 1277, 0th times
+this is start : 143, 3083
+check how it works : 772 < 3083, 0th times
+check how it works : 313 < 5734, 2th times
+check how it works : 25 < 1372, 1th times
+check how it works : 294 < 6205, 1th times
+check how it works : 25 < 2704, 1th times
+check how it works : 295 < 6396, 1th times
+check how it works : 322 < 6017, 2th times
+(mlfqs-load-avg) Starting threads took 3 seconds.
+this is start : 963, 63
+check how it works : 4 < 63, 0th times
+check how it works : 578 < 1843, 0th times
+check how it works : 341 < 6300, 3th times
+check how it works : 533 < 2987, 2th times
+check how it works : 595 < 1943, 2th times
+check how it works : 208 < 3458, 1th times
+check how it works : 520 < 3558, 1th times
+check how it works : 327 < 1468, 1th times
+check how it works : 521 < 3749, 1th times
+check how it works : 548 < 3370, 2th times
+check how it works : 618 < 2134, 2th times
+check how it works : 220 < 3841, 1th times
+check how it works : 679 < 1085, 1th times
+check how it works : 656 < 1755, 2th times
+check how it works : 538 < 4032, 2th times
+check how it works : 565 < 3653, 3th times
+check how it works : 229 < 4124, 1th times
+check how it works : 648 < 2226, 1th times
+check how it works : 230 < 4315, 1th times
+check how it works : 658 < 2326, 1th times
+check how it works : 574 < 3936, 3th times
+check how it works : 733 < 989, 2th times
+check how it works : 557 < 4407, 2th times
+check how it works : 239 < 4598, 1th times
+check how it works : 720 < 1560, 1th times
+check how it works : 585 < 4219, 3th times
+check how it works : 246 < 4690, 1th times
+check how it works : 566 < 4790, 1th times
+check how it works : 721 < 2038, 3th times
+check how it works : 590 < 4502, 2th times
+check how it works : 703 < 2509, 2th times
+check how it works : 255 < 4973, 1th times
+check how it works : 577 < 5073, 1th times
+check how it works : 401 < 2609, 1th times
+check how it works : 774 < 1660, 1th times
+check how it works : 605 < 4885, 3th times
+check how it works : 264 < 5256, 1th times
+check how it works : 586 < 5356, 1th times
+check how it works : 418 < 2800, 1th times
+check how it works : 587 < 5547, 1th times
+check how it works : 614 < 5168, 2th times
+check how it works : 829 < 1177, 2th times
+check how it works : 778 < 2421, 2th times
+check how it works : 602 < 5639, 2th times
+check how it works : 278 < 5830, 1th times
+check how it works : 765 < 2892, 1th times
+check how it works : 630 < 5451, 3th times
+check how it works : 285 < 5922, 1th times
+check how it works : 866 < 1277, 1th times
+check how it works : 286 < 6113, 1th times
+check how it works : 782 < 3083, 1th times
+check how it works : 639 < 5734, 3th times
+check how it works : 883 < 1372, 2th times
+check how it works : 622 < 6205, 2th times
+check how it works : 827 < 2704, 2th times
+check how it works : 625 < 6396, 2th times
+check how it works : 651 < 6017, 3th times
+check how it works : 303 < 6488, 1th times
+this is start : 151, 3275
+check how it works : 1472 < 6488, 2th times
+check how it works : 14 < 6585, 1th times
+check how it works : 13 < 63, 1th times
+check how it works : 899 < 1843, 1th times
+check how it works : 662 < 6300, 4th times
+check how it works : 855 < 2987, 3th times
+check how it works : 917 < 1943, 3th times
+check how it works : 838 < 3458, 2th times
+check how it works : 844 < 3558, 2th times
+check how it works : 960 < 1468, 2th times
+check how it works : 847 < 3749, 2th times
+check how it works : 874 < 3370, 3th times
+check how it works : 944 < 2134, 3th times
+check how it works : 857 < 3841, 2th times
+check how it works : 1007 < 1085, 2th times
+check how it works : 982 < 1755, 3th times
+check how it works : 865 < 4032, 3th times
+check how it works : 892 < 3653, 4th times
+check how it works : 869 < 4124, 2th times
+check how it works : 977 < 2226, 2th times
+check how it works : 872 < 4315, 2th times
+check how it works : 989 < 2326, 2th times
+check how it works : 905 < 3936, 4th times
+check how it works : 896 < 4407, 3th times
+check how it works : 900 < 4598, 2th times
+check how it works : 1075 < 1560, 2th times
+check how it works : 947 < 4219, 4th times
+check how it works : 931 < 4690, 2th times
+check how it works : 944 < 4790, 2th times
+check how it works : 1105 < 2038, 4th times
+check how it works : 982 < 4502, 3th times
+check how it works : 1102 < 2509, 3th times
+check how it works : 979 < 4973, 2th times
+check how it works : 992 < 5073, 2th times
+check how it works : 1141 < 2609, 2th times
+check how it works : 1205 < 1660, 2th times
+check how it works : 1043 < 4885, 4th times
+check how it works : 1027 < 5256, 2th times
+check how it works : 1040 < 5356, 2th times
+check how it works : 1197 < 2800, 2th times
+check how it works : 1057 < 5547, 2th times
+check how it works : 1091 < 5168, 3th times
+check how it works : 1278 < 2421, 3th times
+check how it works : 1117 < 5639, 3th times
+check how it works : 1129 < 5830, 2th times
+check how it works : 1312 < 2892, 2th times
+check how it works : 1192 < 5451, 4th times
+check how it works : 1184 < 5922, 2th times
+check how it works : 1225 < 6113, 2th times
+check how it works : 1424 < 3083, 2th times
+this is start : 7057, 4969
+check how it works : 100 < 4969, 0th times
+this is start : 7343, 4683
+check how it works : 88 < 4683, 0th times
+this is start : 7592, 4434
+check how it works : 80 < 4434, 0th times
+this is start : 7797, 4229
+check how it works : 76 < 4229, 0th times
+this is start : 7974, 4052
+check how it works : 64 < 4052, 0th times
+this is start : 8147, 3879
+check how it works : 60 < 3879, 0th times
+this is start : 8276, 3750
+check how it works : 52 < 3750, 0th times
+this is start : 8426, 3600
+check how it works : 48 < 3600, 0th times
+this is start : 8547, 3479
+check how it works : 44 < 3479, 0th times
+this is start : 8648, 3378
+check how it works : 40 < 3378, 0th times
+check how it works : 2877 < 4315, 3th times
+check how it works : 3092 < 3936, 5th times
+check how it works : 3164 < 4407, 4th times
+check how it works : 3256 < 4598, 3th times
+this is start : 9056, 2970
+check how it works : 44 < 2970, 0th times
+check how it works : 3676 < 4790, 3th times
+this is start : 9254, 2772
+check how it works : 44 < 2772, 0th times
+check how it works : 4252 < 5073, 3th times
+check how it works : 4663 < 4885, 5th times
+check how it works : 4775 < 5256, 3th times
+check how it works : 4916 < 5356, 3th times
+check how it works : 5197 < 5547, 3th times
+check how it works : 5824 < 5830, 3th times
+check how it works : 1304 < 5734, 4th times
+this is start : 10138, 1888
+check how it works : 68 < 1888, 0th times
+check how it works : 1341 < 6205, 3th times
+check how it works : 1577 < 2704, 3th times
+this is start : 10549, 1477
+check how it works : 68 < 1477, 0th times
+check how it works : 1406 < 6396, 3th times
+this is start : 10859, 1167
+check how it works : 64 < 1167, 0th times
+this is start : 11036, 990
+check how it works : 60 < 990, 0th times
+check how it works : 1658 < 3275, 0th times
+check how it works : 237 < 4434, 1th times
+this is start : 7897, 4129
+check how it works : 3569 < 4129, 0th times
+this is start : 11544, 482
+check how it works : 44 < 482, 0th times
+this is start : 8038, 3988
+check how it works : 3667 < 3988, 0th times
+this is start : 11755, 271
+check how it works : 36 < 271, 0th times
+this is start : 11848, 178
+check how it works : 32 < 178, 0th times
+check how it works : 177 < 3879, 1th times
+this is start : 8328, 3698
+check how it works : 3694 < 3698, 0th times
+check how it works : 2141 < 3749, 3th times
+check how it works : 153 < 3750, 1th times
+check how it works : 2223 < 3370, 4th times
+check how it works : 2324 < 3841, 3th times
+check how it works : 141 < 3600, 1th times
+check how it works : 2546 < 4032, 4th times
+check how it works : 2652 < 3653, 5th times
+check how it works : 129 < 3479, 1th times
+this is start : 8726, 3300
+check how it works : 2708 < 4124, 3th times
+check how it works : 115 < 3378, 1th times
+this is start : 8945, 3081
+check how it works : 3487 < 4219, 5th times
+check how it works : 3567 < 4690, 3th times
+check how it works : 133 < 2970, 1th times
+check how it works : 3914 < 4502, 4th times
+this is start : 12526, -500
+check how it works : 133 < 2772, 1th times
+this is start : 7129, 4897
+this is start : 7253, 4773
+check how it works : 205 < 1888, 1th times
+check how it works : 290 < 4969, 1th times
+this is start : 10613, 1413
+this is start : 10677, 1349
+this is start : 7431, 4595
+check how it works : 197 < 1477, 1th times
+check how it works : 1464 < 6017, 4th times
+check how it works : 261 < 4683, 1th times
+this is start : 7656, 4370
+check how it works : 189 < 1167, 1th times
+this is start : 11136, 890
+check how it works : 500 < 3175, 1th times
+check how it works : 173 < 990, 1th times
+this is start : 11318, 708
+this is start : 11354, 672
+check how it works : 3827 < 4434, 2th times
+this is start : 11426, 600
+check how it works : 1514 < 6488, 3th times
+check how it works : 1548 < 6585, 2th times
+check how it works : 3663 < 4129, 1th times
+this is start : 11628, 398
+check how it works : 217 < 4229, 1th times
+check how it works : 125 < 482, 1th times
+(mlfqs-load-avg) After 0 seconds, load average=0.00.
+this is start : 12854, -11628
+(mlfqs-load-avg) After 2 seconds, load average=0.00.
+this is start : 12878, -11452
+(mlfqs-load-avg) After 4 seconds, load average=0.00.
+this is start : 12903, -11277
+(mlfqs-load-avg) After 6 seconds, load average=0.00.
+this is start : 12926, -11100
+(mlfqs-load-avg) After 8 seconds, load average=0.00.
+this is start : 12938, -10912
+(mlfqs-load-avg) After 10 seconds, load average=0.00.
+this is start : 12950, -10724
+(mlfqs-load-avg) After 12 seconds, load average=0.00.
+this is start : 12961, -10535
+(mlfqs-load-avg) After 14 seconds, load average=0.00.
+this is start : 12973, -10347
+(mlfqs-load-avg) After 16 seconds, load average=0.00.
+this is start : 12986, -10160
+(mlfqs-load-avg) After 18 seconds, load average=0.00.
+this is start : 12997, -9971
+(mlfqs-load-avg) After 20 seconds, load average=0.00.
+this is start : 13009, -9783
+(mlfqs-load-avg) After 22 seconds, load average=0.00.this is start : 12286, -260
+this is start : 12315, -289
+this is start : 12401, -375
+this is start : 12431, -405
+this is start : 12472, -446
+this is start : 12493, -467
+check how it works : 4127 < 4973, 3th times
+this is start : 12531, -505
+this is start : 12667, -641
+this is start : 12730, -704
+this is start : 12730, -704
+this is start : 12826, -800
+check how it works : 1682 < 6300, 5th times
+check how it works : 3745 < 3988, 1th times
+check how it works : 189 < 4052, 1th times
+check how it works : 1914 < 2987, 4th times
+check how it works : 105 < 271, 1th times
+check how it works : 1983 < 3458, 3th times
+check how it works : 97 < 178, 1th times
+this is start : 11953, 73
+check how it works : 3851 < 3879, 2th times
+this is start : 12042, -16
+check how it works : 2036 < 3558, 3th times
+this is start : 12117, -91
+this is start : 12133, -107
+this is start : 12928, -902
+this is start : 12191, -165
+this is start : 12228, -202
+this is start : 12232, -206
+
+this is start : 13188, -9762
+(mlfqs-load-avg) After 24 seconds, load average=0.00.
+this is start : 13200, -9574
+(mlfqs-load-avg) After 26 seconds, load average=0.00.
+this is start : 13211, -9385
+(mlfqs-load-avg) After 28 seconds, load average=0.00.
+this is start : 13223, -9197
+(mlfqs-load-avg) After 30 seconds, load average=0.00.
+this is start : 13235, -9009
+(mlfqs-load-avg) After 32 seconds, load average=0.00.
+this is start : 13246, -8820
+(mlfqs-load-avg) After 34 seconds, load average=0.00.
+this is start : 13258, -8632
+(mlfqs-load-avg) After 36 seconds, load average=0.00.
+this is start : 13269, -8443
+(mlfqs-load-avg) After 38 seconds, load average=0.00.
+this is start : 13281, -8255
+(mlfqs-load-avg) After 40 seconds, load average=0.00.
+this is start : 13293, -8066
+(mlfqs-load-avg) After 42 seconds, load average=0.00.
+this is start : 13304, -7878
+(mlfqs-load-avg) After 44 seconds, load average=0.00.
+this is start : 13317, -7691
+(mlfqs-load-avg) After 46 seconds, load average=0.00.
+this is start : 13328, -7502
+(mlfqs-load-avg) After 48 seconds, load average=0.00.
+this is start : 13340, -7314
+(mlfqs-load-avg) After 50 seconds, load average=0.00.
+this is start : 13352, -7126
+(mlfqs-load-avg) After 52 seconds, load average=0.00.
+this is start : 13363, -6937
+(mlfqs-load-avg) this is start : 13095, -1069
+this is start : 13130, -1104
+this is start : 13159, -1133
+this is start : 13064, -1038
+this is start : 13116, -1090
+After 54 seconds, load average=0.00.
+this is start : 13400, -6774
+(mlfqs-load-avg) After 56 seconds, load average=0.00.
+this is start : 13411, -6585
+(mlfqs-load-avg) After 58 seconds, load average=0.00.
+this is start : 13423, -6397
+(mlfqs-load-avg) After 60 seconds, load average=0.00.
+this is start : 13434, -6208
+(mlfqs-load-avg) After 62 seconds, load average=0.00.
+this is start : 13445, -6019
+(mlfqs-load-avg) After 64 seconds, load average=0.00.
+this is start : 13457, -5831
+(mlfqs-load-avg) After 66 seconds, load average=0.00.
+this is start : 13468, -5642
+(mlfqs-load-avg) After 68 seconds, load average=0.00.
+this is start : 13479, -5453
+(mlfqs-load-avg) After 70 seconds, load average=0.00.
+this is start : 13491, -5265
+(mlfqs-load-avg) After 72 seconds, load average=0.00.
+this is start : 13502, -5076
+(mlfqs-load-avg) After 74 seconds, load average=0.00.
+this is start : 13514, -4888
+(mlfqs-load-avg) After 76 seconds, load average=0.00.
+this is start : 13525, -4699
+(mlfqs-load-avg) After 78 seconds, load average=0.00.
+this is start : 13536, -4510
+(mlfqs-load-avg) After 80 seconds, load average=0.00.
+this is start : 13548, -4322
+(mlfqs-load-avg) After 82 seconds, load average=0.00.
+this is start : 13559, -4133
+(mlfqs-load-avg) After 84 seconds, load average=0.00.
+this is start : 13570, -3944
+(mlfqs-load-avg) After 86 seconds, load average=0.00.
+this is start : 13582, -3756
+(mlfqs-load-avg) After 88 seconds, load average=0.00.
+this is start : 13593, -3567
+(mlfqs-load-avg) After 90 seconds, load average=0.00.
+this is start : 13604, -3378
+(mlfqs-load-avg) After 92 seconds, load average=0.00.
+this is start : 13616, -3190
+(mlfqs-load-avg) After 94 seconds, load average=0.00.
+this is start : 13627, -3001
+(mlfqs-load-avg) After 96 seconds, load average=0.00.
+this is start : 13639, -2813
+(mlfqs-load-avg) After 98 seconds, load average=0.00.
+this is start : 13650, -2624
+(mlfqs-load-avg) After 100 seconds, load average=0.00.
+this is start : 13661, -2435
+(mlfqs-load-avg) After 102 seconds, load average=0.00.
+this is start : 13673, -2247
+(mlfqs-load-avg) After 104 seconds, load average=0.00.
+this is start : 13684, -2058
+(mlfqs-load-avg) After 106 seconds, load average=0.00.
+this is start : 13696, -1870
+(mlfqs-load-avg) After 108 seconds, load average=0.00.
+this is start : 13707, -1681
+(mlfqs-load-avg) After 110 seconds, load average=0.00.
+this is start : 13719, -1493
+(mlfqs-load-avg) After 112 seconds, load average=0.00.
+this is start : 13730, -1304
+(mlfqs-load-avg) After 114 seconds, load average=0.00.
+this is start : 13742, -1116
+(mlfqs-load-avg) After 116 seconds, load average=0.00.
+this is start : 13753, -927
+(mlfqs-load-avg) After 118 seconds, load average=0.00.
+this is start : 13765, -739
+(mlfqs-load-avg) After 120 seconds, load average=0.00.
+this is start : 13776, -550
+(mlfqs-load-avg) After 122 seconds, load average=0.00.
+this is start : 13787, -361
+(mlfqs-load-avg) After 124 seconds, load average=0.00.
+this is start : 13799, -173
+(mlfqs-load-avg) After 126 seconds, load average=0.00.
+this is start : 13810, 16
+check how it works : 4 < 16, 0th times
+check how it works : 9 < 16, 1th times
+check how it works : 15 < 16, 2th times
+(mlfqs-load-avg) After 128 seconds, load average=0.00.
+this is start : 13837, 189
+check how it works : 4 < 189, 0th times
+check how it works : 10 < 189, 1th times
+check how it works : 16 < 189, 2th times
+check how it works : 21 < 189, 3th times
+check how it works : 27 < 189, 4th times
+check how it works : 32 < 189, 5th times
+check how it works : 38 < 189, 6th times
+check how it works : 44 < 189, 7th times
+check how it works : 49 < 189, 8th times
+check how it works : 55 < 189, 9th times
+check how it works : 62 < 189, 10th times
+check how it works : 67 < 189, 11th times
+check how it works : 73 < 189, 12th times
+check how it works : 79 < 189, 13th times
+check how it works : 85 < 189, 14th times
+check how it works : 90 < 189, 15th times
+check how it works : 96 < 189, 16th times
+check how it works : 102 < 189, 17th times
+check how it works : 108 < 189, 18th times
+check how it works : 113 < 189, 19th times
+check how it works : 119 < 189, 20th times
+check how it works : 125 < 189, 21th times
+check how it works : 131 < 189, 22th times
+check how it works : 137 < 189, 23th times
+check how it works : 143 < 189, 24th times
+check how it works : 149 < 189, 25th times
+check how it works : 155 < 189, 26th times
+check how it works : 160 < 189, 27th times
+check how it works : 166 < 189, 28th times
+check how it works : 172 < 189, 29th times
+check how it works : 178 < 189, 30th times
+check how it works : 184 < 189, 31th times
+(mlfqs-load-avg) After 130 seconds, load average=0.00.
+this is start : 14034, 192
+check how it works : 4 < 192, 0th times
+check how it works : 9 < 192, 1th times
+check how it works : 15 < 192, 2th times
+check how it works : 22 < 192, 3th times
+check how it works : 27 < 192, 4th times
+check how it works : 33 < 192, 5th times
+check how it works : 38 < 192, 6th times
+check how it works : 44 < 192, 7th times
+check how it works : 50 < 192, 8th times
+check how it works : 55 < 192, 9th times
+check how it works : 61 < 192, 10th times
+check how it works : 67 < 192, 11th times
+check how it works : 72 < 192, 12th times
+check how it works : 78 < 192, 13th times
+check how it works : 84 < 192, 14th times
+check how it works : 90 < 192, 15th times
+check how it works : 95 < 192, 16th times
+check how it works : 101 < 192, 17th times
+check how it works : 107 < 192, 18th times
+check how it works : 113 < 192, 19th times
+check how it works : 119 < 192, 20th times
+check how it works : 125 < 192, 21th times
+check how it works : 130 < 192, 22th times
+check how it works : 136 < 192, 23th times
+check how it works : 142 < 192, 24th times
+check how it works : 148 < 192, 25th times
+check how it works : 154 < 192, 26th times
+check how it works : 160 < 192, 27th times
+check how it works : 166 < 192, 28th times
+check how it works : 171 < 192, 29th times
+check how it works : 177 < 192, 30th times
+check how it works : 183 < 192, 31th times
+check how it works : 189 < 192, 32th times
+(mlfqs-load-avg) After 132 seconds, load average=0.00.
+this is start : 14236, 190
+check how it works : 4 < 190, 0th times
+check how it works : 10 < 190, 1th times
+check how it works : 15 < 190, 2th times
+check how it works : 21 < 190, 3th times
+check how it works : 27 < 190, 4th times
+check how it works : 32 < 190, 5th times
+check how it works : 38 < 190, 6th times
+check how it works : 43 < 190, 7th times
+check how it works : 49 < 190, 8th times
+check how it works : 55 < 190, 9th times
+check how it works : 60 < 190, 10th times
+check how it works : 66 < 190, 11th times
+check how it works : 72 < 190, 12th times
+check how it works : 77 < 190, 13th times
+check how it works : 83 < 190, 14th times
+check how it works : 89 < 190, 15th times
+check how it works : 95 < 190, 16th times
+check how it works : 100 < 190, 17th times
+check how it works : 106 < 190, 18th times
+check how it works : 112 < 190, 19th times
+check how it works : 118 < 190, 20th times
+check how it works : 124 < 190, 21th times
+check how it works : 130 < 190, 22th times
+check how it works : 136 < 190, 23th times
+check how it works : 141 < 190, 24th times
+check how it works : 147 < 190, 25th times
+check how it works : 153 < 190, 26th times
+check how it works : 159 < 190, 27th times
+check how it works : 165 < 190, 28th times
+check how it works : 171 < 190, 29th times
+check how it works : 177 < 190, 30th times
+check how it works : 182 < 190, 31th times
+check how it works : 188 < 190, 32th times
+(mlfqs-load-avg) After 134 seconds, load average=0.00.
+this is start : 14437, 189
+check how it works : 4 < 189, 0th times
+check how it works : 10 < 189, 1th times
+check how it works : 17 < 189, 2th times
+check how it works : 22 < 189, 3th times
+check how it works : 28 < 189, 4th times
+check how it works : 33 < 189, 5th times
+check how it works : 39 < 189, 6th times
+check how it works : 45 < 189, 7th times
+check how it works : 50 < 189, 8th times
+check how it works : 56 < 189, 9th times
+check how it works : 62 < 189, 10th times
+check how it works : 67 < 189, 11th times
+check how it works : 73 < 189, 12th times
+check how it works : 79 < 189, 13th times
+check how it works : 84 < 189, 14th times
+check how it works : 90 < 189, 15th times
+check how it works : 96 < 189, 16th times
+check how it works : 102 < 189, 17th times
+check how it works : 108 < 189, 18th times
+check how it works : 113 < 189, 19th times
+check how it works : 119 < 189, 20th times
+check how it works : 125 < 189, 21th times
+check how it works : 131 < 189, 22th times
+check how it works : 137 < 189, 23th times
+check how it works : 143 < 189, 24th times
+check how it works : 149 < 189, 25th times
+check how it works : 154 < 189, 26th times
+check how it works : 160 < 189, 27th times
+check how it works : 166 < 189, 28th times
+check how it works : 172 < 189, 29th times
+check how it works : 178 < 189, 30th times
+check how it works : 184 < 189, 31th times
+(mlfqs-load-avg) After 136 seconds, load average=0.00.
+this is start : 14634, 192
+check how it works : 4 < 192, 0th times
+check how it works : 9 < 192, 1th times
+check how it works : 15 < 192, 2th times
+check how it works : 21 < 192, 3th times
+check how it works : 26 < 192, 4th times
+check how it works : 32 < 192, 5th times
+check how it works : 37 < 192, 6th times
+check how it works : 43 < 192, 7th times
+check how it works : 49 < 192, 8th times
+check how it works : 54 < 192, 9th times
+check how it works : 60 < 192, 10th times
+check how it works : 66 < 192, 11th times
+check how it works : 71 < 192, 12th times
+check how it works : 77 < 192, 13th times
+check how it works : 83 < 192, 14th times
+check how it works : 89 < 192, 15th times
+check how it works : 94 < 192, 16th times
+check how it works : 100 < 192, 17th times
+check how it works : 106 < 192, 18th times
+check how it works : 112 < 192, 19th times
+check how it works : 118 < 192, 20th times
+check how it works : 123 < 192, 21th times
+check how it works : 129 < 192, 22th times
+check how it works : 135 < 192, 23th times
+check how it works : 141 < 192, 24th times
+check how it works : 147 < 192, 25th times
+check how it works : 153 < 192, 26th times
+check how it works : 159 < 192, 27th times
+check how it works : 165 < 192, 28th times
+check how it works : 170 < 192, 29th times
+check how it works : 176 < 192, 30th times
+check how it works : 182 < 192, 31th times
+check how it works : 188 < 192, 32th times
+(mlfqs-load-avg) After 138 seconds, load average=0.00.
+this is start : 14835, 191
+check how it works : 4 < 191, 0th times
+check how it works : 10 < 191, 1th times
+check how it works : 15 < 191, 2th times
+check how it works : 21 < 191, 3th times
+check how it works : 26 < 191, 4th times
+check how it works : 32 < 191, 5th times
+check how it works : 38 < 191, 6th times
+check how it works : 43 < 191, 7th times
+check how it works : 49 < 191, 8th times
+check how it works : 55 < 191, 9th times
+check how it works : 60 < 191, 10th times
+check how it works : 66 < 191, 11th times
+check how it works : 72 < 191, 12th times
+check how it works : 77 < 191, 13th times
+check how it works : 83 < 191, 14th times
+check how it works : 89 < 191, 15th times
+check how it works : 95 < 191, 16th times
+check how it works : 100 < 191, 17th times
+check how it works : 106 < 191, 18th times
+check how it works : 112 < 191, 19th times
+check how it works : 118 < 191, 20th times
+check how it works : 124 < 191, 21th times
+check how it works : 130 < 191, 22th times
+check how it works : 136 < 191, 23th times
+check how it works : 141 < 191, 24th times
+check how it works : 147 < 191, 25th times
+check how it works : 153 < 191, 26th times
+check how it works : 159 < 191, 27th times
+check how it works : 165 < 191, 28th times
+check how it works : 171 < 191, 29th times
+check how it works : 177 < 191, 30th times
+check how it works : 182 < 191, 31th times
+check how it works : 188 < 191, 32th times
+(mlfqs-load-avg) After 140 seconds, load average=0.00.
+this is start : 15036, 190
+check how it works : 4 < 190, 0th times
+check how it works : 10 < 190, 1th times
+check how it works : 16 < 190, 2th times
+check how it works : 21 < 190, 3th times
+check how it works : 27 < 190, 4th times
+check how it works : 32 < 190, 5th times
+check how it works : 38 < 190, 6th times
+check how it works : 44 < 190, 7th times
+check how it works : 49 < 190, 8th times
+check how it works : 55 < 190, 9th times
+check how it works : 60 < 190, 10th times
+check how it works : 66 < 190, 11th times
+check how it works : 72 < 190, 12th times
+check how it works : 78 < 190, 13th times
+check how it works : 83 < 190, 14th times
+check how it works : 89 < 190, 15th times
+check how it works : 95 < 190, 16th times
+check how it works : 101 < 190, 17th times
+check how it works : 107 < 190, 18th times
+check how it works : 112 < 190, 19th times
+check how it works : 118 < 190, 20th times
+check how it works : 124 < 190, 21th times
+check how it works : 130 < 190, 22th times
+check how it works : 136 < 190, 23th times
+check how it works : 142 < 190, 24th times
+check how it works : 148 < 190, 25th times
+check how it works : 153 < 190, 26th times
+check how it works : 159 < 190, 27th times
+check how it works : 165 < 190, 28th times
+check how it works : 171 < 190, 29th times
+check how it works : 177 < 190, 30th times
+check how it works : 183 < 190, 31th times
+check how it works : 189 < 190, 32th times
+(mlfqs-load-avg) After 142 seconds, load average=0.00.
+this is start : 15238, 188
+check how it works : 4 < 188, 0th times
+check how it works : 9 < 188, 1th times
+check how it works : 15 < 188, 2th times
+check how it works : 20 < 188, 3th times
+check how it works : 26 < 188, 4th times
+check how it works : 32 < 188, 5th times
+check how it works : 37 < 188, 6th times
+check how it works : 43 < 188, 7th times
+check how it works : 48 < 188, 8th times
+check how it works : 54 < 188, 9th times
+check how it works : 60 < 188, 10th times
+check how it works : 65 < 188, 11th times
+check how it works : 71 < 188, 12th times
+check how it works : 77 < 188, 13th times
+check how it works : 83 < 188, 14th times
+check how it works : 88 < 188, 15th times
+check how it works : 94 < 188, 16th times
+check how it works : 100 < 188, 17th times
+check how it works : 106 < 188, 18th times
+check how it works : 112 < 188, 19th times
+check how it works : 117 < 188, 20th times
+check how it works : 123 < 188, 21th times
+check how it works : 129 < 188, 22th times
+check how it works : 135 < 188, 23th times
+check how it works : 141 < 188, 24th times
+check how it works : 147 < 188, 25th times
+check how it works : 153 < 188, 26th times
+check how it works : 158 < 188, 27th times
+check how it works : 164 < 188, 28th times
+check how it works : 170 < 188, 29th times
+check how it works : 176 < 188, 30th times
+check how it works : 182 < 188, 31th times
+(mlfqs-load-avg) After 144 seconds, load average=0.00.
+this is start : 15433, 193
+check how it works : 4 < 193, 0th times
+check how it works : 10 < 193, 1th times
+check how it works : 15 < 193, 2th times
+check how it works : 21 < 193, 3th times
+check how it works : 26 < 193, 4th times
+check how it works : 32 < 193, 5th times
+check how it works : 38 < 193, 6th times
+check how it works : 43 < 193, 7th times
+check how it works : 49 < 193, 8th times
+check how it works : 54 < 193, 9th times
+check how it works : 60 < 193, 10th times
+check how it works : 66 < 193, 11th times
+check how it works : 72 < 193, 12th times
+check how it works : 77 < 193, 13th times
+check how it works : 83 < 193, 14th times
+check how it works : 89 < 193, 15th times
+check how it works : 95 < 193, 16th times
+check how it works : 100 < 193, 17th times
+check how it works : 106 < 193, 18th times
+check how it works : 112 < 193, 19th times
+check how it works : 118 < 193, 20th times
+check how it works : 124 < 193, 21th times
+check how it works : 131 < 193, 22th times
+check how it works : 136 < 193, 23th times
+check how it works : 142 < 193, 24th times
+check how it works : 148 < 193, 25th times
+check how it works : 154 < 193, 26th times
+check how it works : 160 < 193, 27th times
+check how it works : 166 < 193, 28th times
+check how it works : 172 < 193, 29th times
+check how it works : 177 < 193, 30th times
+check how it works : 183 < 193, 31th times
+check how it works : 189 < 193, 32th times
+(mlfqs-load-avg) After 146 seconds, load average=0.00.
+this is start : 15635, 191
+check how it works : 4 < 191, 0th times
+check how it works : 10 < 191, 1th times
+check how it works : 15 < 191, 2th times
+check how it works : 21 < 191, 3th times
+check how it works : 27 < 191, 4th times
+check how it works : 32 < 191, 5th times
+check how it works : 38 < 191, 6th times
+check how it works : 44 < 191, 7th times
+check how it works : 49 < 191, 8th times
+check how it works : 55 < 191, 9th times
+check how it works : 60 < 191, 10th times
+check how it works : 66 < 191, 11th times
+check how it works : 72 < 191, 12th times
+check how it works : 78 < 191, 13th times
+check how it works : 83 < 191, 14th times
+check how it works : 89 < 191, 15th times
+check how it works : 95 < 191, 16th times
+check how it works : 101 < 191, 17th times
+check how it works : 106 < 191, 18th times
+check how it works : 112 < 191, 19th times
+check how it works : 118 < 191, 20th times
+check how it works : 124 < 191, 21th times
+check how it works : 130 < 191, 22th times
+check how it works : 136 < 191, 23th times
+check how it works : 142 < 191, 24th times
+check how it works : 147 < 191, 25th times
+check how it works : 153 < 191, 26th times
+check how it works : 159 < 191, 27th times
+check how it works : 165 < 191, 28th times
+check how it works : 171 < 191, 29th times
+check how it works : 177 < 191, 30th times
+check how it works : 183 < 191, 31th times
+check how it works : 189 < 191, 32th times
+(mlfqs-load-avg) After 148 seconds, load average=0.00.
+this is start : 15836, 190
+check how it works : 5 < 190, 0th times
+check how it works : 10 < 190, 1th times
+check how it works : 16 < 190, 2th times
+check how it works : 21 < 190, 3th times
+check how it works : 27 < 190, 4th times
+check how it works : 33 < 190, 5th times
+check how it works : 38 < 190, 6th times
+check how it works : 44 < 190, 7th times
+check how it works : 49 < 190, 8th times
+check how it works : 55 < 190, 9th times
+check how it works : 61 < 190, 10th times
+check how it works : 66 < 190, 11th times
+check how it works : 72 < 190, 12th times
+check how it works : 78 < 190, 13th times
+check how it works : 84 < 190, 14th times
+check how it works : 89 < 190, 15th times
+check how it works : 95 < 190, 16th times
+check how it works : 101 < 190, 17th times
+check how it works : 107 < 190, 18th times
+check how it works : 113 < 190, 19th times
+check how it works : 118 < 190, 20th times
+check how it works : 124 < 190, 21th times
+check how it works : 130 < 190, 22th times
+check how it works : 136 < 190, 23th times
+check how it works : 142 < 190, 24th times
+check how it works : 148 < 190, 25th times
+check how it works : 154 < 190, 26th times
+check how it works : 160 < 190, 27th times
+check how it works : 165 < 190, 28th times
+check how it works : 171 < 190, 29th times
+check how it works : 177 < 190, 30th times
+check how it works : 183 < 190, 31th times
+check how it works : 189 < 190, 32th times
+(mlfqs-load-avg) After 150 seconds, load average=0.00.
+this is start : 16038, 188
+check how it works : 4 < 188, 0th times
+check how it works : 9 < 188, 1th times
+check how it works : 15 < 188, 2th times
+check how it works : 21 < 188, 3th times
+check how it works : 26 < 188, 4th times
+check how it works : 32 < 188, 5th times
+check how it works : 37 < 188, 6th times
+check how it works : 43 < 188, 7th times
+check how it works : 49 < 188, 8th times
+check how it works : 54 < 188, 9th times
+check how it works : 60 < 188, 10th times
+check how it works : 66 < 188, 11th times
+check how it works : 71 < 188, 12th times
+check how it works : 77 < 188, 13th times
+check how it works : 83 < 188, 14th times
+check how it works : 89 < 188, 15th times
+check how it works : 94 < 188, 16th times
+check how it works : 100 < 188, 17th times
+check how it works : 106 < 188, 18th times
+check how it works : 112 < 188, 19th times
+check how it works : 118 < 188, 20th times
+check how it works : 124 < 188, 21th times
+check how it works : 129 < 188, 22th times
+check how it works : 135 < 188, 23th times
+check how it works : 141 < 188, 24th times
+check how it works : 147 < 188, 25th times
+check how it works : 153 < 188, 26th times
+check how it works : 159 < 188, 27th times
+check how it works : 165 < 188, 28th times
+check how it works : 170 < 188, 29th times
+check how it works : 176 < 188, 30th times
+check how it works : 182 < 188, 31th times
+(mlfqs-load-avg) After 152 seconds, load average=0.00.
+this is start : 16233, 193
+check how it works : 4 < 193, 0th times
+check how it works : 10 < 193, 1th times
+check how it works : 15 < 193, 2th times
+check how it works : 21 < 193, 3th times
+check how it works : 27 < 193, 4th times
+check how it works : 32 < 193, 5th times
+check how it works : 38 < 193, 6th times
+check how it works : 43 < 193, 7th times
+check how it works : 49 < 193, 8th times
+check how it works : 55 < 193, 9th times
+check how it works : 60 < 193, 10th times
+check how it works : 66 < 193, 11th times
+check how it works : 72 < 193, 12th times
+check how it works : 78 < 193, 13th times
+check how it works : 83 < 193, 14th times
+check how it works : 89 < 193, 15th times
+check how it works : 95 < 193, 16th times
+check how it works : 100 < 193, 17th times
+check how it works : 106 < 193, 18th times
+check how it works : 112 < 193, 19th times
+check how it works : 118 < 193, 20th times
+check how it works : 124 < 193, 21th times
+check how it works : 130 < 193, 22th times
+check how it works : 136 < 193, 23th times
+check how it works : 142 < 193, 24th times
+check how it works : 147 < 193, 25th times
+check how it works : 153 < 193, 26th times
+check how it works : 159 < 193, 27th times
+check how it works : 165 < 193, 28th times
+check how it works : 171 < 193, 29th times
+check how it works : 177 < 193, 30th times
+check how it works : 184 < 193, 31th times
+check how it works : 189 < 193, 32th times
+(mlfqs-load-avg) After 154 seconds, load average=0.00.
+this is start : 16435, 191
+check how it works : 6 < 191, 0th times
+check how it works : 11 < 191, 1th times
+check how it works : 17 < 191, 2th times
+check how it works : 22 < 191, 3th times
+check how it works : 28 < 191, 4th times
+check how it works : 34 < 191, 5th times
+check how it works : 39 < 191, 6th times
+check how it works : 45 < 191, 7th times
+check how it works : 50 < 191, 8th times
+check how it works : 56 < 191, 9th times
+check how it works : 62 < 191, 10th times
+check how it works : 67 < 191, 11th times
+check how it works : 73 < 191, 12th times
+check how it works : 79 < 191, 13th times
+check how it works : 85 < 191, 14th times
+check how it works : 90 < 191, 15th times
+check how it works : 96 < 191, 16th times
+check how it works : 102 < 191, 17th times
+check how it works : 108 < 191, 18th times
+check how it works : 114 < 191, 19th times
+check how it works : 119 < 191, 20th times
+check how it works : 125 < 191, 21th times
+check how it works : 131 < 191, 22th times
+check how it works : 137 < 191, 23th times
+check how it works : 143 < 191, 24th times
+check how it works : 149 < 191, 25th times
+check how it works : 155 < 191, 26th times
+check how it works : 160 < 191, 27th times
+check how it works : 166 < 191, 28th times
+check how it works : 172 < 191, 29th times
+check how it works : 178 < 191, 30th times
+check how it works : 184 < 191, 31th times
+check how it works : 190 < 191, 32th times
+(mlfqs-load-avg) After 156 seconds, load average=0.00.
+this is start : 16638, 188
+check how it works : 4 < 188, 0th times
+check how it works : 9 < 188, 1th times
+check how it works : 15 < 188, 2th times
+check how it works : 20 < 188, 3th times
+check how it works : 26 < 188, 4th times
+check how it works : 32 < 188, 5th times
+check how it works : 37 < 188, 6th times
+check how it works : 43 < 188, 7th times
+check how it works : 49 < 188, 8th times
+check how it works : 54 < 188, 9th times
+check how it works : 60 < 188, 10th times
+check how it works : 67 < 188, 11th times
+check how it works : 72 < 188, 12th times
+check how it works : 78 < 188, 13th times
+check how it works : 84 < 188, 14th times
+check how it works : 90 < 188, 15th times
+check how it works : 95 < 188, 16th times
+check how it works : 101 < 188, 17th times
+check how it works : 107 < 188, 18th times
+check how it works : 113 < 188, 19th times
+check how it works : 119 < 188, 20th times
+check how it works : 124 < 188, 21th times
+check how it works : 130 < 188, 22th times
+check how it works : 136 < 188, 23th times
+check how it works : 142 < 188, 24th times
+check how it works : 148 < 188, 25th times
+check how it works : 154 < 188, 26th times
+check how it works : 160 < 188, 27th times
+check how it works : 166 < 188, 28th times
+check how it works : 171 < 188, 29th times
+check how it works : 177 < 188, 30th times
+check how it works : 183 < 188, 31th times
+(mlfqs-load-avg) After 158 seconds, load average=0.00.
+this is start : 16834, 192
+check how it works : 4 < 192, 0th times
+check how it works : 10 < 192, 1th times
+check how it works : 15 < 192, 2th times
+check how it works : 21 < 192, 3th times
+check how it works : 27 < 192, 4th times
+check how it works : 32 < 192, 5th times
+check how it works : 38 < 192, 6th times
+check how it works : 43 < 192, 7th times
+check how it works : 49 < 192, 8th times
+check how it works : 55 < 192, 9th times
+check how it works : 60 < 192, 10th times
+check how it works : 66 < 192, 11th times
+check how it works : 72 < 192, 12th times
+check how it works : 78 < 192, 13th times
+check how it works : 83 < 192, 14th times
+check how it works : 89 < 192, 15th times
+check how it works : 95 < 192, 16th times
+check how it works : 100 < 192, 17th times
+check how it works : 106 < 192, 18th times
+check how it works : 112 < 192, 19th times
+check how it works : 118 < 192, 20th times
+check how it works : 124 < 192, 21th times
+check how it works : 130 < 192, 22th times
+check how it works : 136 < 192, 23th times
+check how it works : 142 < 192, 24th times
+check how it works : 147 < 192, 25th times
+check how it works : 153 < 192, 26th times
+check how it works : 159 < 192, 27th times
+check how it works : 165 < 192, 28th times
+check how it works : 171 < 192, 29th times
+check how it works : 177 < 192, 30th times
+check how it works : 183 < 192, 31th times
+check how it works : 188 < 192, 32th times
+(mlfqs-load-avg) After 160 seconds, load average=0.00.
+this is start : 17035, 191
+check how it works : 4 < 191, 0th times
+check how it works : 10 < 191, 1th times
+check how it works : 16 < 191, 2th times
+check how it works : 21 < 191, 3th times
+check how it works : 27 < 191, 4th times
+check how it works : 32 < 191, 5th times
+check how it works : 38 < 191, 6th times
+check how it works : 44 < 191, 7th times
+check how it works : 49 < 191, 8th times
+check how it works : 55 < 191, 9th times
+check how it works : 61 < 191, 10th times
+check how it works : 66 < 191, 11th times
+check how it works : 72 < 191, 12th times
+check how it works : 78 < 191, 13th times
+check how it works : 84 < 191, 14th times
+check how it works : 89 < 191, 15th times
+check how it works : 95 < 191, 16th times
+check how it works : 101 < 191, 17th times
+check how it works : 107 < 191, 18th times
+check how it works : 112 < 191, 19th times
+check how it works : 118 < 191, 20th times
+check how it works : 124 < 191, 21th times
+check how it works : 130 < 191, 22th times
+check how it works : 136 < 191, 23th times
+check how it works : 142 < 191, 24th times
+check how it works : 148 < 191, 25th times
+check how it works : 154 < 191, 26th times
+check how it works : 159 < 191, 27th times
+check how it works : 165 < 191, 28th times
+check how it works : 171 < 191, 29th times
+check how it works : 177 < 191, 30th times
+check how it works : 183 < 191, 31th times
+check how it works : 189 < 191, 32th times
+(mlfqs-load-avg) After 162 seconds, load average=0.00.
+this is start : 17238, 188
+check how it works : 4 < 188, 0th times
+check how it works : 9 < 188, 1th times
+check how it works : 15 < 188, 2th times
+check how it works : 20 < 188, 3th times
+check how it works : 26 < 188, 4th times
+check how it works : 32 < 188, 5th times
+check how it works : 37 < 188, 6th times
+check how it works : 43 < 188, 7th times
+check how it works : 49 < 188, 8th times
+check how it works : 54 < 188, 9th times
+check how it works : 60 < 188, 10th times
+check how it works : 66 < 188, 11th times
+check how it works : 71 < 188, 12th times
+check how it works : 77 < 188, 13th times
+check how it works : 83 < 188, 14th times
+check how it works : 88 < 188, 15th times
+check how it works : 94 < 188, 16th times
+check how it works : 100 < 188, 17th times
+check how it works : 106 < 188, 18th times
+check how it works : 112 < 188, 19th times
+check how it works : 118 < 188, 20th times
+check how it works : 123 < 188, 21th times
+check how it works : 129 < 188, 22th times
+check how it works : 135 < 188, 23th times
+check how it works : 141 < 188, 24th times
+check how it works : 147 < 188, 25th times
+check how it works : 153 < 188, 26th times
+check how it works : 159 < 188, 27th times
+check how it works : 164 < 188, 28th times
+check how it works : 170 < 188, 29th times
+check how it works : 176 < 188, 30th times
+check how it works : 182 < 188, 31th times
+(mlfqs-load-avg) After 164 seconds, load average=0.00.
+this is start : 17433, 193
+check how it works : 4 < 193, 0th times
+check how it works : 10 < 193, 1th times
+check how it works : 15 < 193, 2th times
+check how it works : 21 < 193, 3th times
+check how it works : 26 < 193, 4th times
+check how it works : 32 < 193, 5th times
+check how it works : 38 < 193, 6th times
+check how it works : 43 < 193, 7th times
+check how it works : 49 < 193, 8th times
+check how it works : 55 < 193, 9th times
+check how it works : 60 < 193, 10th times
+check how it works : 66 < 193, 11th times
+check how it works : 72 < 193, 12th times
+check how it works : 77 < 193, 13th times
+check how it works : 83 < 193, 14th times
+check how it works : 89 < 193, 15th times
+check how it works : 95 < 193, 16th times
+check how it works : 100 < 193, 17th times
+check how it works : 106 < 193, 18th times
+check how it works : 112 < 193, 19th times
+check how it works : 118 < 193, 20th times
+check how it works : 124 < 193, 21th times
+check how it works : 130 < 193, 22th times
+check how it works : 137 < 193, 23th times
+check how it works : 142 < 193, 24th times
+check how it works : 148 < 193, 25th times
+check how it works : 154 < 193, 26th times
+check how it works : 160 < 193, 27th times
+check how it works : 166 < 193, 28th times
+check how it works : 172 < 193, 29th times
+check how it works : 178 < 193, 30th times
+check how it works : 183 < 193, 31th times
+check how it works : 189 < 193, 32th times
+(mlfqs-load-avg) After 166 seconds, load average=0.00.
+this is start : 17635, 191
+check how it works : 4 < 191, 0th times
+check how it works : 10 < 191, 1th times
+check how it works : 16 < 191, 2th times
+check how it works : 21 < 191, 3th times
+check how it works : 27 < 191, 4th times
+check how it works : 32 < 191, 5th times
+check how it works : 38 < 191, 6th times
+check how it works : 44 < 191, 7th times
+check how it works : 49 < 191, 8th times
+check how it works : 55 < 191, 9th times
+check how it works : 61 < 191, 10th times
+check how it works : 66 < 191, 11th times
+check how it works : 72 < 191, 12th times
+check how it works : 78 < 191, 13th times
+check how it works : 83 < 191, 14th times
+check how it works : 89 < 191, 15th times
+check how it works : 95 < 191, 16th times
+check how it works : 101 < 191, 17th times
+check how it works : 107 < 191, 18th times
+check how it works : 112 < 191, 19th times
+check how it works : 118 < 191, 20th times
+check how it works : 124 < 191, 21th times
+check how it works : 130 < 191, 22th times
+check how it works : 136 < 191, 23th times
+check how it works : 142 < 191, 24th times
+check how it works : 148 < 191, 25th times
+check how it works : 153 < 191, 26th times
+check how it works : 159 < 191, 27th times
+check how it works : 165 < 191, 28th times
+check how it works : 171 < 191, 29th times
+check how it works : 177 < 191, 30th times
+check how it works : 183 < 191, 31th times
+check how it works : 189 < 191, 32th times
+(mlfqs-load-avg) After 168 seconds, load average=0.00.
+this is start : 17837, 189
+check how it works : 4 < 189, 0th times
+check how it works : 9 < 189, 1th times
+check how it works : 15 < 189, 2th times
+check how it works : 20 < 189, 3th times
+check how it works : 26 < 189, 4th times
+check how it works : 32 < 189, 5th times
+check how it works : 37 < 189, 6th times
+check how it works : 43 < 189, 7th times
+check how it works : 48 < 189, 8th times
+check how it works : 54 < 189, 9th times
+check how it works : 60 < 189, 10th times
+check how it works : 65 < 189, 11th times
+check how it works : 71 < 189, 12th times
+check how it works : 77 < 189, 13th times
+check how it works : 83 < 189, 14th times
+check how it works : 88 < 189, 15th times
+check how it works : 94 < 189, 16th times
+check how it works : 100 < 189, 17th times
+check how it works : 106 < 189, 18th times
+check how it works : 112 < 189, 19th times
+check how it works : 117 < 189, 20th times
+check how it works : 123 < 189, 21th times
+check how it works : 129 < 189, 22th times
+check how it works : 135 < 189, 23th times
+check how it works : 141 < 189, 24th times
+check how it works : 147 < 189, 25th times
+check how it works : 153 < 189, 26th times
+check how it works : 159 < 189, 27th times
+check how it works : 164 < 189, 28th times
+check how it works : 170 < 189, 29th times
+check how it works : 176 < 189, 30th times
+check how it works : 182 < 189, 31th times
+check how it works : 188 < 189, 32th times
+(mlfqs-load-avg) After 170 seconds, load average=0.00.
+this is start : 18038, 188
+check how it works : 4 < 188, 0th times
+check how it works : 9 < 188, 1th times
+check how it works : 15 < 188, 2th times
+check how it works : 21 < 188, 3th times
+check how it works : 26 < 188, 4th times
+check how it works : 32 < 188, 5th times
+check how it works : 37 < 188, 6th times
+check how it works : 43 < 188, 7th times
+check how it works : 49 < 188, 8th times
+check how it works : 54 < 188, 9th times
+check how it works : 60 < 188, 10th times
+check how it works : 66 < 188, 11th times
+check how it works : 71 < 188, 12th times
+check how it works : 77 < 188, 13th times
+check how it works : 83 < 188, 14th times
+check how it works : 89 < 188, 15th times
+check how it works : 94 < 188, 16th times
+check how it works : 100 < 188, 17th times
+check how it works : 106 < 188, 18th times
+check how it works : 112 < 188, 19th times
+check how it works : 118 < 188, 20th times
+check how it works : 124 < 188, 21th times
+check how it works : 129 < 188, 22th times
+check how it works : 135 < 188, 23th times
+check how it works : 141 < 188, 24th times
+check how it works : 147 < 188, 25th times
+check how it works : 153 < 188, 26th times
+check how it works : 159 < 188, 27th times
+check how it works : 166 < 188, 28th times
+check how it works : 171 < 188, 29th times
+check how it works : 177 < 188, 30th times
+check how it works : 183 < 188, 31th times
+(mlfqs-load-avg) After 172 seconds, load average=0.00.
+this is start : 18234, 192
+check how it works : 4 < 192, 0th times
+check how it works : 10 < 192, 1th times
+check how it works : 15 < 192, 2th times
+check how it works : 21 < 192, 3th times
+check how it works : 27 < 192, 4th times
+check how it works : 32 < 192, 5th times
+check how it works : 38 < 192, 6th times
+check how it works : 43 < 192, 7th times
+check how it works : 49 < 192, 8th times
+check how it works : 55 < 192, 9th times
+check how it works : 60 < 192, 10th times
+check how it works : 66 < 192, 11th times
+check how it works : 72 < 192, 12th times
+check how it works : 79 < 192, 13th times
+check how it works : 84 < 192, 14th times
+check how it works : 90 < 192, 15th times
+check how it works : 96 < 192, 16th times
+check how it works : 102 < 192, 17th times
+check how it works : 107 < 192, 18th times
+check how it works : 113 < 192, 19th times
+check how it works : 119 < 192, 20th times
+check how it works : 125 < 192, 21th times
+check how it works : 131 < 192, 22th times
+check how it works : 137 < 192, 23th times
+check how it works : 143 < 192, 24th times
+check how it works : 148 < 192, 25th times
+check how it works : 154 < 192, 26th times
+check how it works : 160 < 192, 27th times
+check how it works : 166 < 192, 28th times
+check how it works : 172 < 192, 29th times
+check how it works : 178 < 192, 30th times
+check how it works : 184 < 192, 31th times
+check how it works : 189 < 192, 32th times
+(mlfqs-load-avg) After 174 seconds, load average=0.00.
+this is start : 18436, 190
+check how it works : 5 < 190, 0th times
+check how it works : 10 < 190, 1th times
+check how it works : 16 < 190, 2th times
+check how it works : 21 < 190, 3th times
+check how it works : 27 < 190, 4th times
+check how it works : 34 < 190, 5th times
+check how it works : 39 < 190, 6th times
+check how it works : 45 < 190, 7th times
+check how it works : 50 < 190, 8th times
+check how it works : 56 < 190, 9th times
+check how it works : 62 < 190, 10th times
+check how it works : 67 < 190, 11th times
+check how it works : 73 < 190, 12th times
+check how it works : 79 < 190, 13th times
+check how it works : 85 < 190, 14th times
+check how it works : 90 < 190, 15th times
+check how it works : 96 < 190, 16th times
+check how it works : 102 < 190, 17th times
+check how it works : 108 < 190, 18th times
+check how it works : 114 < 190, 19th times
+check how it works : 119 < 190, 20th times
+check how it works : 125 < 190, 21th times
+check how it works : 131 < 190, 22th times
+check how it works : 137 < 190, 23th times
+check how it works : 143 < 190, 24th times
+check how it works : 149 < 190, 25th times
+check how it works : 155 < 190, 26th times
+check how it works : 160 < 190, 27th times
+check how it works : 166 < 190, 28th times
+check how it works : 172 < 190, 29th times
+check how it works : 178 < 190, 30th times
+check how it works : 184 < 190, 31th times
+(mlfqs-load-avg) After 176 seconds, load average=0.00.
+this is start : 18633, 193
+check how it works : 4 < 193, 0th times
+check how it works : 10 < 193, 1th times
+check how it works : 15 < 193, 2th times
+check how it works : 21 < 193, 3th times
+check how it works : 26 < 193, 4th times
+check how it works : 32 < 193, 5th times
+check how it works : 38 < 193, 6th times
+check how it works : 43 < 193, 7th times
+check how it works : 49 < 193, 8th times
+check how it works : 55 < 193, 9th times
+check how it works : 60 < 193, 10th times
+check how it works : 66 < 193, 11th times
+check how it works : 72 < 193, 12th times
+check how it works : 77 < 193, 13th times
+check how it works : 83 < 193, 14th times
+check how it works : 89 < 193, 15th times
+check how it works : 96 < 193, 16th times
+check how it works : 101 < 193, 17th times
+check how it works : 107 < 193, 18th times
+check how it works : 113 < 193, 19th times
+check how it works : 119 < 193, 20th times
+check how it works : 125 < 193, 21th times
+check how it works : 131 < 193, 22th times
+check how it works : 136 < 193, 23th times
+check how it works : 142 < 193, 24th times
+check how it works : 148 < 193, 25th times
+check how it works : 154 < 193, 26th times
+check how it works : 160 < 193, 27th times
+check how it works : 166 < 193, 28th times
+check how it works : 172 < 193, 29th times
+check how it works : 178 < 193, 30th times
+check how it works : 183 < 193, 31th times
+check how it works : 189 < 193, 32th times
+(mlfqs-load-avg) After 178 seconds, load average=0.00.
+(mlfqs-load-avg) end
+Execution of 'mlfqs-load-avg' complete.
+Timer: 18844 ticks
+Thread: 0 idle ticks, 18847 kernel ticks, 0 user ticks
+Console: 57730 characters output
+Keyboard: 0 keys pressed
+Powering off...

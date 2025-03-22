@@ -1,0 +1,24 @@
+FAIL
+Some tick counts were missing or differed from those expected by more than 20.
+thread   actual <-> expected explanation
+------ -------- --- -------- ----------------------------------------
+     0       88 <<< 152      Too small, by 44.
+     1      121 <<< 152      Too small, by 11.
+     2       73 <<< 152      Too small, by 59.
+     3      161  =  152      
+     4      168  =  152      
+     5      128 <<< 152      Too small, by 4.
+     6      205 >>> 152      Too big, by 33.
+     7      198 >>> 152      Too big, by 26.
+     8      112 <<< 152      Too small, by 20.
+     9      177 >>> 152      Too big, by 5.
+    10      145  =  148      
+    11      136  =  148      
+    12       60 <<< 148      Too small, by 68.
+    13      104 <<< 148      Too small, by 24.
+    14       97 <<< 148      Too small, by 31.
+    15      193 >>> 148      Too big, by 25.
+    16       81 <<< 148      Too small, by 47.
+    17      221 >>> 148      Too big, by 53.
+    18      212 >>> 148      Too big, by 44.
+    19      185 >>> 148      Too big, by 17.

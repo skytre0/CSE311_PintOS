@@ -1,0 +1,74 @@
+PiLo hda1
+Loading.........
+Kernel command line: -q run alarm-single
+Pintos booting with 4,096 kB RAM...
+383 pages available in kernel pool.
+383 pages available in user pool.
+Calibrating timer...  204,600 loops/s.
+Boot complete.
+Executing 'alarm-single':
+(alarm-single) begin
+(alarm-single) Creating 5 threads to sleep 1 times each.
+(alarm-single) Thread 0 sleeps 10 ticks each time,
+(alarm-single) thread 1 sleeps 20 ticks each time, and so on.
+(alarm-single) If successful, product of iteration count and
+(alarm-single) sleep duration will appear in nondescending order.
+this is start : 69, 105
+check how it works : 3 < 105, 0th times
+this is start : 84, 130
+this is start : 73, 111
+check how it works : 18 < 111, 0th times
+this is start : 83, 250
+check how it works : 18 < 250, 0th times
+this is start : 81, 113
+check how it works : 29 < 113, 0th times
+this is start : 81, 123
+check how it works : 39 < 123, 0th times
+check how it works : 23 < 105, 1th times
+check how it works : 28 < 250, 1th times
+check how it works : 8 < 130, 0th times
+check how it works : 39 < 113, 1th times
+check how it works : 28 < 111, 1th times
+check how it works : 49 < 123, 1th times
+check how it works : 66 < 105, 2th times
+check how it works : 58 < 250, 2th times
+check how it works : 62 < 130, 1th times
+check how it works : 71 < 113, 2th times
+check how it works : 85 < 111, 2th times
+check how it works : 82 < 123, 2th times
+check how it works : 100 < 105, 3th times
+check how it works : 92 < 250, 3th times
+check how it works : 98 < 130, 2th times
+check how it works : 106 < 113, 3th times
+check how it works : 119 < 123, 3th times
+check how it works : 130 < 250, 4th times
+check how it works : 155 < 250, 5th times
+check how it works : 161 < 250, 6th times
+check how it works : 166 < 250, 7th times
+check how it works : 172 < 250, 8th times
+check how it works : 178 < 250, 9th times
+check how it works : 183 < 250, 10th times
+check how it works : 189 < 250, 11th times
+check how it works : 195 < 250, 12th times
+check how it works : 201 < 250, 13th times
+check how it works : 207 < 250, 14th times
+check how it works : 213 < 250, 15th times
+check how it works : 219 < 250, 16th times
+check how it works : 225 < 250, 17th times
+check how it works : 230 < 250, 18th times
+check how it works : 236 < 250, 19th times
+check how it works : 242 < 250, 20th times
+check how it works : 248 < 250, 21th times
+(alarm-single) thread 1: duration=20, iteration=1, product=20
+(alarm-single) thread 0: duration=10, iteration=1, product=10
+(alarm-single) FAIL: thread 0 woke up out of order (20 > 10)!
+Kernel PANIC at ../../tests/threads/tests.c:93 in fail(): test failed
+Call stack: 0xc002841c 0xc002a2f5 0xc002a6c6 0xc002a768 0xc002a33b 0xc00207d1 0xc0020771.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 361 ticks
+Thread: 0 idle ticks, 361 kernel ticks, 0 user ticks
+Console: 2930 characters output
+Keyboard: 0 keys pressed
+Powering off..

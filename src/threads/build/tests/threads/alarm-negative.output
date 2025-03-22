@@ -1,0 +1,19 @@
+PiLo hda1
+Loading.........
+Kernel command line: -q run alarm-negative
+Pintos booting with 4,096 kB RAM...
+383 pages available in kernel pool.
+383 pages available in user pool.
+Calibrating timer...  204,600 loops/s.
+Boot complete.
+Executing 'alarm-negative':
+(alarm-negative) begin
+this is start : 26, -100
+(alarm-negative) PASS
+(alarm-negative) end
+Execution of 'alarm-negative' complete.
+Timer: 42 ticks
+Thread: 0 idle ticks, 45 kernel ticks, 0 user ticks
+Console: 430 characters output
+Keyboard: 0 keys pressed
+Powering off...

@@ -1,0 +1,139 @@
+PiLo hda1
+Loading.........
+Kernel command line: -q run alarm-multiple
+Pintos booting with 4,096 kB RAM...
+383 pages available in kernel pool.
+383 pages available in user pool.
+Calibrating timer...  204,600 loops/s.
+Boot complete.
+Executing 'alarm-multiple':
+(alarm-multiple) begin
+(alarm-multiple) Creating 5 threads to sleep 7 times each.
+(alarm-multiple) Thread 0 sleeps 10 ticks each time,
+(alarm-multiple) thread 1 sleeps 20 ticks each time, and so on.
+(alarm-multiple) If successful, product of iteration count and
+(alarm-multiple) sleep duration will appear in nondescending order.
+this is start : 69, 106
+check how it works : 3 < 106, 0th times
+this is start : 85, 120
+this is start : 89, 126
+check how it works : 3 < 126, 0th times
+this is start : 81, 104
+check how it works : 21 < 104, 0th times
+this is start : 81, 114
+check how it works : 30 < 114, 0th times
+this is start : 84, 550
+check how it works : 37 < 550, 0th times
+check how it works : 24 < 106, 1th times
+check how it works : 31 < 104, 1th times
+check how it works : 8 < 120, 0th times
+check how it works : 40 < 114, 1th times
+check how it works : 13 < 126, 1th times
+check how it works : 46 < 550, 1th times
+check how it works : 67 < 106, 2th times
+check how it works : 61 < 104, 2th times
+check how it works : 62 < 120, 1th times
+check how it works : 72 < 114, 2th times
+check how it works : 70 < 126, 2th times
+check how it works : 80 < 550, 2th times
+check how it works : 101 < 106, 3th times
+check how it works : 95 < 104, 3th times
+check how it works : 97 < 120, 2th times
+check how it works : 106 < 114, 3th times
+check how it works : 104 < 126, 3th times
+check how it works : 115 < 550, 3th times
+this is start : 204, -19
+this is start : 233, -38
+this is start : 237, -32
+this is start : 241, -26
+this is start : 245, -20
+this is start : 249, -14
+this is start : 210, -5
+this is start : 258, -33
+this is start : 262, -17
+this is start : 266, -1
+this is start : 269, 16
+check how it works : 4 < 16, 0th times
+this is start : 222, 3
+this is start : 282, -27
+this is start : 286, -1
+this is start : 290, 25
+check how it works : 4 < 25, 0th times
+this is start : 228, 37
+this is start : 303, 12
+check how it works : 4 < 12, 0th times
+check how it works : 14 < 16, 1th times
+check how it works : 13 < 25, 1th times
+check how it works : 149 < 550, 4th times
+this is start : 216, 29
+this is start : 333, -48
+this is start : 337, -12
+this is start : 341, 24
+check how it works : 4 < 24, 0th times
+this is start : 317, 48
+check how it works : 37 < 48, 0th times
+this is start : 328, 17
+this is start : 364, 11
+check how it works : 4 < 11, 0th times
+this is start : 322, -17
+check how it works : 47 < 48, 1th times
+check how it works : 250 < 550, 5th times
+check how it works : 14 < 24, 1th times
+this is start : 389, 26
+check how it works : 11 < 26, 0th times
+this is start : 400, 5
+this is start : 409, 36
+check how it works : 4 < 36, 0th times
+check how it works : 311 < 550, 6th times
+check how it works : 21 < 26, 1th times
+check how it works : 14 < 36, 1th times
+check how it works : 345 < 550, 7th times
+this is start : 434, 31
+check how it works : 11 < 31, 0th times
+check how it works : 361 < 550, 8th times
+check how it works : 31 < 36, 2th times
+check how it works : 21 < 31, 1th times
+check how it works : 377 < 550, 9th times
+this is start : 473, 42
+check how it works : 6 < 42, 0th times
+check how it works : 395 < 550, 10th times
+check how it works : 16 < 42, 1th times
+check how it works : 410 < 550, 11th times
+check how it works : 27 < 42, 2th times
+check how it works : 422 < 550, 12th times
+check how it works : 39 < 42, 3th times
+check how it works : 433 < 550, 13th times
+check how it works : 443 < 550, 14th times
+check how it works : 449 < 550, 15th times
+check how it works : 454 < 550, 16th times
+check how it works : 460 < 550, 17th times
+check how it works : 466 < 550, 18th times
+check how it works : 472 < 550, 19th times
+check how it works : 478 < 550, 20th times
+check how it works : 484 < 550, 21th times
+check how it works : 490 < 550, 22th times
+check how it works : 495 < 550, 23th times
+check how it works : 501 < 550, 24th times
+check how it works : 507 < 550, 25th times
+check how it works : 513 < 550, 26th times
+check how it works : 519 < 550, 27th times
+check how it works : 525 < 550, 28th times
+check how it works : 531 < 550, 29th times
+check how it works : 537 < 550, 30th times
+check how it works : 542 < 550, 31th times
+check how it works : 548 < 550, 32th times
+(alarm-multiple) thread 0: duration=10, iteration=1, product=10
+(alarm-multiple) thread 1: duration=20, iteration=1, product=20
+(alarm-multiple) thread 3: duration=40, iteration=1, product=40
+(alarm-multiple) thread 2: duration=30, iteration=1, product=30
+(alarm-multiple) FAIL: thread 2 woke up out of order (40 > 30)!
+Kernel PANIC at ../../tests/threads/tests.c:93 in fail(): test failed
+Call stack: 0xc002841c 0xc002a2f5 0xc002a6c6 0xc002a751 0xc002a33b 0xc00207d1 0xc0020771.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 679 ticks
+Thread: 0 idle ticks, 679 kernel ticks, 0 user ticks
+Console: 5157 characters output
+Keyboard: 0 keys pressed
+Powering off..
