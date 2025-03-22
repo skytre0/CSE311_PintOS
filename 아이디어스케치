@@ -14,3 +14,13 @@ timer_sleep 호출하면
 -------------
 > 쓰레드는 동작 할 수도 안할 수도 있는데, 타이머 인터럽트는 주기적으로
     계속 동작하니까, 구현에 편할 것 같음
+-----------------------------------------
+그러면 : 
+1. struct thread 에 int64_t count_ticks 추가
+2. timer.c에 thread sleeping[] 형태 array 추가
+3. timer_sleep() 함수에 
+    3-1. int num_of_ele로 개수 기록
+    3-2. sleeping[++num_of_ele] = XXX
+    3-3. for (int i = 0; i < num_of_ele; i++) 
+            timer_elapsed (sleeping[i].count_ticks) - sleeping[i].count_ticks > @ ? XXXXX + thread_yield() 형태 구현
+4. mem size 고려해야 해서 malloc 사용해야 할 수도 있을 듯.
