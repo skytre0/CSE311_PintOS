@@ -10,6 +10,9 @@
   
 /* See [8254] for hardware details of the 8254 timer chip. */
 
+//sleep list for sleep queue
+static struct list sleep_list;
+
 #if TIMER_FREQ < 19
 #error 8254 timer requires TIMER_FREQ >= 19
 #endif
@@ -37,6 +40,8 @@ timer_init (void)
 {
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+  //sleep queue 생성
+  list_init ( &sleep_list );
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -92,8 +97,17 @@ timer_sleep (int64_t ticks)
   int64_t start = timer_ticks ();
 
   ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
-    thread_yield ();
+  // while (timer_elapsed (start) < ticks)
+  //   thread_yield ();
+  int64_t waketime = start + ticks;
+  struct thread* cur = thread_current ();
+  
+  cur->waketime = waketime; // 일어날 시간 셋팅(쓰레드에 적어놈)
+
+  //sleep list 에 추가해야함
+  list_push_back ( &sleep_list , &(cur->elem) );
+
+  thread_block(); // block 하고 scheduling 슛
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -172,6 +186,19 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+
+  struct list_elem* tmp = list_head(&sleep_list)->next;
+  struct thread* target;
+
+  while( tmp != list_end(&sleep_list)){
+    target = list_entry( tmp, struct thread, allelem );
+    if( ticks > target->waketime ){
+      thread_unblock(target);
+      list_remove(tmp);
+    }else{
+      tmp = list_next(tmp);
+    }
+  }
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
