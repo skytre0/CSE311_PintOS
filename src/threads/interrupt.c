@@ -291,7 +291,7 @@ pic_end_of_interrupt (int irq)
    [IA32-v3a] section 5.12.1.2 "Flag Usage By Exception- or
    Interrupt-Handler Procedure" for discussion. */
 static uint64_t
-make_gate (void (*function) (void), int dpl, int type)
+make_gate (void (*function) (void), int dpl, int type)    // type : intr=14, trap=15
 {
   uint32_t e0, e1;
 
