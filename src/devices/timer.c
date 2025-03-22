@@ -7,9 +7,11 @@
 #include "threads/interrupt.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
-
-
+  
 /* See [8254] for hardware details of the 8254 timer chip. */
+
+//sleep list for sleep queue
+static struct list sleep_list;
 
 #if TIMER_FREQ < 19
 #error 8254 timer requires TIMER_FREQ >= 19
@@ -38,6 +40,8 @@ timer_init (void)
 {
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+  //sleep queue 생성
+  list_init ( &sleep_list );
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -94,14 +98,16 @@ timer_sleep (int64_t ticks)
 
   ASSERT (intr_get_level () == INTR_ON);
   // while (timer_elapsed (start) < ticks)
-  //   thread_yield ();;
-  struct list* sleep_list = sleep_list_address();
-  struct thread* cur = thread_current();
+  //   thread_yield ();
+  int64_t waketime = start + ticks;
+  struct thread* cur = thread_current ();
   
-  cur->status = THREAD_SLEEP;
-  cur->waketick = ticks + start;
-  list_push_back (sleep_list, &cur->elem);
-  thread_yield ();
+  cur->waketime = waketime; // 일어날 시간 셋팅(쓰레드에 적어놈)
+
+  //sleep list 에 추가해야함
+  list_push_back ( &sleep_list , &(cur->elem) );
+
+  thread_block(); // block 하고 scheduling 슛
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -181,19 +187,17 @@ timer_interrupt (struct intr_frame *args UNUSED)
   ticks++;
   thread_tick ();
 
-  struct list* sleep_list = sleep_list_address();
-  struct list* ready_list = ready_list_address();
+  struct list_elem* tmp = list_head(&sleep_list)->next;
+  struct thread* target;
 
-  struct list_elem* tmp = list_head(sleep_list)->next;
-  while ( tmp != list_end( sleep_list ) ){
-    if (ticks > (list_entry (tmp, struct thread, elem))->waketick) {  // element 에 접근하는 list 구형해야함  그리고 접근해서 waketick 보다 현재 tick 이 크면 출소(상태바꾸고 ready list 에 박아)
-      (list_entry (tmp, struct thread, elem))->waketick = 0;
-      (list_entry (tmp, struct thread, elem))->status = THREAD_READY;
-      list_push_back (ready_list, &(list_entry (tmp, struct thread, elem))->elem);
-      tmp = list_remove (tmp);
+  while( tmp != list_end(&sleep_list)){
+    target = list_entry( tmp, struct thread, allelem );
+    if( ticks > target->waketime ){
+      thread_unblock(target);
+      list_remove(tmp);
+    }else{
+      tmp = list_next(tmp);
     }
-    else
-      tmp = list_next(sleep_list);
   }
 }
 
