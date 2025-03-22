@@ -7,6 +7,10 @@
 #include "threads/interrupt.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
+
+#include "threads/thread.c"
+#include "lib/kernel/list.h"
+#include "lib/kernel/list.c"
   
 /* See [8254] for hardware details of the 8254 timer chip. */
 
@@ -92,8 +96,11 @@ timer_sleep (int64_t ticks)
 {
   int64_t start = timer_ticks ();   // sleep에 들어온 순간 기록.
   ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks)
-   thread_yield ();
+
+  struct thread *cur = thread_current ();
+  cur->status = THREAD_SLEEP;
+  
+  thread_yield ();
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -172,6 +179,14 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+  
+  struct list_elem* tmp = list_head(&sleep_list);
+  while ( tmp != list_end( &sleep_list ) ){
+    if()  // element 에 접근하는 list 구형해야함  그리고 접근해서 waketick 보다 현재 tick 이 크면 출소(상태바꾸고 ready list 에 박아)
+
+    tmp = list_next(&sleep_list);
+  }
+
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
