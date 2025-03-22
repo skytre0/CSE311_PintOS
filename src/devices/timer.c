@@ -7,21 +7,18 @@
 #include "threads/interrupt.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
-// 추가됨
-#include "threads/thread.c"
-#include "lib/kernel/list.h"
-#include "lib/kernel/list.c"
-  
+
+
 /* See [8254] for hardware details of the 8254 timer chip. */
 
-#if TIMER_FREQ < 19    // : 100 ticks / 1 sec -> 여기서 ticks는 하단의 ticks 변수가 측정으로 보임.
+#if TIMER_FREQ < 19
 #error 8254 timer requires TIMER_FREQ >= 19
 #endif
 #if TIMER_FREQ > 1000
 #error TIMER_FREQ <= 1000 recommended
 #endif
 
-/* Number of timer ticks since OS booted. */      // ticks 출력 : %lld
+/* Number of timer ticks since OS booted. */
 static int64_t ticks;
 
 /* Number of loops per timer tick.
@@ -90,17 +87,17 @@ timer_elapsed (int64_t then)
 
 /* Sleeps for approximately TICKS timer ticks.  Interrupts must
    be turned on. */
-  // 여기 고쳐야 함.
 void
 timer_sleep (int64_t ticks) 
 {
-  int64_t start = timer_ticks ();   // sleep에 들어온 순간 기록.
-  ASSERT (intr_get_level () == INTR_ON);
+  int64_t start = timer_ticks ();
 
-  struct thread *cur = thread_current ();
-  cur->status = THREAD_SLEEP;
-  cur->waketick = ticks + start;
-  list_push_back (&sleep_list, &cur->elem);
+  ASSERT (intr_get_level () == INTR_ON);
+  // while (timer_elapsed (start) < ticks)
+  //   thread_yield ();;
+  // thread_current ()->status = THREAD_SLEEP;
+  // thread_current ()->waketick = ticks + start;
+  // list_push_back (&sleep_list, &thread_current ()->elem);
   thread_yield ();
 }
 
@@ -173,26 +170,13 @@ timer_print_stats (void)
 {
   printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
-  
-/* Timer interrupt handler. */      // 여기서만 ticks가 증가함.
+
+/* Timer interrupt handler. */
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
-  
-  struct list_elem* tmp = list_head(&sleep_list);
-  while ( tmp != list_end( &sleep_list ) ){
-    if (ticks > (list_entry (tmp, struct thread, allelem))->waketick) {  // element 에 접근하는 list 구형해야함  그리고 접근해서 waketick 보다 현재 tick 이 크면 출소(상태바꾸고 ready list 에 박아)
-      (list_entry (tmp, struct thread, allelem))->waketick = 0;
-      (list_entry (tmp, struct thread, allelem))->status = THREAD_READY;
-      list_push_back (&ready_list, &(list_entry (tmp, struct thread, allelem))->elem);
-      tmp = list_remove (tmp);
-    }
-    else
-      tmp = list_next(&sleep_list);
-  }
-
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

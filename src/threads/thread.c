@@ -23,6 +23,8 @@
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
 static struct list ready_list;
+
+/* List of sleeping threads */
 static struct list sleep_list;
 
 /* List of all processes.  Processes are added to this list
@@ -317,12 +319,13 @@ thread_yield (void)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-  if(cur->status == THREAD_SLEEP){
+  if( cur->status == THREAD_SLEEP ){
     list_push_back (&sleep_list, &cur->elem);
   }else if (cur != idle_thread) 
     list_push_back (&ready_list, &cur->elem);
-  if(cur->status != THREAD_SLEEP)
+  if(cur->status != THREAD_SLEEP ){
     cur->status = THREAD_READY;
+  }
   schedule ();
   intr_set_level (old_level);
 }

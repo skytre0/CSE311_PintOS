@@ -13,7 +13,7 @@ enum thread_status
     THREAD_BLOCKED,     /* Waiting for an event to trigger. */
     THREAD_DYING,        /* About to be destroyed. */
     THREAD_SLEEP        /* now sleeping by timer sleep */
-  };
+   };
 
 /* Thread identifier type.
    You can redefine this to whatever type you like. */
@@ -94,11 +94,9 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
-
-    int64_t waketick;                  /* 이 틱 이후에 일어남*/
-
-
-
+    //추가
+    int64_t waketick;                    /*일어날 시간*/
+    //추가끝
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
