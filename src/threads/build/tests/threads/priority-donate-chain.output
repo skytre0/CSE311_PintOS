@@ -37,7 +37,7 @@ Thread: 0 idle ticks, 249 kernel ticks, 0 user ticks
 Console: 1748 characters output
 thread 3 got lock
 Kernel PANIC at ../../threads/synch.c:232 in lock_release(): assertion `lock_held_by_current_thread (lock)' failed.
-Call stack: 0xc002841c 0xc00228af 0xc002bf4a 0xc002104a.
+Call stack: 0xc002839c 0xc00228bf 0xc002beca 0xc002104a.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.

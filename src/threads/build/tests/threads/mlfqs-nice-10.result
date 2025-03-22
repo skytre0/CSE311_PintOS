@@ -2,13 +2,13 @@ FAIL
 Some tick counts were missing or differed from those expected by more than 25.
 thread   actual <-> expected explanation
 ------ -------- --- -------- ----------------------------------------
-     0      277 <<< 672      Too small, by 370.
-     1      260 <<< 588      Too small, by 303.
-     2      252 <<< 492      Too small, by 215.
-     3      308 <<< 408      Too small, by 75.
+     0      300 <<< 672      Too small, by 347.
+     1      301 <<< 588      Too small, by 262.
+     2      300 <<< 492      Too small, by 167.
+     3      301 <<< 408      Too small, by 82.
      4      301  =  316      
-     5      284 >>> 232      Too big, by 27.
-     6      246 >>> 152      Too big, by 69.
-     7      241 >>> 92       Too big, by 124.
-     8      293 >>> 40       Too big, by 228.
-     9      316 >>> 8        Too big, by 283.
+     5      300 >>> 232      Too big, by 43.
+     6      301 >>> 152      Too big, by 124.
+     7      300 >>> 92       Too big, by 183.
+     8      300 >>> 40       Too big, by 235.
+     9      301 >>> 8        Too big, by 268.

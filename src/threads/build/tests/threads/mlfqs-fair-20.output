@@ -9,253 +9,32 @@ Boot complete.
 Executing 'mlfqs-fair-20':
 (mlfqs-fair-20) begin
 (mlfqs-fair-20) Starting 20 threads...
-this is start : 37, 489
-check how it works : 3 < 489, 0th times
-this is start : 54, 472
-check how it works : 3 < 472, 0th times
-this is start : 71, 455
-check how it works : 8 < 455, 0th times
-this is start : 88, 438
-check how it works : 8 < 438, 0th times
-this is start : 105, 421
-check how it works : 8 < 421, 0th times
-this is start : 120, 406
-check how it works : 4 < 406, 0th times
-this is start : 49, 477
-check how it works : 84 < 477, 0th times
-this is start : 83, 443
-check how it works : 60 < 443, 0th times
-this is start : 58, 468
-check how it works : 94 < 468, 0th times
-check how it works : 25 < 455, 1th times
-this is start : 100, 426
-check how it works : 68 < 426, 0th times
-check how it works : 25 < 489, 1th times
-this is start : 109, 417
-check how it works : 74 < 417, 0th times
-check how it works : 25 < 438, 1th times
-this is start : 117, 409
-check how it works : 81 < 409, 0th times
-(mlfqs-fair-20) Starting threads took 92 ticks.
+(mlfqs-fair-20) Starting threads took 52 ticks.
 (mlfqs-fair-20) Sleeping 40 seconds to let threads run, please wait...
-this is start : 219, 4000
-check how it works : 4 < 4000, 0th times
-this is start : 83, 443
-check how it works : 150 < 443, 0th times
-this is start : 41, 485
-check how it works : 201 < 485, 0th times
-check how it works : 97 < 455, 2th times
-this is start : 100, 426
-check how it works : 158 < 426, 0th times
-check how it works : 146 < 489, 2th times
-this is start : 49, 477
-check how it works : 224 < 477, 0th times
-check how it works : 110 < 438, 2th times
-this is start : 117, 409
-check how it works : 172 < 409, 0th times
-this is start : 66, 460
-check how it works : 232 < 460, 0th times
-check how it works : 19 < 421, 1th times
-this is start : 75, 451
-check how it works : 239 < 451, 0th times
-check how it works : 25 < 472, 1th times
-check how it works : 94 < 477, 1th times
-check how it works : 14 < 4000, 1th times
-check how it works : 70 < 443, 1th times
-check how it works : 160 < 443, 1th times
-check how it works : 104 < 468, 1th times
-check how it works : 211 < 485, 1th times
-check how it works : 187 < 455, 3th times
-check how it works : 77 < 426, 1th times
-check how it works : 168 < 426, 1th times
-check how it works : 236 < 489, 3th times
-check how it works : 84 < 417, 1th times
-check how it works : 234 < 477, 1th times
-check how it works : 201 < 438, 3th times
-check how it works : 91 < 409, 1th times
-check how it works : 182 < 409, 1th times
-this is start : 66, 460
-check how it works : 350 < 460, 0th times
-check how it works : 209 < 421, 2th times
-check how it works : 14 < 406, 1th times
-check how it works : 249 < 451, 1th times
-check how it works : 275 < 472, 2th times
-check how it works : 286 < 477, 2th times
-check how it works : 122 < 4000, 2th times
-check how it works : 263 < 443, 2th times
-check how it works : 269 < 443, 2th times
-check how it works : 300 < 468, 2th times
-check how it works : 323 < 485, 2th times
-check how it works : 299 < 455, 4th times
-check how it works : 275 < 426, 2th times
-check how it works : 281 < 426, 2th times
-check how it works : 350 < 489, 4th times
-check how it works : 285 < 417, 2th times
-check how it works : 350 < 477, 2th times
-check how it works : 317 < 438, 4th times
-check how it works : 294 < 409, 2th times
-check how it works : 300 < 409, 2th times
-check how it works : 242 < 460, 1th times
-check how it works : 360 < 460, 1th times
-check how it works : 327 < 421, 3th times
-check how it works : 318 < 406, 2th times
-check how it works : 369 < 451, 2th times
-check how it works : 395 < 472, 3th times
-check how it works : 406 < 477, 3th times
-check how it works : 242 < 4000, 3th times
-check how it works : 384 < 443, 3th times
-check how it works : 390 < 443, 3th times
-check how it works : 421 < 468, 3th times
-check how it works : 443 < 485, 3th times
-check how it works : 419 < 455, 5th times
-check how it works : 396 < 426, 3th times
-check how it works : 402 < 426, 3th times
-check how it works : 471 < 489, 5th times
-check how it works : 404 < 417, 3th times
-check how it works : 470 < 477, 3th times
-check how it works : 437 < 438, 5th times
-check how it works : 717 < 4000, 4th times
-check how it works : 2165 < 4000, 5th times
-check how it works : 2330 < 4000, 6th times
-check how it works : 2495 < 4000, 7th times
-check how it works : 2660 < 4000, 8th times
-check how it works : 2825 < 4000, 9th times
-check how it works : 2990 < 4000, 10th times
-check how it works : 3156 < 4000, 11th times
-check how it works : 3311 < 4000, 12th times
-check how it works : 3335 < 4000, 13th times
-check how it works : 3342 < 4000, 14th times
-check how it works : 3348 < 4000, 15th times
-check how it works : 3354 < 4000, 16th times
-check how it works : 3360 < 4000, 17th times
-check how it works : 3366 < 4000, 18th times
-check how it works : 3372 < 4000, 19th times
-check how it works : 3378 < 4000, 20th times
-check how it works : 3384 < 4000, 21th times
-check how it works : 3390 < 4000, 22th times
-check how it works : 3396 < 4000, 23th times
-check how it works : 3404 < 4000, 24th times
-check how it works : 3410 < 4000, 25th times
-check how it works : 3416 < 4000, 26th times
-check how it works : 3422 < 4000, 27th times
-check how it works : 3428 < 4000, 28th times
-check how it works : 3434 < 4000, 29th times
-check how it works : 3440 < 4000, 30th times
-check how it works : 3446 < 4000, 31th times
-check how it works : 3452 < 4000, 32th times
-check how it works : 3459 < 4000, 33th times
-check how it works : 3465 < 4000, 34th times
-check how it works : 3471 < 4000, 35th times
-check how it works : 3477 < 4000, 36th times
-check how it works : 3483 < 4000, 37th times
-check how it works : 3489 < 4000, 38th times
-check how it works : 3495 < 4000, 39th times
-check how it works : 3501 < 4000, 40th times
-check how it works : 3507 < 4000, 41th times
-check how it works : 3514 < 4000, 42th times
-check how it works : 3520 < 4000, 43th times
-check how it works : 3526 < 4000, 44th times
-check how it works : 3532 < 4000, 45th times
-check how it works : 3538 < 4000, 46th times
-check how it works : 3544 < 4000, 47th times
-check how it works : 3550 < 4000, 48th times
-check how it works : 3556 < 4000, 49th times
-check how it works : 3562 < 4000, 50th times
-check how it works : 3568 < 4000, 51th times
-check how it works : 3575 < 4000, 52th times
-check how it works : 3581 < 4000, 53th times
-check how it works : 3587 < 4000, 54th times
-check how it works : 3593 < 4000, 55th times
-check how it works : 3599 < 4000, 56th times
-check how it works : 3605 < 4000, 57th times
-check how it works : 3611 < 4000, 58th times
-check how it works : 3617 < 4000, 59th times
-check how it works : 3623 < 4000, 60th times
-check how it works : 3630 < 4000, 61th times
-check how it works : 3636 < 4000, 62th times
-check how it works : 3642 < 4000, 63th times
-check how it works : 3648 < 4000, 64th times
-check how it works : 3654 < 4000, 65th times
-check how it works : 3660 < 4000, 66th times
-check how it works : 3666 < 4000, 67th times
-check how it works : 3672 < 4000, 68th times
-check how it works : 3678 < 4000, 69th times
-check how it works : 3684 < 4000, 70th times
-check how it works : 3691 < 4000, 71th times
-check how it works : 3697 < 4000, 72th times
-check how it works : 3703 < 4000, 73th times
-check how it works : 3709 < 4000, 74th times
-check how it works : 3715 < 4000, 75th times
-check how it works : 3721 < 4000, 76th times
-check how it works : 3727 < 4000, 77th times
-check how it works : 3733 < 4000, 78th times
-check how it works : 3739 < 4000, 79th times
-check how it works : 3746 < 4000, 80th times
-check how it works : 3752 < 4000, 81th times
-check how it works : 3758 < 4000, 82th times
-check how it works : 3764 < 4000, 83th times
-check how it works : 3770 < 4000, 84th times
-check how it works : 3776 < 4000, 85th times
-check how it works : 3782 < 4000, 86th times
-check how it works : 3788 < 4000, 87th times
-check how it works : 3794 < 4000, 88th times
-check how it works : 3800 < 4000, 89th times
-check how it works : 3807 < 4000, 90th times
-check how it works : 3813 < 4000, 91th times
-check how it works : 3819 < 4000, 92th times
-check how it works : 3825 < 4000, 93th times
-check how it works : 3831 < 4000, 94th times
-check how it works : 3837 < 4000, 95th times
-check how it works : 3843 < 4000, 96th times
-check how it works : 3849 < 4000, 97th times
-check how it works : 3855 < 4000, 98th times
-check how it works : 3862 < 4000, 99th times
-check how it works : 3868 < 4000, 100th times
-check how it works : 3874 < 4000, 101th times
-check how it works : 3880 < 4000, 102th times
-check how it works : 3886 < 4000, 103th times
-check how it works : 3893 < 4000, 104th times
-check how it works : 3899 < 4000, 105th times
-check how it works : 3905 < 4000, 106th times
-check how it works : 3911 < 4000, 107th times
-check how it works : 3917 < 4000, 108th times
-check how it works : 3924 < 4000, 109th times
-check how it works : 3930 < 4000, 110th times
-check how it works : 3936 < 4000, 111th times
-check how it works : 3942 < 4000, 112th times
-check how it works : 3949 < 4000, 113th times
-check how it works : 3955 < 4000, 114th times
-check how it works : 3961 < 4000, 115th times
-check how it works : 3967 < 4000, 116th times
-check how it works : 3974 < 4000, 117th times
-check how it works : 3980 < 4000, 118th times
-check how it works : 3986 < 4000, 119th times
-check how it works : 3992 < 4000, 120th times
-check how it works : 3998 < 4000, 121th times
-(mlfqs-fair-20) Thread 0 received 88 ticks.
-(mlfqs-fair-20) Thread 1 received 121 ticks.
-(mlfqs-fair-20) Thread 2 received 73 ticks.
-(mlfqs-fair-20) Thread 3 received 161 ticks.
-(mlfqs-fair-20) Thread 4 received 168 ticks.
-(mlfqs-fair-20) Thread 5 received 128 ticks.
-(mlfqs-fair-20) Thread 6 received 205 ticks.
-(mlfqs-fair-20) Thread 7 received 198 ticks.
-(mlfqs-fair-20) Thread 8 received 112 ticks.
-(mlfqs-fair-20) Thread 9 received 177 ticks.
-(mlfqs-fair-20) Thread 10 received 145 ticks.
-(mlfqs-fair-20) Thread 11 received 136 ticks.
-(mlfqs-fair-20) Thread 12 received 60 ticks.
-(mlfqs-fair-20) Thread 13 received 104 ticks.
-(mlfqs-fair-20) Thread 14 received 97 ticks.
-(mlfqs-fair-20) Thread 15 received 193 ticks.
-(mlfqs-fair-20) Thread 16 received 81 ticks.
-(mlfqs-fair-20) Thread 17 received 221 ticks.
-(mlfqs-fair-20) Thread 18 received 212 ticks.
-(mlfqs-fair-20) Thread 19 received 185 ticks.
+(mlfqs-fair-20) Thread 0 received 149 ticks.
+(mlfqs-fair-20) Thread 1 received 148 ticks.
+(mlfqs-fair-20) Thread 2 received 148 ticks.
+(mlfqs-fair-20) Thread 3 received 148 ticks.
+(mlfqs-fair-20) Thread 4 received 149 ticks.
+(mlfqs-fair-20) Thread 5 received 149 ticks.
+(mlfqs-fair-20) Thread 6 received 148 ticks.
+(mlfqs-fair-20) Thread 7 received 149 ticks.
+(mlfqs-fair-20) Thread 8 received 152 ticks.
+(mlfqs-fair-20) Thread 9 received 153 ticks.
+(mlfqs-fair-20) Thread 10 received 152 ticks.
+(mlfqs-fair-20) Thread 11 received 152 ticks.
+(mlfqs-fair-20) Thread 12 received 152 ticks.
+(mlfqs-fair-20) Thread 13 received 153 ticks.
+(mlfqs-fair-20) Thread 14 received 153 ticks.
+(mlfqs-fair-20) Thread 15 received 153 ticks.
+(mlfqs-fair-20) Thread 16 received 153 ticks.
+(mlfqs-fair-20) Thread 17 received 153 ticks.
+(mlfqs-fair-20) Thread 18 received 149 ticks.
+(mlfqs-fair-20) Thread 19 received 149 ticks.
 (mlfqs-fair-20) end
 Execution of 'mlfqs-fair-20' complete.
-Timer: 4356 ticks
-Thread: 0 idle ticks, 4359 kernel ticks, 0 user ticks
-Console: 10705 characters output
+Timer: 4227 ticks
+Thread: 0 idle ticks, 4230 kernel ticks, 0 user ticks
+Console: 1457 characters output
 Keyboard: 0 keys pressed
 Powering off...

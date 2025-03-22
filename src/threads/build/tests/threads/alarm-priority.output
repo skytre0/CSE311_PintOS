@@ -8,114 +8,20 @@ Calibrating timer...  204,600 loops/s.
 Boot complete.
 Executing 'alarm-priority':
 (alarm-priority) begin
-this is start : 30, 496
-check how it works : 7 < 496, 0th times
-this is start : 48, 478
-check how it works : 8 < 478, 0th times
-this is start : 68, 458
-check how it works : 6 < 458, 0th times
-this is start : 61, 465
-check how it works : 25 < 465, 0th times
-this is start : 52, 474
-check how it works : 43 < 474, 0th times
-this is start : 42, 484
-check how it works : 63 < 484, 0th times
-this is start : 79, 447
-check how it works : 35 < 447, 0th times
-check how it works : 26 < 496, 1th times
-check how it works : 18 < 458, 1th times
-this is start : 62, 464
-check how it works : 73 < 464, 0th times
-this is start : 72, 454
-check how it works : 83 < 464, 1th times
-check how it works : 26 < 478, 1th times
-check how it works : 72 < 484, 1th times
-this is start : 80, 446
-check how it works : 85 < 446, 0th times
-check how it works : 100 < 496, 2th times
-check how it works : 67 < 458, 2th times
-check how it works : 35 < 465, 1th times
-check how it works : 53 < 474, 1th times
-check how it works : 77 < 454, 0th times
-check how it works : 92 < 464, 2th times
-check how it works : 112 < 478, 2th times
-check how it works : 124 < 484, 2th times
-check how it works : 45 < 447, 1th times
-check how it works : 95 < 446, 1th times
-check how it works : 151 < 496, 3th times
-check how it works : 119 < 458, 3th times
-check how it works : 131 < 465, 2th times
-check how it works : 146 < 474, 2th times
-check how it works : 132 < 454, 1th times
-check how it works : 147 < 464, 3th times
-check how it works : 167 < 478, 3th times
-check how it works : 179 < 484, 3th times
-check how it works : 148 < 447, 2th times
-check how it works : 152 < 446, 2th times
-check how it works : 208 < 496, 4th times
-check how it works : 176 < 458, 4th times
-check how it works : 189 < 465, 3th times
-check how it works : 205 < 474, 3th times
-check how it works : 190 < 454, 2th times
-check how it works : 206 < 464, 4th times
-check how it works : 226 < 478, 4th times
-check how it works : 238 < 484, 4th times
-check how it works : 207 < 447, 3th times
-check how it works : 211 < 446, 3th times
-check how it works : 267 < 496, 5th times
-check how it works : 235 < 458, 5th times
-check how it works : 248 < 465, 4th times
-check how it works : 263 < 474, 4th times
-check how it works : 248 < 454, 3th times
-check how it works : 264 < 464, 5th times
-check how it works : 284 < 478, 5th times
-check how it works : 296 < 484, 5th times
-check how it works : 265 < 447, 4th times
-check how it works : 269 < 446, 4th times
-check how it works : 325 < 496, 6th times
-check how it works : 293 < 458, 6th times
-check how it works : 306 < 465, 5th times
-check how it works : 321 < 474, 5th times
-check how it works : 306 < 454, 4th times
-check how it works : 322 < 464, 6th times
-check how it works : 342 < 478, 6th times
-check how it works : 354 < 484, 6th times
-check how it works : 323 < 447, 5th times
-check how it works : 327 < 446, 5th times
-check how it works : 383 < 496, 7th times
-check how it works : 351 < 458, 7th times
-check how it works : 364 < 465, 6th times
-check how it works : 379 < 474, 6th times
-check how it works : 365 < 454, 5th times
-check how it works : 380 < 464, 7th times
-check how it works : 400 < 478, 7th times
-check how it works : 412 < 484, 7th times
-check how it works : 381 < 447, 6th times
-check how it works : 386 < 446, 6th times
-check how it works : 441 < 496, 8th times
-check how it works : 409 < 458, 8th times
-check how it works : 422 < 465, 7th times
-check how it works : 437 < 474, 7th times
-check how it works : 423 < 454, 6th times
-check how it works : 438 < 464, 8th times
-check how it works : 458 < 478, 8th times
-check how it works : 470 < 484, 8th times
-check how it works : 439 < 447, 7th times
-check how it works : 444 < 446, 7th times
-(alarm-priority) Thread priority 25 woke up.
-(alarm-priority) Thread priority 21 woke up.
-(alarm-priority) Thread priority 23 woke up.
-(alarm-priority) Thread priority 27 woke up.
-(alarm-priority) Thread priority 22 woke up.
-(alarm-priority) Thread priority 24 woke up.
 (alarm-priority) Thread priority 28 woke up.
-(alarm-priority) Thread priority 29 woke up.
-(alarm-priority) Thread priority 30 woke up.
+(alarm-priority) Thread priority 27 woke up.
+(alarm-priority) Thread priority 24 woke up.
+(alarm-priority) Thread priority 21 woke up.
 (alarm-priority) Thread priority 26 woke up.
+(alarm-priority) Thread priority 30 woke up.
+(alarm-priority) Thread priority 25 woke up.
+(alarm-priority) Thread priority 29 woke up.
+(alarm-priority) Thread priority 23 woke up.
+(alarm-priority) Thread priority 22 woke up.
 (alarm-priority) end
 Execution of 'alarm-priority' complete.
-Timer: 659 ticks
-Thread: 0 idle ticks, 662 kernel ticks, 0 user ticks
-Console: 4579 characters output
+Timer: 607 ticks
+Thread: 0 idle ticks, 610 kernel ticks, 0 user ticks
+Console: 835 characters output
 Keyboard: 0 keys pressed
 Powering off...
