@@ -5,6 +5,10 @@
 #include <list.h>
 #include <stdint.h>
 
+/* return sleep_list address */
+struct list* sleep_list_address( void );
+struct list* ready_list_address( void );
+
 /* States in a thread's life cycle. */
 enum thread_status
   {

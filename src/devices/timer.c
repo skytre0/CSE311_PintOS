@@ -95,9 +95,10 @@ timer_sleep (int64_t ticks)
   ASSERT (intr_get_level () == INTR_ON);
   // while (timer_elapsed (start) < ticks)
   //   thread_yield ();;
-  // thread_current ()->status = THREAD_SLEEP;
-  // thread_current ()->waketick = ticks + start;
-  // list_push_back (&sleep_list, &thread_current ()->elem);
+  struct list* sleep_list = sleep_list_address();
+  thread_current ()->status = THREAD_SLEEP;
+  thread_current ()->waketick = ticks + start;
+  list_push_back (sleep_list, &thread_current ()->elem);
   thread_yield ();
 }
 
@@ -177,6 +178,24 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+
+  struct list* sleep_list = sleep_list_address();
+  struct list* ready_list = ready_list_address();
+
+  struct list_elem* tmp = list_head(sleep_list);
+  while ( tmp != list_end( sleep_list ) ){
+    if (ticks > (list_entry (tmp, struct thread, allelem))->waketick) {  // element 에 접근하는 list 구형해야함  그리고 접근해서 waketick 보다 현재 tick 이 크면 출소(상태바꾸고 ready list 에 박아)
+      (list_entry (tmp, struct thread, allelem))->waketick = 0;
+      (list_entry (tmp, struct thread, allelem))->status = THREAD_READY;
+      list_push_back (ready_list, &(list_entry (tmp, struct thread, allelem))->elem);
+      tmp = list_remove (tmp);
+    }
+    else
+      tmp = list_next(sleep_list);
+  }
+
+
+
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
