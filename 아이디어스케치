@@ -40,3 +40,12 @@ timer_sleep() {
         schedule ()
     }
 }
+
+------
+yeild 하기 전에 상태 바꾸기
+yeild 까지하면 끝 timer_sleep 끝
+
+yeild 에서 state 가 wait 이면 스테이트를 run으로 바꾸지 않고 schedule 실행
+
+timer 인터럽트 떄, traversal 하면서 확인.
+-> 쓰레드가 출소일이랑, 상태 가지고 있어야함 (추가 필요).
