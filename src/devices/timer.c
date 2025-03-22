@@ -92,14 +92,9 @@ timer_sleep (int64_t ticks)
 {
   int64_t start = timer_ticks ();   // sleep에 들어온 순간 기록.
   ASSERT (intr_get_level () == INTR_ON);
-  //while (timer_elapsed (start) < ticks)
-  //  thread_yield ();
+  while (timer_elapsed (start) < ticks)
+   thread_yield ();
   // maybe not busy waiting...?
-  printf("begin time : %lld \n", start);
-  while (timer_elapsed (start) < (int64_t)400);
-  
-  printf("%lld is out of loop : %lld > %lld\n", start, timer_elapsed (start), (int64_t)400);
-  thread_yield ();
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
