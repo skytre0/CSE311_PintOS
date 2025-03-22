@@ -7,7 +7,7 @@
 #include "threads/interrupt.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
-
+// 추가됨
 #include "threads/thread.c"
 #include "lib/kernel/list.h"
 #include "lib/kernel/list.c"
@@ -99,7 +99,8 @@ timer_sleep (int64_t ticks)
 
   struct thread *cur = thread_current ();
   cur->status = THREAD_SLEEP;
-  
+  cur->waketick = ticks + start;
+  list_push_back (&sleep_list, &cur->elem);
   thread_yield ();
 }
 
@@ -182,9 +183,14 @@ timer_interrupt (struct intr_frame *args UNUSED)
   
   struct list_elem* tmp = list_head(&sleep_list);
   while ( tmp != list_end( &sleep_list ) ){
-    if()  // element 에 접근하는 list 구형해야함  그리고 접근해서 waketick 보다 현재 tick 이 크면 출소(상태바꾸고 ready list 에 박아)
-
-    tmp = list_next(&sleep_list);
+    if (ticks > (list_entry (tmp, struct thread, allelem))->waketick) {  // element 에 접근하는 list 구형해야함  그리고 접근해서 waketick 보다 현재 tick 이 크면 출소(상태바꾸고 ready list 에 박아)
+      (list_entry (tmp, struct thread, allelem))->waketick = 0;
+      (list_entry (tmp, struct thread, allelem))->status = THREAD_READY;
+      list_push_back (&ready_list, &(list_entry (tmp, struct thread, allelem))->elem);
+      tmp = list_remove (tmp);
+    }
+    else
+      tmp = list_next(&sleep_list);
   }
 
 }

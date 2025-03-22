@@ -95,7 +95,7 @@ struct thread
     struct list_elem elem;              /* List element. */
 
 
-    int64_t waketick;                  /* 이 틱 이후에 일어남남*/
+    int64_t waketick;                  /* 이 틱 이후에 일어남*/
 
 
 
