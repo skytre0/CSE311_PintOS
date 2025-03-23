@@ -215,7 +215,7 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
-  thread_yield();
+  thread_yield();     // added -> checked test case, found preempt don't operate function underneath
 
   return tid;
 }
@@ -569,8 +569,8 @@ static void
 schedule (void) 
 {
   struct thread *cur = running_thread ();
-  // if (!list_empty(&ready_list)) {
-    // list_sort(&ready_list, compare, NULL);
+  // if (!list_empty(&ready_list)) {              insertion_sort 사용해서 이거 없어도 됨.
+  //   list_sort(&ready_list, compare, NULL);
   // }
 
   struct thread *next = next_thread_to_run ();

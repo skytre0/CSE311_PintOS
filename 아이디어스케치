@@ -73,3 +73,9 @@ sleep_list를 추가 -> 기존의 elem은 thread <-> ready_list 사이 움직임
 sleep_list에서 waketime이 된 element 추출 필요 = list 순회하면서 확인
 ticks >= waketime이면 thread_unblock()하고, list_remove()로 sleep_list에서 삭제 -> 가능한 이유 sleep_elem이라서
 ticks < waketime이면 삭제 안 하도록 list_next() 사용하면 됨.
+
+_________________________________________________________________
+priority 정리 : 
+- sort() function 위해 compare 함수 작성함 -> void 위치에 아무것도 안 와도 되기에 그 공간은 NULL로 대체 (없으면 에러남)
+- set_priority()를 priority 설정 후 다시 ready_list에서 priority가 높은 것 가져올 수 있게 thread_yield() 추가함
+- priority-preempt 파일 확인 결과 thread_create()에 들어간 function이 역할을 수행하지 않는 것을 확인 -> 마지막에 thread_yield() 추가함.
