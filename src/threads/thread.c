@@ -71,6 +71,13 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
+list_less_func* compare(struct list_elem * a, struct list_elem * b) {
+  struct thread* first = list_entry( a, struct thread, elem );
+  struct thread* second = list_entry( b, struct thread, elem );
+  return first->priority > second->priority;
+}
+
+
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
    general and it is possible in this case only because loader.S
@@ -208,6 +215,7 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
+  thread_yield();
 
   return tid;
 }
@@ -246,7 +254,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+  list_insert_ordered(&ready_list, &t->elem, compare, NULL);    // changed from list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -317,7 +325,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+    list_insert_ordered(&ready_list, &cur->elem, compare, NULL);    // changed from list_push_back (&ready_list, &cur->elem);
   cur->status = THREAD_READY;
   
   schedule ();
@@ -346,6 +354,7 @@ void
 thread_set_priority (int new_priority) 
 {
   thread_current ()->priority = new_priority;
+  thread_yield();     // modified
 }
 
 /* Returns the current thread's priority. */
@@ -555,16 +564,13 @@ thread_schedule_tail (struct thread *prev)
    It's not safe to call printf() until thread_schedule_tail()
    has completed. */
 
-list_less_func* compare(struct list_elem * a, struct list_elem * b) {
-  return list_entry( a, struct thread, elem )->priority < list_entry( b, struct thread, elem )->priority;
-}
 
 static void
 schedule (void) 
 {
   struct thread *cur = running_thread ();
   // if (!list_empty(&ready_list)) {
-    list_sort(&ready_list, compare, NULL);
+    // list_sort(&ready_list, compare, NULL);
   // }
 
   struct thread *next = next_thread_to_run ();
