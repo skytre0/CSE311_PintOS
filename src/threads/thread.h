@@ -91,7 +91,7 @@ struct thread
     struct list_elem allelem;           /* List element for all threads list. */
 
     /* Shared between thread.c and synch.c. */
-    struct list_elem elem;              /* List element. */
+    struct list_elem elem;              /* List element. */    // list_remove() 에서 보면 sleep에서 사용해도 ready_list를 변경함.
     struct list_elem sleepelem;
 
     //추가
