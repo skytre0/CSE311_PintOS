@@ -55,4 +55,21 @@ _________________________________________________________________--
 
 처음부터
 
-thread_block 과 unblock 을 이용해서 다시 시작 구조는 비슷함함
+thread_block 과 unblock 을 이용해서 다시 시작 구조는 비슷함
+
+__________________________________________________________________
+timer 정리 : 
+- Timer_Sleep 제작 과정
+timer_sleep busy wait 방지 -> THREAD_BLOCKED 사용 필요
+THREAD_BLOCKED 사용하려면 thread_block() & thread_unblock() 사용 필요
+thread_block()의 문제 : schedule() 사용
+schedule()의 문제 : INTR_ON을 추가해야 함
+thread_schedule_tail() 이후에 INTR_ON을 해야 함 = schedule() 나가고 난 뒤에 thread_block() 끝에서 INTR_ON을 추가함.
+timer_sleep에서 cur_ticks + input_ticks = waketime
+thread_block()에서 assert(is INTR_OFF) 존재 = thread_block() 직전에 INTR_OFF 설정
+sleep_list를 추가 -> 기존의 elem은 thread <-> ready_list 사이 움직임 통제 = 새로운 elem 만들어야 함 = sleepelem
+
+- Timer_Interrupt 제작 과정
+sleep_list에서 waketime이 된 element 추출 필요 = list 순회하면서 확인
+ticks >= waketime이면 thread_unblock()하고, list_remove()로 sleep_list에서 삭제 -> 가능한 이유 sleep_elem이라서
+ticks < waketime이면 삭제 안 하도록 list_next() 사용하면 됨.

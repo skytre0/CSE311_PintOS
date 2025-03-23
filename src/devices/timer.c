@@ -195,7 +195,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
     target = list_entry( tmp, struct thread, sleepelem );
     if( ticks >= target->waketime ){
       thread_unblock(target);
-
       tmp = list_remove(tmp);
     }else{
       tmp = list_next(tmp);
