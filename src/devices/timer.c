@@ -105,8 +105,10 @@ timer_sleep (int64_t ticks)
   cur->waketime = waketime; // 일어날 시간 셋팅(쓰레드에 적어놈)
 
   //sleep list 에 추가해야함
-  list_push_back ( &sleep_list , &(cur->elem) );
-
+  
+  intr_set_level (INTR_OFF);
+  printf("--in the timer_sleep zone : %d--\n", thread_current ()->tid);
+  list_push_back ( &sleep_list , &(cur->allelem) );
   thread_block(); // block 하고 scheduling 슛
 }
 
@@ -192,9 +194,10 @@ timer_interrupt (struct intr_frame *args UNUSED)
 
   while( tmp != list_end(&sleep_list)){
     target = list_entry( tmp, struct thread, allelem );
-    if( ticks > target->waketime ){
+    if( ticks >= target->waketime ){
       thread_unblock(target);
-      list_remove(tmp);
+
+      tmp = list_remove(tmp);
     }else{
       tmp = list_next(tmp);
     }

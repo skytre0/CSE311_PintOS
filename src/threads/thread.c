@@ -226,6 +226,7 @@ thread_block (void)
 
   thread_current ()->status = THREAD_BLOCKED;
   schedule ();
+  intr_set_level (INTR_ON);
 }
 
 /* Transitions a blocked thread T to the ready-to-run state.
@@ -245,7 +246,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+  list_push_back (&ready_list, &t->allelem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
