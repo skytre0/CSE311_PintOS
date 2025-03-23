@@ -107,7 +107,7 @@ timer_sleep (int64_t ticks)
   //sleep list 에 추가해야함
   
   intr_set_level (INTR_OFF);
-  list_push_back ( &sleep_list , &(cur->elem) );
+  list_push_back ( &sleep_list , &(cur->sleepelem) );
   thread_block(); // block 하고 scheduling 슛
 }
 
@@ -188,11 +188,11 @@ timer_interrupt (struct intr_frame *args UNUSED)
   ticks++;
   thread_tick ();
 
-  struct list_elem* tmp = list_head(&sleep_list)->next;
+  struct list_elem* tmp = list_next(list_head(&sleep_list));
   struct thread* target;
 
   while( tmp != list_end(&sleep_list)){
-    target = list_entry( tmp, struct thread, elem );
+    target = list_entry( tmp, struct thread, sleepelem );
     if( ticks >= target->waketime ){
       thread_unblock(target);
 
