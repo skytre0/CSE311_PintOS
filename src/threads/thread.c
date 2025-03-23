@@ -226,7 +226,7 @@ thread_block (void)
 
   thread_current ()->status = THREAD_BLOCKED;
   schedule ();
-  intr_set_level(INTR_ON);
+  // intr_set_level(INTR_ON);     // timer에 old_level로 변경해서 원래 코드 유지함.
 }
 
 /* Transitions a blocked thread T to the ready-to-run state.
@@ -554,10 +554,19 @@ thread_schedule_tail (struct thread *prev)
 
    It's not safe to call printf() until thread_schedule_tail()
    has completed. */
+
+list_less_func* compare(struct list_elem * a, struct list_elem * b) {
+  return list_entry( a, struct thread, elem )->priority < list_entry( b, struct thread, elem )->priority;
+}
+
 static void
 schedule (void) 
 {
   struct thread *cur = running_thread ();
+  // if (!list_empty(&ready_list)) {
+    list_sort(&ready_list, compare, NULL);
+  // }
+
   struct thread *next = next_thread_to_run ();
   struct thread *prev = NULL;
 

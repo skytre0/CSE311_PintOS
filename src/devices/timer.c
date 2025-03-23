@@ -106,9 +106,11 @@ timer_sleep (int64_t ticks)
 
   //sleep list 에 추가해야함
   
-  intr_set_level (INTR_OFF);
+  enum intr_level old_level = intr_disable();
   list_push_back ( &sleep_list , &(cur->sleepelem) );
   thread_block(); // block 하고 scheduling 슛
+  intr_set_level(old_level);
+  
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
