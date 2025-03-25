@@ -37,15 +37,17 @@ process_execute (const char *file_name)
   if (fn_copy == NULL)
     return TID_ERROR;
 
-    // 사용 예정으로 보이는 코드 추가함.
+  // 사용 예정으로 보이는 코드 추가함.
   // char s[] = "  String to  tokenize. ";
-  char *argv[128], *save_ptr;
-  for (int i = 0; ; ) {
-    argv[i] = strtok_r (file_name, " ", &save_ptr);
-    if (argv[i] == NULL)
-      break;
-      argv[++i] = strtok_r (NULL, " ", &save_ptr);
-  }
+  // char *argv[128], *save_ptr;
+  // int n;
+  // for (int n = 0; ; ) {
+  //   argv[n] = strtok_r (file_name, " ", &save_ptr);
+  //   if (argv[n] == NULL)
+  //     break;
+  //     argv[++n] = strtok_r (NULL, " ", &save_ptr);
+  // }
+  // stack에 argv argument (n high -> low 순) -> padding space (% 4 == 0) -> *argv (n이 ~ 0까지) + argc + return add
   
   strlcpy (fn_copy, file_name, PGSIZE);
 
