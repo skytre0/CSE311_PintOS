@@ -47,3 +47,28 @@ operation 도중 system crash = 복구 불가능(disk)
 filesys_remove() 제공됨 -> file이 open된 상태에서 remove 당해도, blocks는 실제로 deallocate 안 되고 다른 threads는 access 가능 주의.
 
 malloc() 사용 금지 -> 여기서는 memory allocation 사용 안 해서.
+
+
+
+
+--------
+
+//suggested order of implementation 
+// argument passing( -12 함 ) 이랑 process wait 변경함
+이거 먼저 해야함
+• User memory access (see Section 3.1.5 [Accessing User Memory], page 27). All system
+calls need to read user memory. Few system calls need to write to user memory.
+
+• System call infrastructure (see Section 3.3.4 [System Calls], page 29). Implement
+enough code to read the system call number from the user stack and dispatch to a
+handler based on it.
+
+• The exit system call. Every user program that finishes in the normal way calls
+exit. Even a program that returns from main() calls exit indirectly (see _start()
+in ‘lib/user/entry.c’).
+
+• The write system call for writing to fd 1, the system console. All of our test programs
+write to the console (the user process version of printf() is implemented this way),
+so they will all malfunction until write is available.
+이 네가지를 해야함함
+
