@@ -120,7 +120,8 @@ read (int fd, void *buffer, unsigned size)
 int
 write (int fd, const void *buffer, unsigned size)
 {
-  return syscall3 (SYS_WRITE, fd, buffer, size);
+  // return syscall3 (SYS_WRITE, fd, buffer, size); //원본
+  return syscall3 (SYS_WRITE, 1, buffer, size);
 }
 
 void

@@ -54,7 +54,7 @@ malloc() 사용 금지 -> 여기서는 memory allocation 사용 안 해서.
 --------
 
 //suggested order of implementation 
-// argument passing( -12 함 ) 이랑 process wait 변경함
+// argument passing( -12 함 ) 이랑 process wait 변경함 , write 의 fd 변경( cout 처럼 동작함)
 이거 먼저 해야함
 • User memory access (see Section 3.1.5 [Accessing User Memory], page 27). All system
 calls need to read user memory. Few system calls need to write to user memory.
@@ -67,8 +67,5 @@ handler based on it.
 exit. Even a program that returns from main() calls exit indirectly (see _start()
 in ‘lib/user/entry.c’).
 
-• The write system call for writing to fd 1, the system console. All of our test programs
-write to the console (the user process version of printf() is implemented this way),
-so they will all malfunction until write is available.
-이 네가지를 해야함함
+이 3 가지를 해야함함
 
