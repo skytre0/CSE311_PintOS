@@ -1,0 +1,49 @@
+기본 지식 : 
+pintos --filesys-size=2 -p ../../examples/echo -a echo -- -f -q run ’echo x’
++) 이걸로 disk simulate
+
+kernel virtual memory는 global로 어떤 thread 관계 없이 동일함. kernel virtual memory는 PHYS_BASE + @로 주어지면 physical memory @를 point 의미.
+
+kernel은 syscall의 일부로, user program이 전달한 pointer를 사용해야 하는 경우가 생김 -> 이때 금지 구역 / NULL을 전달 가능성 있음 -> 발생 시 해당 process terminate & free resources -> 해결법 2가지 
++)  pointer valid 여부 verify & dereference -> userprog/pagedir.c + threads/vaddr.h 참고 필수(쉬운 방법)
++) pointer가 PHYS_BASE 보다 낮은 곳 가리키는지 확인 -> 그러면 page_fault 발생시키고, 이걸 userprog/exception.c의 page_fault() 필수로 변경으로 해결 가능 (이게 더 빨라서 실전에 사용)
+어떤 경우든 resource leak 금지 = 방지 필수 -> 후자가 더 힘들기에, 약간의 도움 제공 예정.
++) get_user(), put_user() 코드 제공됨 -> 둘다 user address가 PHYS_BASE보다 낮은 곳 이미 증명됨 + page_fault() 변경함 전제하고 있음.
+
+
+필수 + 추천 (권장) : 
+pagedir.h -> 변경할 필요 없을 것으로 보이지만, function 몇 개는 call할 필요가 있을 것.
+syscall.h -> kernel 기능 이용할 때 필요, 지금은 print & terminate process만 해서 추가 필수.
+exception.h -> process가 선점되거나, 불가능한 operation 시도할 경우 kernel이 exception/fault에 빠짐 -> 지금 syscall과 같은 행동만 가능 -> 여기 있는 page_fault() 변경 필수.
+filesys/filesys.h / filesys/file.h 확인 필수 -> 변경은 안 해도 됨.
+
+다음 순서 코드 작성 필수 :
+1. argument passing (없으면 모든 user prog fail함)
++) 포인터 조작 setup_stack()인 것으로 보임 
+2. user memory access (user memory 읽는 거 필수 + 몇 syscall은 user memory에 write 해야 함)
+3. system call infrastructure (user stack에서 syscall num 읽고 + 적합한 handler 할당)
+4. exit syscall -> 정상적으로 종료하는 모든 program이 call함 (main도 간접적 호출)
+5. write -> fd 1, sys console에 write하는 syscall -> 모든 test case 후자에 write해서 완료 전까지 오작동 가능.
+6. process_wait()를 '일단' 무한 루프 돌도록 변경 -> 이후에 정상 작동 제작 필수 (지금은 wait 안 하고 바로 return이라서 '일단' 조건이 붙은 것).
+이 모든 것을 해야 최소한의 작동 보장됨.
+
+user process terminate 할 때마다 "printf ("%s: exit(%d)\n", full_name, exit_code);" 형태로 출력
+
+process_execute() -> 현재 pass 안 함 = function 완성해야 함 -> name의 words를 spacebar 기준 분할(1번 name, 2번 arg 1, 3번 arg 2...)
+
+userprog/syscall.c의 syscall handler 완성해야 함
+
+exe에는 write 필수로 거부하게 code 작성해야 함 -> file_deny_write() 이거 사용하면 되는 것으로 보임.
++) file close = write 가능 = exe는 process 종료 직전까지 open 상태 유지해야 함.
+
+금지 (don't recommend) : 
+현재 제약 : 
+No internal synchronization = file system을 1번에 1개 process만 실행 필수.
+file size 고정 = file create num 제약 (+ root dir = file로 표현됨)
+file data single = disk에 파편화되지 않고 통째로 push되어야 함.
+subdir 불가능
+file name 최대 char 14개 제한.
+operation 도중 system crash = 복구 불가능(disk)
+filesys_remove() 제공됨 -> file이 open된 상태에서 remove 당해도, blocks는 실제로 deallocate 안 되고 다른 threads는 access 가능 주의.
+
+malloc() 사용 금지 -> 여기서는 memory allocation 사용 안 해서.
