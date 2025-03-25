@@ -61,6 +61,8 @@
           retval;                                               \
         })
 
+        // 아래 syscall 요청하는 함수들에
+        // lookup 이용해서 PHYS_BASE 보다 위 에있거나, NULL 이면 밴
 void
 halt (void) 
 {
