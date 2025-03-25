@@ -36,6 +36,17 @@ process_execute (const char *file_name)
   fn_copy = palloc_get_page (0);
   if (fn_copy == NULL)
     return TID_ERROR;
+
+    // 사용 예정으로 보이는 코드 추가함.
+  // char s[] = "  String to  tokenize. ";
+  char *token[128], *save_ptr;
+  for (int i = 0; ; ) {
+    token[i] = strtok_r (file_name, " ", &save_ptr);
+    if (token[i] == NULL)
+      break;
+    token[++i] = strtok_r (NULL, " ", &save_ptr);
+  }
+  
   strlcpy (fn_copy, file_name, PGSIZE);
 
   /* Create a new thread to execute FILE_NAME. */
