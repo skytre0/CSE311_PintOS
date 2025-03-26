@@ -39,7 +39,7 @@ process_execute (const char *file_name)
 
   // 사용 예정으로 보이는 코드 추가함.
   // char s[] = "  String to  tokenize. ";
-  // char *argv[128], *save_ptr;
+  // char *argv[64], *save_ptr;
   // int n;
   // for (int n = 0; ; ) {
   //   argv[n] = strtok_r (file_name, " ", &save_ptr);
@@ -85,7 +85,7 @@ start_process (void *file_name_)
      arguments on the stack in the form of a `struct intr_frame',
      we just point the stack pointer (%esp) to our stack frame
      and jump to it. */
-  asm volatile ("movl %0, %%esp; jmp intr_exit" : : "g" (&if_) : "memory");
+  asm volatile ("movl %0, %%esp; jmp intr_exit" : : "g" (&if_) : "memory"); // 프로세스 실행
   NOT_REACHED ();
 }
 
