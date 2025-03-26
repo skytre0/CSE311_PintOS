@@ -61,8 +61,6 @@
           retval;                                               \
         })
 
-        // 아래 syscall 요청하는 함수들에
-        // lookup 이용해서 PHYS_BASE 보다 위 에있거나, NULL 이면 밴
 void
 halt (void) 
 {
@@ -122,8 +120,7 @@ read (int fd, void *buffer, unsigned size)
 int
 write (int fd, const void *buffer, unsigned size)
 {
-  // return syscall3 (SYS_WRITE, fd, buffer, size); //원본
-  return syscall3 (SYS_WRITE, 1, buffer, size);
+  return syscall3 (SYS_WRITE, fd, buffer, size);
 }
 
 void
