@@ -187,22 +187,29 @@ timer_print_stats (void)
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
+  int64_t record_time = thread_current()->waketime;
+  thread_current()->waketime = 0;
+
   ticks++;
   thread_tick ();
 
   struct list_elem* tmp = list_next(list_head(&sleep_list));
   struct thread* target;
-
-  while( tmp != list_end(&sleep_list)){
-    target = list_entry( tmp, struct thread, sleepelem );
-    if( ticks >= target->waketime ){
-      thread_unblock(target);
-      tmp = list_remove(tmp);
-      intr_yield_on_return();
-    }else{
-      tmp = list_next(tmp);
+  
+  if (thread_current()->waketime < 0 || thread_tid() == 2) {    // TIME_SLICE 지나거나, idle thread인 겅우.
+    while( tmp != list_end(&sleep_list)){
+      target = list_entry( tmp, struct thread, sleepelem );
+      if( ticks >= target->waketime ){
+        thread_unblock(target);
+        tmp = list_remove(tmp);
+        intr_yield_on_return();
+      }else{
+        tmp = list_next(tmp);
+      }
     }
   }
+
+  thread_current()->waketime = record_time;
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

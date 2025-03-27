@@ -29,14 +29,28 @@ FirstName LastName <email@domain.example>
 >> A1: Copy here the declaration of each new or changed `struct' or
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
+1. In timer.c
+static struct list sleep_list : this carry the threads interrupted by timer_sleep.
+2. In thread.h
+struct list_elem sleepelem : used as a marker for sleep_list.
+int64_t waketime : mark the time that a thread should wake + check if time_slice has passed
 
 ---- ALGORITHMS ----
 
 >> A2: Briefly describe what happens in a call to timer_sleep(),
 >> including the effects of the timer interrupt handler.
+1. Timer_sleep() record waketime as current time + input ticks, then 
+disable interrupt, change the status as blocked, and schedule a new thread.
+2. Timer interrupt handler scan the sleep_list for element with waketime less than current time, 
+unblock them and put them in the ready_list, then make it execute thread_yield() later.
 
 >> A3: What steps are taken to minimize the amount of time spent in
 >> the timer interrupt handler?
+It doesn't try to wake the threads all the time.
+Rather, it wakes the threads when time_slice has passed 
+with waketime as negative, which can't in normally, 
+or check if the current thread is idle.
+
 
 ---- SYNCHRONIZATION ----
 
@@ -50,6 +64,12 @@ FirstName LastName <email@domain.example>
 
 >> A6: Why did you choose this design?  In what ways is it superior to
 >> another design you considered?
+1. We used this design to minimize the change in the template.
+2. We thought of adding THREAD_SLEEP in the thread's status. 
+But, the template was made to check the thread's status, 
+so if we did so. we should have looked at & changed the codes provided. 
+However, by creating sleep_list and sleepelem, we were 
+able to minimize the change, thus enabling ourselves to minimize the error posibilities.
 
        PRIORITY SCHEDULING
        ===================
@@ -59,6 +79,8 @@ FirstName LastName <email@domain.example>
 >> B1: Copy here the declaration of each new or changed `struct' or
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
+1. In thread.c
+list_less_func* compare() : it is used to sort elements in the list.
 
 >> B2: Explain the data structure used to track priority donation.
 >> Use ASCII art to diagram a nested donation.  (Alternately, submit a
@@ -85,6 +107,9 @@ FirstName LastName <email@domain.example>
 
 >> B7: Why did you choose this design?  In what ways is it superior to
 >> another design you considered?
+1. we chose to use list_insert_ordered because it reduces the effort to 
+search all the list to find the max priority & save the location of it
+because in our code, it will be at the very beginnning of the list.
 
         ADVANCED SCHEDULER
         ==================
