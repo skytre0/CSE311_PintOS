@@ -47,9 +47,8 @@ unblock them and put them in the ready_list, then make it execute thread_yield()
 >> A3: What steps are taken to minimize the amount of time spent in
 >> the timer interrupt handler?
 It doesn't try to wake the threads all the time.
-Rather, it wakes the threads when time_slice has passed 
-with waketime as negative, which can't in normally, 
-or check if the current thread is idle.
+Rather, it try to wake the threads in sleep list when time_slice has passed 
+or if the current thread is idle.
 
 
 ---- SYNCHRONIZATION ----
@@ -64,7 +63,10 @@ or check if the current thread is idle.
 
 >> A6: Why did you choose this design?  In what ways is it superior to
 >> another design you considered?
+
 1. We used this design to minimize the change in the template.
+but a new member of struct thread waketime must be needed to find when a thread wakes up.
+
 2. We thought of adding THREAD_SLEEP in the thread's status. 
 But, the template was made to check the thread's status, 
 so if we did so. we should have looked at & changed the codes provided. 
@@ -107,9 +109,15 @@ list_less_func* compare() : it is used to sort elements in the list.
 
 >> B7: Why did you choose this design?  In what ways is it superior to
 >> another design you considered?
-1. we chose to use list_insert_ordered because it reduces the effort to 
-search all the list to find the max priority & save the location of it
-because in our code, it will be at the very beginnning of the list.
+
+our design keeps ready_list to be always ordered by using list_insert_ordered.
+then what we have to do become simple.
+when we push a thread to ready_list, we just use list_insert_ordered.
+And we try to pop a thread from the ready_list, we just pop from the front.
+
+if we chose another design, then we should have compared and recorded the index
+while using list_insert_ordered only compared the priority in between.
+Thus our design became simpler and efficient.
 
         ADVANCED SCHEDULER
         ==================
