@@ -193,3 +193,22 @@ the quarter.
 >> students, either for future quarters or the remaining projects?
 
 >> Any other comments?
+
+
+
+==== Peer Evaluation ====
+
++----------------------------+---------------------------------+
+
+|            Name            |          Contribution        |
+
++----------------------------+---------------------------------+
+
+| Ho-Jun Lee                 | 50%, Implemented Timer_sleep, Timer_interrupt
+
++----------------------------+---------------------------------+
+
+| Seong-Ji Yang              |  50%, Implemented compare function, thread_set_priority
+
++----------------------------+---------------------------------+
+
