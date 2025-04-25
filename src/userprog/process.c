@@ -25,6 +25,10 @@ static bool load (const char *cmdline, void (**eip) (void), void **esp);
    FILENAME.  The new thread may be scheduled (and may even exit)
    before process_execute() returns.  Returns the new process's
    thread id, or TID_ERROR if the thread cannot be created. */
+
+int num_of_token = 0;
+char *argv[64] = {};
+
 tid_t
 process_execute (const char *file_name) 
 {
@@ -36,20 +40,15 @@ process_execute (const char *file_name)
   fn_copy = palloc_get_page (0);
   if (fn_copy == NULL)
     return TID_ERROR;
-
-  // 사용 예정으로 보이는 코드 추가함.
-  // char s[] = "  String to  tokenize. ";
-  // char *argv[64], *save_ptr;
-  // int n;
-  // for (int n = 0; ; ) {
-  //   argv[n] = strtok_r (file_name, " ", &save_ptr);
-  //   if (argv[n] == NULL)
-  //     break;
-  //     argv[++n] = strtok_r (NULL, " ", &save_ptr);
-  // }
-  // stack에 argv argument (n high -> low 순) -> padding space (% 4 == 0) -> *argv (n이 ~ 0까지) + argc + return add
   
   strlcpy (fn_copy, file_name, PGSIZE);
+    // 사용 예정으로 보이는 코드 추가함.
+  // char s[] = "  String to  tokenize. ";
+  char *save_ptr, *token;
+  for (token = strtok_r(fn_copy, " ", &save_ptr); token != NULL; token = strtok_r(NULL, " ", &save_ptr))
+    argv[num_of_token++] = token;
+  // stack에 argv argument (n high -> low 순) -> padding space (% 4 == 0) -> *argv (n이 ~ 0까지) + argc + return add
+  // stack에 구현은 나중에 나오는 setup_stack에 해야할 것으로 보임.
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
@@ -450,9 +449,38 @@ setup_stack (void **esp)
   if (kpage != NULL) 
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
-      if (success)
-        // *esp = PHYS_BASE; 원본
-        *esp = PHYS_BASE - 12; //임시
+      if (success) {
+        *esp = PHYS_BASE; // 원본
+        // use later for address
+        void **tmp = esp;
+        
+        int input_size = 0;   // argv[n] = 0, 1, ... n-1
+        for (int i = 0; i < num_of_token; i++) {
+          input_size += sizeof(argv[i]);
+        }
+        int padding = 4 - (input_size % 4);
+        
+        // *esp to head of argv[0][...]
+        for (int i = num_of_token-1; i > -1; i--) {
+          esp -= sizeof(argv[i]);
+          *esp = argv[i];
+        }
+        // *esp to head of word-align
+        for (int i = 0; i < padding; i++) {
+          esp -= 1;
+          *esp = 0;
+        }
+        // set argv[num_of_token] = 0 (null)
+        esp -= 4;
+        *esp = (char *)0;
+        // set pointers 
+        for (int i = num_of_token-1; i > -1; i--) {
+          tmp -= sizeof(argv[i]);
+          esp -= 4;
+          *esp = tmp;
+        }
+
+      }
       else
         palloc_free_page (kpage);
     }
