@@ -54,7 +54,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   printf ("system call!\n");
   printf ("vec_no : %d", f->vec_no);
 //   int argc = *(int*)(f->esp+1*4);
-  int* argv = *(int*)(f->esp+3*4);
+  void** argv_pointer = f->esp + 3 * 4; // argv 가르키는 포인터 위치
 
 
   switch (f->vec_no)
@@ -63,7 +63,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 		shutdown_power_off();
         break;
     case SYS_EXIT:
-		f->eax = argv[0]; //return status
+		f->eax = *(int*)*argv_pointer; //return status
         break;
     // case SYS_EXEC:
     //     break;
@@ -81,9 +81,9 @@ syscall_handler (struct intr_frame *f UNUSED)
 		//     break;
     case SYS_WRITE:
 	;
-		int fd = argv[0];
-		const void* buffer = argv[1];
-		unsigned size = argv[2];
+		int fd = *(int*)*argv_pointer;
+		const void* buffer = *(argv_pointer+4);
+		unsigned size = *(unsigned*)*(argv_pointer+8);
 		if(fd == 1){
 			putbuf(buffer, size);
 			return size;
