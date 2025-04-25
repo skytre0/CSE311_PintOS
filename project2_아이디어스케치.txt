@@ -69,3 +69,4 @@ in ‘lib/user/entry.c’).
 
 이 3 가지를 해야함함
 
+일단 Make.vars의 qemu -> bochs 변경함.
