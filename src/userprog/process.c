@@ -468,18 +468,24 @@ setup_stack (void **esp)
         // *esp to head of word-align
         for (int i = 0; i < padding; i++) {
           esp -= 1;
-          *esp = 0;
+          *esp = (uint8_t)0;
         }
         // set argv[num_of_token] = 0 (null)
         esp -= 4;
         *esp = (char *)0;
-        // set pointers 
+        // set argv[0] ~ argv[num_of_token-1]
         for (int i = num_of_token-1; i > -1; i--) {
           tmp -= sizeof(argv[i]);
           esp -= 4;
           *esp = tmp;
         }
-
+        // set argv, argc, return address
+        esp -= 4;
+        *esp = (esp+4);
+        esp -= 4;
+        *esp = num_of_token;
+        esp -= 4;
+        *esp = (void (*) ())0;
       }
       else
         palloc_free_page (kpage);
