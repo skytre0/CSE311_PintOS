@@ -457,14 +457,14 @@ setup_stack (void **esp)
         int input_size = 0;   // argv[n] = 0, 1, ... n-1
         int i = 0;
         for (; i < num_of_token; i++) {
-          input_size += sizeof(argv[i]);
+          input_size += strlen(argv[i]);
         }
         int padding = 4 - (input_size % 4);
         
         // *esp to head of argv[0][...]
         i = num_of_token-1;
         for (; i > -1; i--) {
-          esp -= sizeof(argv[i]);
+          esp -= strlen(argv[i]);
           *esp = argv[i];
         }
         // *esp to head of word-align
@@ -479,7 +479,7 @@ setup_stack (void **esp)
         // set argv[0] ~ argv[num_of_token-1]
         i = num_of_token-1;
         for (; i > -1; i--) {
-          tmp -= sizeof(argv[i]);
+          tmp -= strlen(argv[i]);
           esp -= 4;
           *esp = tmp;
         }
