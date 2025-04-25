@@ -41,22 +41,7 @@ syscall_init (void)
 //     SYS_INUMBER                 /* Returns the inode number for a fd. */
 //   };
 
-// struct intr_frame
-//   {
-//     /* Pushed by intr_entry in intr-stubs.S.
-//        These are the interrupted task's saved registers. */
-//     uint32_t edi;               /* Saved EDI. */
-//     uint32_t esi;               /* Saved ESI. */
-//     uint32_t ebp;               /* Saved EBP. */
-//     uint32_t esp_dummy;         /* Not used. */
-//     uint32_t ebx;               /* Saved EBX. */
-//     uint32_t edx;               /* Saved EDX. */
-//     uint32_t ecx;               /* Saved ECX. */
-//     uint32_t eax;               /* Saved EAX. */
-//     uint16_t gs, :16;           /* Saved GS segment register. */
-//     uint16_t fs, :16;           /* Saved FS segment register. */
-//     uint16_t es, :16;           /* Saved ES segment register. */
-//     uint16_t ds, :16;           /* Saved DS segment register. */
+
 
 
 // switch case 문으로 경우에 대해서 분기
@@ -67,5 +52,76 @@ static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
   printf ("system call!\n");
+  printf ("vec_no : %d", f->vec_no);
+//   int argc = *(int*)(f->esp+1*4);
+  int* argv = *(int*)(f->esp+3*4);
+
+
+  switch (f->vec_no)
+  {
+    case SYS_HALT:
+		shutdown_power_off();
+        break;
+    case SYS_EXIT:
+		f->eax = argv[0]; //return status
+        break;
+    // case SYS_EXEC:
+    //     break;
+    // case SYS_WAIT:
+    //     break;
+    case SYS_CREATE:
+        break;
+    // case SYS_REMOVE:
+    //     break;
+    case SYS_OPEN:
+        break;
+    // case SYS_FILESIZE:
+    //     break;
+		// case SYS_READ:
+		//     break;
+    case SYS_WRITE:
+	;
+		int fd = argv[0];
+		const void* buffer = argv[1];
+		unsigned size = argv[2];
+		if(fd == 1){
+			putbuf(buffer, size);
+			return size;
+		}
+        break;
+    // case SYS_SEEK:
+    //     break;
+    // case SYS_TELL:
+    //     break;
+    case SYS_CLOSE:
+        break;
+    
+    // /* Project 3 and optionally project 4. */
+    // case SYS_MMAP:
+    //     break;
+    // case SYS_MUNMAP:
+    //     break;
+    
+    // /* Project 4 only. */
+    // case SYS_CHDIR:
+    //     break;
+    // case SYS_MKDIR:
+    //     break;
+    // case SYS_READDIR:
+    //     break;
+    // case SYS_ISDIR:
+    //     break;
+    // case SYS_INUMBER:
+    //     break;
+    
+    /* code */
+    break;
+  
+  default:
+    break;
+  }
+
+
+
   thread_exit ();
 }
