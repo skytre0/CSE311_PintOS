@@ -59,6 +59,16 @@ syscall_handler (struct intr_frame *f UNUSED)
   int argc = *(int*)(f->esp+1*4);
   void** argv_pointer = f->esp + 3 * 4; // argv 가르키는 포인터 위치
 
+  printf("about f\n");
+  printf("esp: %x\nebp: %x\neip: %x\neax: %x\n",f->esp,f->ebp,f->eip,f->eax);
+
+
+  int tmp=f->esp;
+  while(tmp+4<= 0xc0000000){
+    printf("Address: %8x    Data: %8x\n", tmp, *(int*)tmp);  
+    tmp+=4;
+  }
+
 
   switch (f->vec_no)
   {
