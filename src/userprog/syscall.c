@@ -51,14 +51,7 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
-  printf("final *esp pos? : %x\n", (f->esp));
-  printf("final esp val? : %x\n", *(int *)(f->esp));
-
-  printf ("system call!\n");
-  printf ("vec_no : %d\n", f->vec_no);
-  int argc = *(int*)(f->esp+1*4);
-  void** argv_pointer = f->esp + 3 * 4; // argv 가르키는 포인터 위치
-
+  printf ("system call!\n\n");
   printf("about f\n");
   printf("esp: %x\nebp: %x\neip: %x\neax: %x\n",f->esp,f->ebp,f->eip,f->eax);
 
@@ -69,34 +62,43 @@ syscall_handler (struct intr_frame *f UNUSED)
     tmp+=4;
   }
 
+  int number = *(int*)(f->esp);
 
-  switch (f->vec_no)
+  switch (number)
   {
     case SYS_HALT:
+    printf("called sys_halt\n");
 		shutdown_power_off();
         break;
-    case SYS_EXIT:
-		f->eax = *(int*)*argv_pointer; //return status
-        break;
+    // case SYS_EXIT:
+    // printf("called sys_exit\n");
+		// f->eax = *(int*)*argv_pointer; //return status
+    //     break;
     // case SYS_EXEC:
     //     break;
     // case SYS_WAIT:
     //     break;
     case SYS_CREATE:
+    printf("called sys_create\n");
+    shutdown_power_off();
         break;
     // case SYS_REMOVE:
     //     break;
     case SYS_OPEN:
+    printf("called sys_open\n");
+    shutdown_power_off();
         break;
     // case SYS_FILESIZE:
     //     break;
 		// case SYS_READ:
 		//     break;
     case SYS_WRITE:
-	;
-		int fd = *(int*)*argv_pointer;
-		const void* buffer = *(argv_pointer+4);
-		unsigned size = *(unsigned*)*(argv_pointer+8);
+    printf("called sys_write\n");
+    int fd = *(int*)(f->esp + 4);
+    void* buffer = *(int*)(f->esp + 8);
+    printf("buffer : %x\n", buffer);
+    unsigned size = *(unsigned*)(f->esp + 12);
+    printf("size : %d\n", size);
 		if(fd == 1){
 			putbuf(buffer, size);
 			return size;
@@ -107,6 +109,8 @@ syscall_handler (struct intr_frame *f UNUSED)
     // case SYS_TELL:
     //     break;
     case SYS_CLOSE:
+    printf("called sys_close\n");
+    shutdown_power_off();
         break;
     
     // /* Project 3 and optionally project 4. */
@@ -128,7 +132,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     //     break;
     
     /* code */
-    break;
+    // break;
   
   default:
   shutdown_power_off();
