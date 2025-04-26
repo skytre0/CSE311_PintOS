@@ -452,44 +452,42 @@ setup_stack (void **esp)
       if (success) {
         *esp = PHYS_BASE; // 원본
         // use later for address
-        void **tmp = esp;
+        char *argv_addr[num_of_token];
         
         int input_size = 0;   // argv[n] = 0, 1, ... n-1
-        int i = 0;
-        for (; i < num_of_token; i++) {
-          input_size += strlen(argv[i]);
-        }
-        int padding = 4 - (input_size % 4);
-        
+        int i;        
         // *esp to head of argv[0][...]
-        i = num_of_token-1;
-        for (; i > -1; i--) {
-          esp -= strlen(argv[i]);
-          *esp = argv[i];
+        for (i = num_of_token-1; i > -1; i--) {
+          int len = strlen(argv[i]) + 1;
+          input_size += len;
+          *esp -= len;
+          memcpy(*esp, argv[i], len);
+          argv_addr[i] = (char *)*esp;
+          printf("esp : %x, *esp : %x\n", esp, *esp);
         }
+
         // *esp to head of word-align
-        i = 0;
-        for (; i < padding; i++) {
-          esp -= 1;
-          *esp = (uint8_t)0;
-        }
+        int padding = (4 - (input_size % 4)) % 4;
+        *esp -= padding;
+        memset(*esp, (uint8_t)0, padding);
+        printf("esp : %x, *esp : %x\n", esp, *esp);
+
         // set argv[num_of_token] = 0 (null)
-        esp -= 4;
-        *esp = (char *)0;
+        *esp -= 4;
+        memset(*esp, (char *)0, 4);
         // set argv[0] ~ argv[num_of_token-1]
-        i = num_of_token-1;
-        for (; i > -1; i--) {
-          tmp -= strlen(argv[i]);
-          esp -= 4;
-          *esp = tmp;
+        for (i = num_of_token-1; i > -1; i--) {
+          *esp -= 4;
+          memcpy(*esp, argv_addr[i], 4);
+          printf("esp : %x, *esp : %x\n", esp, *esp);
         }
         // set argv, argc, return address
-        esp -= 4;
-        *esp = (esp+4);
-        esp -= 4;
-        *esp = num_of_token;
-        esp -= 4;
-        *esp = (void (*) ())0;
+        *esp -= 4;
+        memcpy(*esp, (*esp + 4), 4);
+        *esp -= 4;
+        memset(*esp, num_of_token, 4);
+        *esp -= 4;
+        memset(*esp, (void (*) ())0, 4);
       }
       else
         palloc_free_page (kpage);
