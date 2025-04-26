@@ -51,9 +51,12 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
+  printf("final *esp pos? : %x\n", (f->esp));
+  printf("final esp val? : %x\n", *(int *)(f->esp));
+
   printf ("system call!\n");
-  printf ("vec_no : %d", f->vec_no);
-//   int argc = *(int*)(f->esp+1*4);
+  printf ("vec_no : %d\n", f->vec_no);
+  int argc = *(int*)(f->esp+1*4);
   void** argv_pointer = f->esp + 3 * 4; // argv 가르키는 포인터 위치
 
 
@@ -118,6 +121,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     break;
   
   default:
+  shutdown_power_off();
     break;
   }
 
