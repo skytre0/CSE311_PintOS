@@ -82,39 +82,41 @@ start_process (void *file_name_)
   int input_size = 0;   // argv[n] = 0, 1, ... n-1
   int i;        
   // *esp to head of argv[0][...]
+  printf("Address     Name          Data\n");
   for (i = num_of_token-1; i > -1; i--) {
     int len = strlen(argv[i]) + 1;
     input_size += len;
     if_.esp -= len;
     memcpy(if_.esp, argv[i], len);
     argv_addr[i] = (char *)if_.esp;
-    printf("%x : %s\n",if_.esp, (char *)if_.esp);
+    printf("%x    argv[%d]       %s\n", if_.esp, i, (char *)if_.esp);
   }
-
   // *esp to head of word-align
   int padding = (4 - (input_size % 4)) % 4;
   if_.esp -= padding;
   memset(if_.esp, (uint8_t)0, padding);
+  printf("%x    word-align    0\n", if_.esp);
 
   // set argv[num_of_token] = 0 (null)
   if_.esp -= 4;
   memset(if_.esp, (char *)0, 4);
+  printf("%x    argv[%d]       %x\n", if_.esp, num_of_token, *(int *)if_.esp);
   // set argv[0] ~ argv[num_of_token-1]
   for (i = num_of_token-1; i > -1; i--) {
     if_.esp -= 4;
     *(int *)if_.esp = argv_addr[i];
+    printf("%x    argv[%d]       %x\n", if_.esp, i, *(int *)if_.esp);
   }
   // set argv, argc, return address
   if_.esp -= 4;
-  printf("check : %x\n", (char *)(if_.esp + 4));
   *(int *)if_.esp = (int)(if_.esp + 4);
+  printf("%x    argv          %x\n", if_.esp, *(int *)if_.esp);
   if_.esp -= 4; 
   *(int *)if_.esp = num_of_token;
+  printf("%x    argc          %x\n", if_.esp, *(int *)if_.esp);
   if_.esp -= 4;
   memset(if_.esp, (void (*) ())0, 4);
-  printf("final *esp pos : %x\n", if_.esp);
-  for (i = 0; i < 3 + num_of_token; i++)
-    printf("what is in there : %x has %x\n", if_.esp + 4 * i, *(int *)(if_.esp + 4 * i));
+  printf("%x    ret_addr      %x\n", if_.esp, *(int *)if_.esp);
 
 
   /* If load failed, quit. */
