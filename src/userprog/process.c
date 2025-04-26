@@ -102,13 +102,13 @@ start_process (void *file_name_)
   // set argv[0] ~ argv[num_of_token-1]
   for (i = num_of_token-1; i > -1; i--) {
     if_.esp -= 4;
-    memcpy(if_.esp, argv_addr[i], 4);
+    *(int *)if_.esp = argv_addr[i];
   }
   // set argv, argc, return address
   if_.esp -= 4;
   printf("check : %x\n", (char *)(if_.esp + 4));
-  memcpy(if_.esp, (char *)(if_.esp + 4), 4);
-  if_.esp -= 4;
+  *(int *)if_.esp = (int)(if_.esp + 4);
+  if_.esp -= 4; 
   *(int *)if_.esp = num_of_token;
   if_.esp -= 4;
   memset(if_.esp, (void (*) ())0, 4);
