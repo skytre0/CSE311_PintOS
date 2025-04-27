@@ -122,6 +122,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_OPEN:;
       // printf("called sys_open\n");
       const char *file = *(int*)(f->esp + 4);
+      if(!check_user_mem(pd,file,file)) EXIT;
       struct file* fl = filesys_open (file);
       int openfd=2;
       while(openfd<=128){
@@ -138,7 +139,10 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_WRITE: ;
       // printf("called sys_write\n");
       int fd = *(int*)(f->esp + 4);
+
       void* buffer = *(int*)(f->esp + 8);
+      if(!check_user_mem(pd,buffer,buffer)) EXIT;
+      
       unsigned size = *(unsigned*)(f->esp + 12);
       // printf("buffer : %x\n", buffer);
       // printf("size : %d\n", size);
