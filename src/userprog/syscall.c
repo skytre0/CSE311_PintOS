@@ -78,6 +78,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   // user process의 syscall
   int number;
+  int len=0;
   if(!check_user_mem(f->esp)) EXIT;
   number = *(int*)(f->esp);
   
@@ -117,11 +118,19 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_CREATE:
       // printf("called sys_create\n");
-      ;
+
       if(!check_user_mem(f->esp+4)) EXIT;
       const char* name = *(int*)(f->esp + 4);
       // make it check buffer as well.
-      if(!check_user_mem(name)) EXIT;
+
+      len=0;
+      while(true){
+        if( ! check_user_mem(name+len) ) EXIT;
+        if( *( name + len ) == NULL ) break; 
+        len++;
+      }
+
+      // if(!check_user_mem(name)) EXIT;
       
       if(!check_user_mem(f->esp+8)) EXIT;
       int32_t initial_size = *(int32_t*)(f->esp + 8);
@@ -134,7 +143,15 @@ syscall_handler (struct intr_frame *f UNUSED)
       if(!check_user_mem(f->esp+4)) EXIT;
       const char *file = *(int*)(f->esp + 4);
       // same as buffer in create
-      if(!check_user_mem(file)) EXIT;
+
+      len=0;
+      while(true){
+        if( ! check_user_mem(file+len) ) EXIT;
+        if( *( file + len ) == NULL ) break; 
+        len++;
+      }
+
+      // if(!check_user_mem(file)) EXIT;
 
       struct file* fl = filesys_open (file);
       if(fl == NULL) {
@@ -162,10 +179,19 @@ syscall_handler (struct intr_frame *f UNUSED)
       if(!check_user_mem(f->esp+8)) EXIT;
       void* buffer = *(int*)(f->esp + 8);
       // same as buffer in create
-      if(!check_user_mem(buffer)) EXIT;
+
+      // if(!check_user_mem(buffer)) EXIT;
 
       if(!check_user_mem(f->esp+12)) EXIT;
       unsigned size = *(unsigned*)(f->esp + 12);
+
+      len = 0;
+      for(len=0; len<size; len++){
+        if( ! check_user_mem(buffer+len) ) EXIT;
+        if( *(char*)( buffer + len ) == NULL ) break; 
+        len++;
+      }
+
       // printf("buffer : %x\n", buffer);
       // printf("size : %d\n", size);
       if(fd == 1){
