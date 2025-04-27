@@ -91,7 +91,8 @@ syscall_handler (struct intr_frame *f UNUSED)
       shutdown_power_off();
       return;
 
-    case SYS_EXIT:
+
+      case SYS_EXIT:
       // printf("called sys_exit\n");
       if(!check_user_mem(f->esp+4)) EXIT;
       f->eax = *(int*)(f->esp + 4); //return status
@@ -99,8 +100,8 @@ syscall_handler (struct intr_frame *f UNUSED)
 
       // all child's sema up & mine down
       struct list_elem *e;
-      for (e = list_begin(&(thread_current()->children)); e != list_end(&(thread_current()->children)); e = list_next(e)) {
-        struct thread *t = list_entry(e, struct thread, am_child);
+      while( list_begin( &(thread_current()->children) ) != list_end( &(thread_current()->children) ) ){
+        struct thread *t = list_begin( &(thread_current()->children) );
         sema_up(&(t->waitsema));
         sema_down(&(thread_current()->waitsema));
       }
@@ -115,6 +116,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       printf ("%s: exit(%d)\n", thread_name(), f->eax);
       sema_up(&(thread_current()->parent->waitsema));
       break;
+
 
     case SYS_CREATE:
       // printf("called sys_create\n");
