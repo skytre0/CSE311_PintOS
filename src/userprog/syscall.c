@@ -212,9 +212,24 @@ syscall_handler (struct intr_frame *f UNUSED)
       return;
 
     // case SYS_EXEC:
-    //     break;
-    // case SYS_WAIT:
-    //     break;
+    //   if(!check_user_mem(f->esp+4)) EXIT;
+    //   const char *cmd_line = *(int*)(f->esp + 4);
+    //   len=0;
+    //   while(true){
+    //     if( ! check_user_mem(name+len) ) EXIT;
+    //     if( *( name + len ) == NULL ) break; 
+    //     len++;
+    //   }
+    //   return;
+
+
+    case SYS_WAIT:
+      if(!check_user_mem(f->esp+4)) EXIT;
+      int waitfd = *(int*)(f->esp + 4);
+      process_wait(waitfd);
+      return;
+
+
     case SYS_REMOVE:
       if(!check_user_mem(f->esp+4)) EXIT;
       const char* remove_file = *(int*)(f->esp + 4);
@@ -252,10 +267,22 @@ syscall_handler (struct intr_frame *f UNUSED)
       f->eax = file_read (read_file, read_buffer, read_size);
 
 		  return;
-    // case SYS_SEEK:
-    //     break;
-    // case SYS_TELL:
-    //     break;
+
+
+    case SYS_SEEK:
+      if(!check_user_mem(f->esp+4)) EXIT;
+      int seekfd = *(int*)(f->esp + 4);
+      if(!check_user_mem(f->esp+8)) EXIT;
+      int32_t seekpos = *(int*)(f->esp + 8);
+      file_seek ((thread_current()->fds)[seekfd], seekpos);
+      return;
+
+      
+    case SYS_TELL:
+      if(!check_user_mem(f->esp+4)) EXIT;
+      int tellfd = *(int*)(f->esp + 4);
+      f->eax = (int)file_tell ((thread_current()->fds)[tellfd]); 
+      return;
 
     
     // /* Project 3 and optionally project 4. */
