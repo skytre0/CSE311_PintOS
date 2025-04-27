@@ -153,8 +153,10 @@ int
 process_wait (tid_t child_tid UNUSED) 
 {
   // while 대신 sema 필요함.
-  // child's sema up
+  // child's sema up -> find_child로 찾아야 invalid, valid 판단 후, valid하면 up 가능함. 
+  
   // my sema down
+  sema_down(&(thread_current()->waitsema));
   while(true){
     
     printf("child's tid : %d, exiting thread : %d\n", child_tid, thread_current()->tid);

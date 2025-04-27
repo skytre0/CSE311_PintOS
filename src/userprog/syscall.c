@@ -72,10 +72,13 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_EXIT:
       printf("called sys_exit\n");
       f->eax = *(int*)(f->esp + 4); //return status
-      // sema 필요함.
       // my sema down
+      sema_down(&(thread_current()->waitsema));
+
       // parent의 children에서 본인 제거.
+      
       // parent's sema up
+      sema_up(&(thread_current()->parent->waitsema));
       printf ("%s: exit(%d)\n", thread_name(), f->eax);
       break;
 
