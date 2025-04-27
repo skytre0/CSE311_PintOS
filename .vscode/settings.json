@@ -5,6 +5,9 @@
         "random": "c",
         "interrupt.h": "c",
         "syscall-nr.h": "c",
-        "thread.h": "c"
+        "thread.h": "c",
+        "palloc.h": "c",
+        "init.h": "c",
+        "inode.h": "c"
     }
 }

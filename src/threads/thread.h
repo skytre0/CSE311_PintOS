@@ -107,6 +107,7 @@ struct thread
     struct semaphore waitsema;
     int initialized;
     int exitval;     // exit return value = eax
+    struct file* fds[128];
     //추가끝
 
 #ifdef USERPROG

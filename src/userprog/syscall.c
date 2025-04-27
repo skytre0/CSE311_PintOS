@@ -95,10 +95,20 @@ syscall_handler (struct intr_frame *f UNUSED)
       f->eax = filesys_create (name, initial_size);
       return;
 
-    case SYS_OPEN:
+    case SYS_OPEN:;
       // printf("called sys_open\n");
-      shutdown_power_off();
-      return;
+      const char *file = *(int*)(f->esp + 4);
+      struct file* fl = filesys_open (file);
+      int openfd=2;
+      while(openfd<=128){
+        if( (thread_current()->fds)[openfd] == NULL ){
+          (thread_current()->fds)[openfd] = fl;
+          break;
+        }
+      }
+      
+       f->eax = openfd;
+       return;
 
     case SYS_WRITE: ;
       // printf("called sys_write\n");
