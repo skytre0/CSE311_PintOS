@@ -217,12 +217,15 @@ thread_create (const char *name, int priority,
   sema_init(&(t->waitsema),0);
   t->parent = thread_current();
   list_init(&(t->children));
-  if(thread_current()->parent == NULL) {
+  if (thread_current()->tid == 1 && thread_current()->initialized == 0) {
     sema_init(&(thread_current()->waitsema),0);
     list_init(&(thread_current()->children));
+    thread_current()->initialized = 1;
   }
-
+  
+  printf("cur : %d, new : %d\n", thread_current()->tid, t->tid);
   list_push_back( &(thread_current()->children), &(t->am_child));
+  printf("pushed child : %d\n", list_entry(list_begin(&(thread_current()->children)), struct thread, am_child)->tid);
   //
 
   intr_set_level (old_level);
@@ -621,7 +624,7 @@ struct thread* find_child(struct thread* parent, tid_t child_tid){
   struct list_elem *e;
   struct list* searchlist = &(parent->children);
   for (e = list_begin(searchlist); e != list_end(searchlist); e = list_next(e)) {
-    struct thread *t = list_entry(e, struct thread, elem);
+    struct thread *t = list_entry(e, struct thread, am_child);
     if (t->tid == child_tid) return t;
   }
   return NULL;

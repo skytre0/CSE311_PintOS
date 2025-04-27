@@ -61,6 +61,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   // user process의 syscall
   int number = *(int*)(f->esp);
+  printf("%d\n", number);
 
   switch (number)
   {

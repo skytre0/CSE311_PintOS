@@ -155,6 +155,8 @@ process_wait (tid_t child_tid UNUSED)
   // while 대신 sema 필요함.
   // child's sema up -> find_child로 찾아야 invalid, valid 판단 후, valid하면 up 가능함. 
   struct thread* target = find_child(thread_current(), child_tid);
+  if (target == NULL)
+    printf("child's tid : %d, exiting thread : %d\n", child_tid, thread_current()->tid);
   if (target == NULL)   // not child thread
     return -1;
   else if (target->status == THREAD_DYING)    // child already killed
