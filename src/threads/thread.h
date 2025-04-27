@@ -80,6 +80,7 @@ typedef int tid_t;
    only because they are mutually exclusive: only a thread in the
    ready state is on the run queue, whereas only a thread in the
    blocked state is on a semaphore wait list. */
+
 struct thread
   {
     /* Owned by thread.c. */
@@ -96,6 +97,13 @@ struct thread
 
     //추가
     int64_t waketime;                    /*일어날 시간*/
+
+    // project 2
+    struct thread* parent;       // parent 바로 확인 가능(tid만 가지고 있는 대신 더 편리함)
+    struct list children;        // child 관리용.
+    struct list_elem am_child;   // children list에 들어감.
+    struct semaphore waitsema;
+    int exitval;     // exit return value = eax
     //추가끝
 
 #ifdef USERPROG

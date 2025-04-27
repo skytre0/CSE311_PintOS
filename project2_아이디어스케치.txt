@@ -70,3 +70,6 @@ in ‘lib/user/entry.c’).
 이 3 가지를 해야함함
 
 일단 Make.vars의 qemu -> bochs 변경함.
+
+
+syscall 모두 esp + 4 * i 모양 PHYS_BASE보다 아래인지 확인하는 if문 필요함.

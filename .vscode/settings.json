@@ -4,6 +4,7 @@
         "syscall.h": "c",
         "random": "c",
         "interrupt.h": "c",
-        "syscall-nr.h": "c"
+        "syscall-nr.h": "c",
+        "thread.h": "c"
     }
 }

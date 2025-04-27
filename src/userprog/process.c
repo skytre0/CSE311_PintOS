@@ -81,6 +81,7 @@ start_process (void *file_name_)
           
   int input_size = 0;   // argv[n] = 0, 1, ... n-1
   int i;        
+  
   // *esp to head of argv[0][...]
   printf("Address     Name          Data\n");
   for (i = num_of_token-1; i > -1; i--) {
@@ -91,6 +92,7 @@ start_process (void *file_name_)
     argv_addr[i] = (char *)if_.esp;
     printf("%x    argv[%d]       %s\n", if_.esp, i, (char *)if_.esp);
   }
+
   // *esp to head of word-align
   int padding = (4 - (input_size % 4)) % 4;
   if_.esp -= padding;
@@ -101,19 +103,23 @@ start_process (void *file_name_)
   if_.esp -= 4;
   memset(if_.esp, (char *)0, 4);
   printf("%x    argv[%d]       %x\n", if_.esp, num_of_token, *(int *)if_.esp);
+
   // set argv[0] ~ argv[num_of_token-1]
   for (i = num_of_token-1; i > -1; i--) {
     if_.esp -= 4;
     *(int *)if_.esp = argv_addr[i];
     printf("%x    argv[%d]       %x\n", if_.esp, i, *(int *)if_.esp);
   }
+
   // set argv, argc, return address
   if_.esp -= 4;
   *(int *)if_.esp = (int)(if_.esp + 4);
   printf("%x    argv          %x\n", if_.esp, *(int *)if_.esp);
+
   if_.esp -= 4; 
   *(int *)if_.esp = num_of_token;
   printf("%x    argc          %x\n", if_.esp, *(int *)if_.esp);
+
   if_.esp -= 4;
   memset(if_.esp, (void (*) ())0, 4);
   printf("%x    ret_addr      %x\n", if_.esp, *(int *)if_.esp);
@@ -146,7 +152,13 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  while(true){} // 임시로 막아놓음
+  // while 대신 sema 필요함.
+  // child's sema up
+  // my sema down
+  while(true){
+    
+    printf("child's tid : %d, exiting thread : %d\n", child_tid, thread_current()->tid);
+  } // 임시로 막아놓음
   return -1;
 }
 

@@ -45,73 +45,83 @@ syscall_init (void)
 
 
 // switch case 문으로 경우에 대해서 분기
-//44 page 에 인자 꺼내는 법 써져 있음
+// 44 page 에 인자 꺼내는 법 써져 있음
 // system call 구현
 
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
   printf ("system call!\n\n");
-  printf("about f\n");
-  printf("esp: %x\nebp: %x\neip: %x\neax: %x\n",f->esp,f->ebp,f->eip,f->eax);
-
 
   int tmp=f->esp;
-  while(tmp+4<= 0xc0000000){
-    printf("Address: %8x    Data: %8x\n", tmp, *(int*)tmp);  
-    tmp+=4;
-  }
+  // while(tmp+4<= 0xc0000000){
+  //   printf("Address: %8x    Data: %8x\n", tmp, *(int*)tmp);  
+  //   tmp+=4;
+  // }
 
+  // user process의 syscall
   int number = *(int*)(f->esp);
 
   switch (number)
   {
     case SYS_HALT:
-    printf("called sys_halt\n");
-		shutdown_power_off();
-        break;
-    // case SYS_EXIT:
-    // printf("called sys_exit\n");
-		// f->eax = *(int*)*argv_pointer; //return status
-    //     break;
+      printf("called sys_halt\n");
+      shutdown_power_off();
+      return;
+
+    case SYS_EXIT:
+      printf("called sys_exit\n");
+      f->eax = *(int*)(f->esp + 4); //return status
+      // sema 필요함.
+      // my sema down
+      // parent의 children에서 본인 제거.
+      // parent's sema up
+      printf ("%s: exit(%d)\n", thread_name(), f->eax);
+      break;
+
+    case SYS_CREATE:
+      printf("called sys_create\n");
+      shutdown_power_off();
+      return;
+
+    case SYS_OPEN:
+      printf("called sys_open\n");
+      shutdown_power_off();
+      return;
+
+    case SYS_WRITE:
+      printf("called sys_write\n");
+      int fd = *(int*)(f->esp + 4);
+      void* buffer = *(int*)(f->esp + 8);
+      unsigned size = *(unsigned*)(f->esp + 12);
+      printf("buffer : %x\n", buffer);
+      printf("size : %d\n", size);
+      if(fd == 1){
+        putbuf(buffer, size);
+        return size;
+      }
+      return;
+
+    case SYS_CLOSE:
+      printf("called sys_close\n");
+      shutdown_power_off();
+      return;
+
     // case SYS_EXEC:
     //     break;
     // case SYS_WAIT:
     //     break;
-    case SYS_CREATE:
-    printf("called sys_create\n");
-    shutdown_power_off();
-        break;
     // case SYS_REMOVE:
     //     break;
-    case SYS_OPEN:
-    printf("called sys_open\n");
-    shutdown_power_off();
-        break;
     // case SYS_FILESIZE:
     //     break;
 		// case SYS_READ:
 		//     break;
-    case SYS_WRITE:
-    printf("called sys_write\n");
-    int fd = *(int*)(f->esp + 4);
-    void* buffer = *(int*)(f->esp + 8);
-    printf("buffer : %x\n", buffer);
-    unsigned size = *(unsigned*)(f->esp + 12);
-    printf("size : %d\n", size);
-		if(fd == 1){
-			putbuf(buffer, size);
-			return size;
-		}
-        break;
     // case SYS_SEEK:
     //     break;
     // case SYS_TELL:
     //     break;
-    case SYS_CLOSE:
-    printf("called sys_close\n");
-    shutdown_power_off();
-        break;
+
     
     // /* Project 3 and optionally project 4. */
     // case SYS_MMAP:
@@ -135,9 +145,9 @@ syscall_handler (struct intr_frame *f UNUSED)
     // break;
   
   default:
-  shutdown_power_off();
+    shutdown_power_off();
     break;
-  }
+  } 
 
 
 
