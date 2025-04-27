@@ -215,12 +215,43 @@ syscall_handler (struct intr_frame *f UNUSED)
     //     break;
     // case SYS_WAIT:
     //     break;
-    // case SYS_REMOVE:
-    //     break;
-    // case SYS_FILESIZE:
-    //     break;
-		// case SYS_READ:
-		//     break;
+    case SYS_REMOVE:
+      if(!check_user_mem(f->esp+4)) EXIT;
+      const char* remove_file = *(int*)(f->esp + 4);
+      
+      for(len=0; len<size; len++){
+        if( ! check_user_mem(remove_file+len) ) EXIT;
+      }
+
+      f->eax = filesys_remove (remove_file);
+      return;
+    case SYS_FILESIZE:
+      if(!check_user_mem(f->esp+4)) EXIT;
+      int filesize_arg1 = *(int*)(f->esp + 4);
+      struct file* filesize_file = (thread_current()->fds)[filesize_arg1];
+      f->eax = file_length(filesize_file);
+      return;
+
+    case SYS_READ:
+
+      if(!check_user_mem(f->esp+4)) EXIT;
+      int read_fd = *(int*)(f->esp + 4);
+
+      if(!check_user_mem(f->esp+8)) EXIT;
+      void* read_buffer = *(int*)(f->esp + 8);
+
+      if(!check_user_mem(f->esp+12)) EXIT;
+      unsigned read_size = *(unsigned*)(f->esp + 12);
+
+      for(len=0; len<read_size; len++){
+        if( ! check_user_mem(read_buffer+len) ) EXIT;
+      }
+
+      struct file* read_file = (thread_current()->fds)[read_fd];
+
+      f->eax = file_read (read_file, read_buffer, read_size);
+
+		  return;
     // case SYS_SEEK:
     //     break;
     // case SYS_TELL:
