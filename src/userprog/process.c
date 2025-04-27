@@ -42,8 +42,8 @@ process_execute (const char *file_name)
   char exe_name[16];
   char *name_ptr;
   name_ptr = strtok_r(fn_copy, " ", &name_ptr);
-  strlcpy (exe_name, name_ptr, 16);
-  strlcpy (fn_copy, file_name, PGSIZE);
+  strlcpy (exe_name, name_ptr, 16);   // name만 init_thread처럼 추출
+  strlcpy (fn_copy, file_name, PGSIZE);   // fn_copy 원상복구
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (exe_name, PRI_DEFAULT, start_process, fn_copy);
