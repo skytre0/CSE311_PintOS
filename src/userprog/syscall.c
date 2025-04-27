@@ -136,6 +136,11 @@ syscall_handler (struct intr_frame *f UNUSED)
       if(!check_user_mem(pd,file,file)) EXIT;
 
       struct file* fl = filesys_open (file);
+      if(fl == NULL) {
+        f->eax = -1;
+        return;
+      }
+
       int openfd=2;
       while(openfd<=128){
         if( (thread_current()->fds)[openfd] == NULL ){
