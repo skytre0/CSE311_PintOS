@@ -217,7 +217,11 @@ thread_create (const char *name, int priority,
   sema_init(&(t->waitsema),0);
   t->parent = thread_current();
   list_init(&(t->children));
-  if(thread_current()->parent != NULL)
+  if(thread_current()->parent == NULL) {
+    sema_init(&(thread_current()->waitsema),0);
+    list_init(&(thread_current()->children));
+  }
+
   list_push_back( &(thread_current()->children), &(t->am_child));
   //
 
