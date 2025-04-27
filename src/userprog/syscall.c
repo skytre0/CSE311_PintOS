@@ -105,10 +105,11 @@ syscall_handler (struct intr_frame *f UNUSED)
           (thread_current()->fds)[openfd] = fl;
           break;
         }
+        openfd++;
       }
       
-       f->eax = openfd;
-       return;
+      f->eax = openfd;
+      return;
 
     case SYS_WRITE: ;
       // printf("called sys_write\n");
@@ -123,9 +124,13 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
       return;
 
-    case SYS_CLOSE:
+    case SYS_CLOSE: ;
       // printf("called sys_close\n");
-      shutdown_power_off();
+      int closefd = *(int*)(f->esp + 4);
+      if (closefd > 1 && closefd < 128) {
+        file_close((thread_current()->fds)[closefd]);
+        (thread_current()->fds)[closefd] = NULL;
+      }
       return;
 
     // case SYS_EXEC:
