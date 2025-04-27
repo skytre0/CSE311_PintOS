@@ -47,6 +47,7 @@ syscall_init (void)
 
 #define EXIT \
         ({   \
+          f->esp = PHYS_BASE -8;\
           *(int*)(f->esp) = SYS_EXIT;\
           *(int*)(f->esp + 4) = -1;\
           syscall_handler(f);\
@@ -83,7 +84,14 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   // user process의 syscall
   uint32_t * pd = thread_current()->pagedir;
-  int number = *(int*)(f->esp);
+  int number;
+  if(!check_user_mem(pd,f->esp,f->esp)){
+   EXIT;
+  }else{
+   number = *(int*)(f->esp);
+  }
+  
+  
 
   switch (number)
   {
@@ -94,6 +102,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_EXIT:
       // printf("called sys_exit\n");
+      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
       f->eax = *(int*)(f->esp + 4); //return status
       thread_current()->exitval = *(int*)(f->esp + 4);
       // my sema down
@@ -113,6 +122,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_CREATE:
       // printf("called sys_create\n");
       ;
+      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
       const char* name = *(int*)(f->esp + 4);
       int32_t initial_size = *(int32_t*)(f->esp + 8);
       if(!check_user_mem(pd,name,name)) EXIT;
@@ -121,8 +131,10 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_OPEN:;
       // printf("called sys_open\n");
+      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
       const char *file = *(int*)(f->esp + 4);
       if(!check_user_mem(pd,file,file)) EXIT;
+
       struct file* fl = filesys_open (file);
       int openfd=2;
       while(openfd<=128){
@@ -138,11 +150,14 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_WRITE: ;
       // printf("called sys_write\n");
+      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
       int fd = *(int*)(f->esp + 4);
 
+      if(!check_user_mem(pd,f->esp+8,f->esp+8)) EXIT;
       void* buffer = *(int*)(f->esp + 8);
       if(!check_user_mem(pd,buffer,buffer)) EXIT;
-      
+
+      if(!check_user_mem(pd,f->esp+12,f->esp+12)) EXIT;
       unsigned size = *(unsigned*)(f->esp + 12);
       // printf("buffer : %x\n", buffer);
       // printf("size : %d\n", size);
@@ -154,7 +169,9 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_CLOSE: ;
       // printf("called sys_close\n");
+      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
       int closefd = *(int*)(f->esp + 4);
+      
       if (closefd > 1 && closefd < 128) {
         file_close((thread_current()->fds)[closefd]);
         (thread_current()->fds)[closefd] = NULL;
