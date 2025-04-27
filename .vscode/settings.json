@@ -8,6 +8,7 @@
         "thread.h": "c",
         "palloc.h": "c",
         "init.h": "c",
-        "inode.h": "c"
+        "inode.h": "c",
+        "vaddr.h": "c"
     }
 }

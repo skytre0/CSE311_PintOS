@@ -5,6 +5,8 @@
 #include "threads/thread.h"
 #include "userprog/pagedir.h"
 
+#include "threads/vaddr.h"
+
 static void syscall_handler (struct intr_frame *);
 
 void
@@ -43,7 +45,12 @@ syscall_init (void)
 //   };
 
 
-
+#define EXIT \
+        ({   \
+          *(int*)(f->esp) = SYS_EXIT;\
+          *(int*)(f->esp + 4) = -1;\
+          syscall_handler(f);\
+        })
 
 // switch case 문으로 경우에 대해서 분기
 // 44 page 에 인자 꺼내는 법 써져 있음
@@ -75,6 +82,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   // }
 
   // user process의 syscall
+  uint32_t * pd = thread_current()->pagedir;
   int number = *(int*)(f->esp);
 
   switch (number)
@@ -107,6 +115,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       ;
       const char* name = *(int*)(f->esp + 4);
       int32_t initial_size = *(int32_t*)(f->esp + 8);
+      if(!check_user_mem(pd,name,name)) EXIT;
       f->eax = filesys_create (name, initial_size);
       return;
 
