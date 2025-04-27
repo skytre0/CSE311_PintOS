@@ -3,6 +3,7 @@
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "userprog/pagedir.h"
 
 static void syscall_handler (struct intr_frame *);
 
@@ -47,6 +48,20 @@ syscall_init (void)
 // switch case 문으로 경우에 대해서 분기
 // 44 page 에 인자 꺼내는 법 써져 있음
 // system call 구현
+
+bool check_user_mem(uint32_t *pd, int start, int end) {
+  if (start == NULL)
+    return false;
+  if (!is_user_vaddr(end))
+    return false;
+  int i;
+  for (i = start; i <= end; i++) {
+    if (pagedir_get_page(pd, start) == NULL)
+      return false;
+  }
+  return true;
+}
+
 
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
