@@ -112,8 +112,8 @@ syscall_handler (struct intr_frame *f UNUSED)
       list_remove(&(thread_current()->am_child));
 
       // parent's sema up
-      sema_up(&(thread_current()->parent->waitsema));
       printf ("%s: exit(%d)\n", thread_name(), f->eax);
+      sema_up(&(thread_current()->parent->waitsema));
       break;
 
     case SYS_CREATE:
@@ -185,11 +185,8 @@ syscall_handler (struct intr_frame *f UNUSED)
       if(!check_user_mem(f->esp+12)) EXIT;
       unsigned size = *(unsigned*)(f->esp + 12);
 
-      len = 0;
       for(len=0; len<size; len++){
         if( ! check_user_mem(buffer+len) ) EXIT;
-        if( *(char*)( buffer + len ) == NULL ) break; 
-        len++;
       }
 
       // printf("buffer : %x\n", buffer);
