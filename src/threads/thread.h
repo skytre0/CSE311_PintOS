@@ -103,6 +103,7 @@ struct thread
     struct list children;        // child 관리용.
     struct list_elem am_child;   // children list에 들어감.
     struct semaphore waitsema;
+
     int exitval;     // exit return value = eax
     //추가끝
 

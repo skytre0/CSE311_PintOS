@@ -213,6 +213,13 @@ thread_create (const char *name, int priority,
   sf->eip = switch_entry;
   sf->ebp = 0;
 
+  //
+  sema_init(&(t->waitsema),0);
+  t->parent = thread_current();
+  list_init(&(t->children));
+  list_push_back( &(thread_current()->children), &(t->am_child));
+  //
+
   intr_set_level (old_level);
 
   /* Add to run queue. */
