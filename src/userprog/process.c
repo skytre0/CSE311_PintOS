@@ -39,13 +39,14 @@ process_execute (const char *file_name)
     return TID_ERROR;
   
   strlcpy (fn_copy, file_name, PGSIZE);
-
-  // 사용 예정으로 보이는 코드 추가함.
-  // stack에 argv argument (n high -> low 순) -> padding space (% 4 == 0) -> *argv (n이 ~ 0까지) + argc + return add
-  // stack에 구현은 나중에 나오는 setup_stack에 해야할 것으로 보임.
+  char exe_name[16];
+  char *name_ptr;
+  name_ptr = strtok_r(fn_copy, " ", &name_ptr);
+  strlcpy (exe_name, name_ptr, 16);
+  strlcpy (fn_copy, file_name, PGSIZE);
 
   /* Create a new thread to execute FILE_NAME. */
-  tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
+  tid = thread_create (exe_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
   return tid;
@@ -83,46 +84,46 @@ start_process (void *file_name_)
   int i;        
   
   // *esp to head of argv[0][...]
-  printf("Address     Name          Data\n");
+  // printf("Address     Name          Data\n");
   for (i = num_of_token-1; i > -1; i--) {
     int len = strlen(argv[i]) + 1;
     input_size += len;
     if_.esp -= len;
     memcpy(if_.esp, argv[i], len);
     argv_addr[i] = (char *)if_.esp;
-    printf("%x    argv[%d]       %s\n", if_.esp, i, (char *)if_.esp);
+    // printf("%x    argv[%d]       %s\n", if_.esp, i, (char *)if_.esp);
   }
 
   // *esp to head of word-align
   int padding = (4 - (input_size % 4)) % 4;
   if_.esp -= padding;
   memset(if_.esp, (uint8_t)0, padding);
-  printf("%x    word-align    0\n", if_.esp);
+  // printf("%x    word-align    0\n", if_.esp);
 
   // set argv[num_of_token] = 0 (null)
   if_.esp -= 4;
   memset(if_.esp, (char *)0, 4);
-  printf("%x    argv[%d]       %x\n", if_.esp, num_of_token, *(int *)if_.esp);
+  // printf("%x    argv[%d]       %x\n", if_.esp, num_of_token, *(int *)if_.esp);
 
   // set argv[0] ~ argv[num_of_token-1]
   for (i = num_of_token-1; i > -1; i--) {
     if_.esp -= 4;
     *(int *)if_.esp = argv_addr[i];
-    printf("%x    argv[%d]       %x\n", if_.esp, i, *(int *)if_.esp);
+    // printf("%x    argv[%d]       %x\n", if_.esp, i, *(int *)if_.esp);
   }
 
   // set argv, argc, return address
   if_.esp -= 4;
   *(int *)if_.esp = (int)(if_.esp + 4);
-  printf("%x    argv          %x\n", if_.esp, *(int *)if_.esp);
+  // printf("%x    argv          %x\n", if_.esp, *(int *)if_.esp);
 
   if_.esp -= 4; 
   *(int *)if_.esp = num_of_token;
-  printf("%x    argc          %x\n", if_.esp, *(int *)if_.esp);
+  // printf("%x    argc          %x\n", if_.esp, *(int *)if_.esp);
 
   if_.esp -= 4;
   memset(if_.esp, (void (*) ())0, 4);
-  printf("%x    ret_addr      %x\n", if_.esp, *(int *)if_.esp);
+  // printf("%x    ret_addr      %x\n", if_.esp, *(int *)if_.esp);
 
 
   /* If load failed, quit. */
@@ -155,8 +156,6 @@ process_wait (tid_t child_tid UNUSED)
   // while 대신 sema 필요함.
   // child's sema up -> find_child로 찾아야 invalid, valid 판단 후, valid하면 up 가능함. 
   struct thread* target = find_child(thread_current(), child_tid);
-  if (target == NULL)
-    printf("child's tid : %d, exiting thread : %d\n", child_tid, thread_current()->tid);
   if (target == NULL)   // not child thread
     return -1;
   else if (target->status == THREAD_DYING)    // child already killed

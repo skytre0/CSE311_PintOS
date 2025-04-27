@@ -223,9 +223,9 @@ thread_create (const char *name, int priority,
     thread_current()->initialized = 1;
   }
   
-  printf("cur : %d, new : %d\n", thread_current()->tid, t->tid);
+  // printf("cur : %d, new : %d\n", thread_current()->tid, t->tid);
   list_push_back( &(thread_current()->children), &(t->am_child));
-  printf("pushed child : %d\n", list_entry(list_begin(&(thread_current()->children)), struct thread, am_child)->tid);
+  // printf("pushed child : %d\n", find_child(thread_current(), t->tid)->tid);
   //
 
   intr_set_level (old_level);

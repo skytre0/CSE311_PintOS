@@ -51,9 +51,9 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
-  printf ("system call!\n\n");
+  // printf ("system call!\n");
 
-  int tmp=f->esp;
+  // int tmp=f->esp;
   // while(tmp+4<= 0xc0000000){
   //   printf("Address: %8x    Data: %8x\n", tmp, *(int*)tmp);  
   //   tmp+=4;
@@ -61,17 +61,16 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   // user process의 syscall
   int number = *(int*)(f->esp);
-  printf("%d\n", number);
 
   switch (number)
   {
     case SYS_HALT:
-      printf("called sys_halt\n");
+      // printf("called sys_halt\n");
       shutdown_power_off();
       return;
 
     case SYS_EXIT:
-      printf("called sys_exit\n");
+      // printf("called sys_exit\n");
       f->eax = *(int*)(f->esp + 4); //return status
       thread_current()->exitval = *(int*)(f->esp + 4);
       // my sema down
@@ -89,22 +88,22 @@ syscall_handler (struct intr_frame *f UNUSED)
       break;
 
     case SYS_CREATE:
-      printf("called sys_create\n");
+      // printf("called sys_create\n");
       shutdown_power_off();
       return;
 
     case SYS_OPEN:
-      printf("called sys_open\n");
+      // printf("called sys_open\n");
       shutdown_power_off();
       return;
 
-    case SYS_WRITE:
-      printf("called sys_write\n");
+    case SYS_WRITE: ;
+      // printf("called sys_write\n");
       int fd = *(int*)(f->esp + 4);
       void* buffer = *(int*)(f->esp + 8);
       unsigned size = *(unsigned*)(f->esp + 12);
-      printf("buffer : %x\n", buffer);
-      printf("size : %d\n", size);
+      // printf("buffer : %x\n", buffer);
+      // printf("size : %d\n", size);
       if(fd == 1){
         putbuf(buffer, size);
         return size;
@@ -112,7 +111,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       return;
 
     case SYS_CLOSE:
-      printf("called sys_close\n");
+      // printf("called sys_close\n");
       shutdown_power_off();
       return;
 
