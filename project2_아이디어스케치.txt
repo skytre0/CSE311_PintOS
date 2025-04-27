@@ -71,5 +71,6 @@ in ‘lib/user/entry.c’).
 
 일단 Make.vars의 qemu -> bochs 변경함.
 
-
+    
 syscall 모두 esp + 4 * i 모양 PHYS_BASE보다 아래인지 확인하는 if문 필요함.
+child가 exit에서 wait하는 동안 parent kill되는 경우 sema에서 못 나가기 때문에 모든 child sema up 필요함.

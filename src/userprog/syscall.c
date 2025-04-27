@@ -57,14 +57,14 @@ syscall_init (void)
 // 44 page 에 인자 꺼내는 법 써져 있음
 // system call 구현
 
-bool check_user_mem(uint32_t *pd, int start, int end) {
+bool check_user_mem(void* start, void* end) {
   if (start == NULL)
     return false;
   if (!is_user_vaddr(end))
     return false;
-  int i;
+  void* i;
   for (i = start; i <= end; i++) {
-    if (pagedir_get_page(pd, start) == NULL)
+    if (pagedir_get_page(thread_current()->pagedir, i) == NULL)
       return false;
   }
   return true;
@@ -83,13 +83,9 @@ syscall_handler (struct intr_frame *f UNUSED)
   // }
 
   // user process의 syscall
-  uint32_t * pd = thread_current()->pagedir;
   int number;
-  if(!check_user_mem(pd,f->esp,f->esp)){
-   EXIT;
-  }else{
-   number = *(int*)(f->esp);
-  }
+  if(!check_user_mem(f->esp,f->esp)) EXIT;
+  number = *(int*)(f->esp);
   
   
 
@@ -102,18 +98,24 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_EXIT:
       // printf("called sys_exit\n");
-      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4,f->esp+4)) EXIT;
       f->eax = *(int*)(f->esp + 4); //return status
       thread_current()->exitval = *(int*)(f->esp + 4);
+
+      // all child's sema up & mine down
+      struct list_elem *e;
+      for (e = list_begin(&(thread_current()->children)); e != list_end(&(thread_current()->children)); e = list_next(e)) {
+        struct thread *t = list_entry(e, struct thread, am_child);
+        sema_up(&(t->waitsema));
+        sema_down(&(thread_current()->waitsema));
+      }
+
       // my sema down
       sema_down(&(thread_current()->waitsema));
 
       // parent의 children에서 본인 제거.
       list_remove(&(thread_current()->am_child));
 
-      //exitval
-
-      
       // parent's sema up
       sema_up(&(thread_current()->parent->waitsema));
       printf ("%s: exit(%d)\n", thread_name(), f->eax);
@@ -122,18 +124,23 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_CREATE:
       // printf("called sys_create\n");
       ;
-      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4,f->esp+4)) EXIT;
       const char* name = *(int*)(f->esp + 4);
+      // make it check buffer as well.
+      if(!check_user_mem(name,name)) EXIT;
+      
+      if(!check_user_mem(f->esp+8,f->esp+8)) EXIT;
       int32_t initial_size = *(int32_t*)(f->esp + 8);
-      if(!check_user_mem(pd,name,name)) EXIT;
+      
       f->eax = filesys_create (name, initial_size);
       return;
 
     case SYS_OPEN:;
       // printf("called sys_open\n");
-      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4,f->esp+4)) EXIT;
       const char *file = *(int*)(f->esp + 4);
-      if(!check_user_mem(pd,file,file)) EXIT;
+      // same as buffer in create
+      if(!check_user_mem(file,file)) EXIT;
 
       struct file* fl = filesys_open (file);
       if(fl == NULL) {
@@ -142,7 +149,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
 
       int openfd=2;
-      while(openfd<=128){
+      while(openfd < 128){
         if( (thread_current()->fds)[openfd] == NULL ){
           (thread_current()->fds)[openfd] = fl;
           break;
@@ -155,29 +162,31 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_WRITE: ;
       // printf("called sys_write\n");
-      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4,f->esp+4)) EXIT;
       int fd = *(int*)(f->esp + 4);
 
-      if(!check_user_mem(pd,f->esp+8,f->esp+8)) EXIT;
+      if(!check_user_mem(f->esp+8,f->esp+8)) EXIT;
       void* buffer = *(int*)(f->esp + 8);
-      if(!check_user_mem(pd,buffer,buffer)) EXIT;
+      // same as buffer in create
+      if(!check_user_mem(buffer,buffer)) EXIT;
 
-      if(!check_user_mem(pd,f->esp+12,f->esp+12)) EXIT;
+      if(!check_user_mem(f->esp+12,f->esp+12)) EXIT;
       unsigned size = *(unsigned*)(f->esp + 12);
       // printf("buffer : %x\n", buffer);
       // printf("size : %d\n", size);
       if(fd == 1){
         putbuf(buffer, size);
-        return size;
+        f->eax = size;
+        return;
       }
       return;
 
     case SYS_CLOSE: ;
       // printf("called sys_close\n");
-      if(!check_user_mem(pd,f->esp+4,f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4,f->esp+4)) EXIT;
       int closefd = *(int*)(f->esp + 4);
       
-      if (closefd > 1 && closefd < 128) {
+      if (closefd > 1 && closefd < 128 && (thread_current()->fds)[closefd] != NULL) {
         file_close((thread_current()->fds)[closefd]);
         (thread_current()->fds)[closefd] = NULL;
       }
@@ -221,8 +230,9 @@ syscall_handler (struct intr_frame *f UNUSED)
     // break;
   
   default:
+    EXIT;
     shutdown_power_off();
-    break;
+    return;
   } 
 
 
