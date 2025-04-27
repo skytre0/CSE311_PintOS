@@ -89,7 +89,10 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_CREATE:
       // printf("called sys_create\n");
-      shutdown_power_off();
+      ;
+      const char* name = *(int*)(f->esp + 4);
+      int32_t initial_size = *(int32_t*)(f->esp + 8);
+      f->eax = filesys_create (name, initial_size);
       return;
 
     case SYS_OPEN:
