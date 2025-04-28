@@ -130,7 +130,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       const char* name = *(int*)(f->esp + 4);
       // make it check buffer as well.
 
-      if( ! check_user_mem(name, 16, 1) ) EXIT;
+      if( ! check_user_mem(name, 14, 1) ) EXIT;
       
       if(!check_user_mem(f->esp+8, 4, 0)) EXIT;
       int32_t initial_size = *(int32_t*)(f->esp + 8);
@@ -144,7 +144,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       const char *file = *(int*)(f->esp + 4);
       // same as buffer in create
 
-      if( ! check_user_mem(file, 16, 1) ) EXIT;
+      if( ! check_user_mem(file, 14, 1) ) EXIT;
 
       // if(!check_user_mem(file)) EXIT;
 
@@ -228,7 +228,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     // case SYS_EXEC:
     //   if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
     //   const char *cmd_line = *(int*)(f->esp + 4);
-    //   if( ! check_user_mem(name, 16, 1) ) EXIT;
+    //   if( ! check_user_mem(name, 16, 1) ) EXIT;    // thread(process name)?
     //   return;
 
 
@@ -242,7 +242,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_REMOVE:
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       const char* remove_file = *(int*)(f->esp + 4);
-      if( ! check_user_mem(remove_file, 16, 1) ) EXIT;
+      if( ! check_user_mem(remove_file, 14, 1) ) EXIT;
       f->eax = filesys_remove (remove_file);
       return;
 
