@@ -57,6 +57,12 @@ syscall_init (void)
 // 44 page 에 인자 꺼내는 법 써져 있음
 // system call 구현
 
+// void numhalt(void);
+// void numexit(int);
+// int numwait(int);
+// bool numcreate(const char* createname, unsigned createsize);
+// bool remove(int);
+
 bool check_user_mem(void* addr, int addrsize, bool is_name) {
   void* i;
   for (i = addr; i < addr + addrsize; i++) {
@@ -74,7 +80,7 @@ static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
   // printf ("system call!\n");
-
+  
   // int tmp=f->esp;
   // while(tmp+4<= 0xc0000000){
   //   printf("Address: %8x    Data: %8x\n", tmp, *(int*)tmp);  
@@ -87,7 +93,6 @@ syscall_handler (struct intr_frame *f UNUSED)
   if(!check_user_mem(f->esp, 4, 0)) EXIT;
   number = *(int*)(f->esp);
   
-  
 
   switch (number)
   {
@@ -95,22 +100,23 @@ syscall_handler (struct intr_frame *f UNUSED)
       // printf("called sys_halt\n");
       shutdown_power_off();
       return;
+      // numhalt();
 
 
-      case SYS_EXIT:
+    case SYS_EXIT:
       // printf("called sys_exit\n");
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       f->eax = *(int*)(f->esp + 4); //return status
       thread_current()->exitval = *(int*)(f->esp + 4);
+      // numexit(*(int*)(f->esp + 4));
 
       // all child's sema up & mine down
-      struct list_elem *e;
+      // *t = list_begin 이거 이상함.
       while( list_begin( &(thread_current()->children) ) != list_end( &(thread_current()->children) ) ){
-        struct thread *t = list_begin( &(thread_current()->children) );
+        struct thread *t = list_entry(list_begin(&(thread_current()->children)), struct thread, am_child);
         sema_up(&(t->waitsema));
         sema_down(&(thread_current()->waitsema));
       }
-
       // my sema down
       if(thread_current()->parent == NULL) break;
       sema_down(&(thread_current()->waitsema));
@@ -128,44 +134,40 @@ syscall_handler (struct intr_frame *f UNUSED)
       // printf("called sys_create\n");
 
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
-      const char* name = *(int*)(f->esp + 4);
+      const char* createname = *(int*)(f->esp + 4);
       // make it check buffer as well.
 
-      if( ! check_user_mem(name, 14, 1) ) EXIT;
+      if( ! check_user_mem(createname, 14, 1) ) EXIT;
       
       if(!check_user_mem(f->esp+8, 4, 0)) EXIT;
       int32_t initial_size = *(int32_t*)(f->esp + 8);
       
-      f->eax = filesys_create (name, initial_size);
+      f->eax = filesys_create (createname, initial_size);
+      // f->eax = numcreate(createname, initial_size);
       return;
+
 
     case SYS_OPEN:;
       // printf("called sys_open\n");
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       const char *file = *(int*)(f->esp + 4);
       // same as buffer in create
-
       if( ! check_user_mem(file, 14, 1) ) EXIT;
 
       // if(!check_user_mem(file)) EXIT;
-
       struct file* fl = filesys_open (file);
       if(fl == NULL) {
         f->eax = -1;
         return;
       }
-
-      int openfd=2;
-      while(openfd < 128){
-        if( (thread_current()->fds)[openfd] == NULL ){
-          (thread_current()->fds)[openfd] = fl;
-          break;
-        }
-        openfd++;
-      }
-      
-      f->eax = openfd;
+      struct filedata* openfile = calloc(1, sizeof(struct filedata));
+      openfile->targetfd = thread_current()->availablefd;
+      openfile->targetfile = fl;
+      openfile->targetname = file;
+      list_push_back(&(thread_current()->fds), &(openfile->fdselem));
+      f->eax = thread_current()->availablefd++;
       return;
+
 
     case SYS_WRITE: ;
       // printf("called sys_write\n");
@@ -178,7 +180,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       unsigned writesize;
       // printf("size : %d\n", writesize);
 
-      if(writefd == 1){
+      if (writefd == 1) {
         // same as buffer in create
   
         // if(!check_user_mem(buffer)) EXIT;
@@ -193,13 +195,14 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
       else if (writefd > 0) {
         // check if writing unavilable
-        if (writefd < 1 || writefd > 127 || (thread_current()->fds)[writefd] == NULL) {
+        struct filedata* writefile = find_file(writefd);
+        if (writefd < 1 || writefile == NULL) {
           f->eax = 0;
           return;
         }  
 
         // buffer write할 크기만큼만 검증해야 함 = writesize = min(writesize, eof - 현 위치)
-        int until_eof = file_length((thread_current()->fds)[writefd]) - (int)file_tell((thread_current()->fds)[writefd]);
+        int until_eof = file_length(writefile->targetfile) - (int)file_tell(writefile->targetfile);
         if(!check_user_mem(f->esp+12, 4, 0)) EXIT;
         writesize = *(unsigned*)(f->esp + 12);
         if (writesize > until_eof)
@@ -208,35 +211,39 @@ syscall_handler (struct intr_frame *f UNUSED)
         if( ! check_user_mem(writebuffer, writesize, 0) ) EXIT;
         
         // can write less or equal to writesize
-        f->eax = file_write((thread_current()->fds)[writefd], writebuffer, writesize);
+        f->eax = file_write(writefile->targetfile, writebuffer, writesize);
         return;
-      }
-      return;
-
-    case SYS_CLOSE: ;
-      // printf("called sys_close\n");
-      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
-      int closefd = *(int*)(f->esp + 4);
-      
-      if (closefd > 1 && closefd < 128 && (thread_current()->fds)[closefd] != NULL) {
-        file_close((thread_current()->fds)[closefd]);
-        (thread_current()->fds)[closefd] = NULL;
       }
       else
         EXIT;
       return;
 
-    // case SYS_EXEC:
-    //   if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
-    //   const char *cmd_line = *(int*)(f->esp + 4);
-    //   if( ! check_user_mem(name, 16, 1) ) EXIT;    // thread(process name)?
-    //   return;
+
+    case SYS_CLOSE: ;
+      // printf("called sys_close\n");
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
+      int closefd = *(int*)(f->esp + 4);
+      struct filedata* closefile = find_file(closefd);
+      if (closefd < 2 || closefile == NULL) EXIT;
+      file_close(closefile->targetfile);
+      list_remove(&(closefile->fdselem));
+      free(closefile);
+      return;
+
+      
+    case SYS_EXEC:
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
+      const char *cmd_line = *(int*)(f->esp + 4);
+      if( ! check_user_mem(cmd_line, PGSIZE, 1) ) EXIT;
+      f->eax = process_execute(cmd_line);
+      return;
 
 
     case SYS_WAIT:
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int waitfd = *(int*)(f->esp + 4);
-      process_wait(waitfd);
+      f->eax = process_wait(waitfd);
+      // f->eax = numwait(waitfd);
       return;
 
 
@@ -244,51 +251,69 @@ syscall_handler (struct intr_frame *f UNUSED)
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       const char* remove_file = *(int*)(f->esp + 4);
       if( ! check_user_mem(remove_file, 14, 1) ) EXIT;
-      f->eax = filesys_remove (remove_file);
+      struct list_elem *removeele;
+      struct list* name_search_list = &(thread_current()->fds);
+
+      for (removeele = list_begin(name_search_list); removeele != list_end(name_search_list); removeele = list_next(removeele)) {
+        struct filedata *removedata = list_entry(removeele, struct filedata, fdselem);
+        if (removedata->targetname == remove_file) {
+          f->eax = filesys_remove (remove_file);
+          list_remove(&(removedata->fdselem));
+          free(removedata);
+          break;
+        }
+      }
       return;
+
 
     case SYS_FILESIZE:
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
-      int filesize_arg1 = *(int*)(f->esp + 4);
-      struct file* filesize_file = (thread_current()->fds)[filesize_arg1];
-      f->eax = file_length(filesize_file);
+      int filesizefd = *(int*)(f->esp + 4);
+      struct filedata* sizefile = find_file(filesizefd);
+      if (sizefile == NULL) EXIT;
+      f->eax = file_length(sizefile->targetfile);
       return;
 
+      
     case SYS_READ:
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
-      int read_fd = *(int*)(f->esp + 4);
-      if( read_fd < 0 || read_fd == 1 || read_fd > 127) EXIT;
+      int readfd = *(int*)(f->esp + 4);
+      struct filedata* readfile = find_file(readfd);
+      if (readfile == NULL) EXIT;
 
       if(!check_user_mem(f->esp+8, 4, 0)) EXIT;
       void* read_buffer = *(int*)(f->esp + 8);
-      
+
+      // fd == 0 구현 필요해보임.
 
       if(!check_user_mem(f->esp+12, 4, 0)) EXIT;
       unsigned int read_size = *(unsigned int*)(f->esp + 12);
+      if(!check_user_mem(read_buffer, read_size, 0)) EXIT;
 
-      if( ! check_user_mem(read_buffer, read_size, 0) ) EXIT;
-
-      struct file* read_file = (thread_current()->fds)[read_fd];
-      if( read_file == NULL ) EXIT;
-
-      f->eax = file_read (read_file, read_buffer, read_size);
-
+      f->eax = file_read (readfile->targetfile, read_buffer, read_size);
 		  return;
 
 
     case SYS_SEEK:
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int seekfd = *(int*)(f->esp + 4);
+      struct filedata* seekfile = find_file(seekfd);
+
       if(!check_user_mem(f->esp+8, 4, 0)) EXIT;
       int32_t seekpos = *(int*)(f->esp + 8);
-      file_seek ((thread_current()->fds)[seekfd], seekpos);
+      if (seekfile == NULL)
+        return
+      file_seek(seekfile->targetfile, seekpos);
       return;
 
 
     case SYS_TELL:
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int tellfd = *(int*)(f->esp + 4);
-      f->eax = (int)file_tell((thread_current()->fds)[tellfd]); 
+      struct filedata* tellfile = find_file(tellfd);
+      if (tellfile == NULL)
+        f->eax = -1;
+      f->eax = (int)file_tell(tellfile->targetfile); 
       return;
 
     
@@ -323,3 +348,40 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   thread_exit ();
 }
+
+
+
+// void numhalt(void) {
+//   shutdown_power_off();
+//   return;
+// }
+
+
+// void numexit(int num) {
+//   // all child's sema up & mine down
+//   // *t = list_begin 이거 이상함.
+//   while( list_begin( &(thread_current()->children) ) != list_end( &(thread_current()->children) ) ){
+//     struct thread *t = list_entry(list_begin(&(thread_current()->children)), struct thread, am_child);
+//     sema_up(&(t->waitsema));
+//     sema_down(&(thread_current()->waitsema));
+//   }
+//   // my sema down
+//   if(thread_current()->parent == NULL) thread_exit();
+//   sema_down(&(thread_current()->waitsema));
+
+//   // parent의 children에서 본인 제거.
+//   list_remove(&(thread_current()->am_child));
+
+//   // parent's sema up
+//   printf ("%s: exit(%d)\n", thread_name(), num);
+//   sema_up(&(thread_current()->parent->waitsema));
+//   thread_exit();
+// }
+
+// int numwait(int num) {
+//   return process_wait(num);
+// }
+
+// bool numcreate(const char* createname, unsigned createsize) {
+//   return filesys_create (createname, createsize);
+// }

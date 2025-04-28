@@ -83,6 +83,13 @@ typedef int tid_t;
    ready state is on the run queue, whereas only a thread in the
    blocked state is on a semaphore wait list. */
 
+struct filedata {
+   int targetfd;
+   struct file* targetfile;
+   struct list_elem fdselem;
+   char* targetname    // for sys_remove -> got when opened
+};
+
 struct thread
   {
     /* Owned by thread.c. */
@@ -107,7 +114,8 @@ struct thread
     struct semaphore waitsema;
     int initialized;
     int exitval;     // exit return value = eax
-    struct file* fds[128];
+    struct list fds;        // child 관리용.
+    int availablefd;
     //추가끝
 
 #ifdef USERPROG
@@ -157,5 +165,6 @@ int thread_get_load_avg (void);
 
 //
 struct thread* find_child(struct thread* parent, tid_t child_tid);
+struct filedata* find_file(int searchingfd);
 //
 #endif /* threads/thread.h */

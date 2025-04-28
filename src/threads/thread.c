@@ -217,9 +217,14 @@ thread_create (const char *name, int priority,
   sema_init(&(t->waitsema),0);
   t->parent = thread_current();
   list_init(&(t->children));
+  list_init(&(t->fds));
+  t->availablefd = 2;
+  
   if (thread_current()->tid == 1 && thread_current()->initialized == 0) {
     sema_init(&(thread_current()->waitsema),0);
     list_init(&(thread_current()->children));
+    list_init(&(thread_current()->fds));
+    thread_current()->availablefd = 2;
     thread_current()->initialized = 1;
   }
   
@@ -626,6 +631,16 @@ struct thread* find_child(struct thread* parent, tid_t child_tid){
   for (e = list_begin(searchlist); e != list_end(searchlist); e = list_next(e)) {
     struct thread *t = list_entry(e, struct thread, am_child);
     if (t->tid == child_tid) return t;
+  }
+  return NULL;
+}
+
+struct filedata* find_file(int searchingfd) {
+  struct list_elem *e;
+  struct list* searchlist = &(thread_current()->fds);
+  for (e = list_begin(searchlist); e != list_end(searchlist); e = list_next(e)) {
+    struct filedata *t = list_entry(e, struct filedata, fdselem);
+    if (t->targetfd == searchingfd) return t;
   }
   return NULL;
 }
