@@ -112,6 +112,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
 
       // my sema down
+      if(thread_current()->parent == NULL) break;
       sema_down(&(thread_current()->waitsema));
 
       // parent의 children에서 본인 제거.
