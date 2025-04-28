@@ -176,26 +176,49 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_WRITE: ;
       // printf("called sys_write\n");
       if(!check_user_mem(f->esp+4)) EXIT;
-      int fd = *(int*)(f->esp + 4);
+      int writefd = *(int*)(f->esp + 4);
 
       if(!check_user_mem(f->esp+8)) EXIT;
-      void* buffer = *(int*)(f->esp + 8);
-      // same as buffer in create
-
-      // if(!check_user_mem(buffer)) EXIT;
-
-      if(!check_user_mem(f->esp+12)) EXIT;
-      unsigned size = *(unsigned*)(f->esp + 12);
-
-      for(len=0; len<size; len++){
-        if( ! check_user_mem(buffer+len) ) EXIT;
-      }
-
+      void* writebuffer = *(int*)(f->esp + 8);
       // printf("buffer : %x\n", buffer);
-      // printf("size : %d\n", size);
-      if(fd == 1){
-        putbuf(buffer, size);
-        f->eax = size;
+      unsigned writesize;
+      // printf("size : %d\n", writesize);
+
+      if(writefd == 1){
+        // same as buffer in create
+  
+        // if(!check_user_mem(buffer)) EXIT;
+  
+        if(!check_user_mem(f->esp+12)) EXIT;
+        writesize = *(unsigned*)(f->esp + 12);
+  
+        for(len=0; len < writesize; len++){
+          if( ! check_user_mem(writebuffer+len) ) EXIT;
+        }
+        putbuf(writebuffer, writesize);
+        f->eax = writesize;
+        return;
+      }
+      else if (writefd > 0) {
+        // check if writing unavilable
+        if (writefd < 1 || writefd > 127 || (thread_current()->fds)[writefd] == NULL) {
+          f->eax = 0;
+          return;
+        }  
+
+        // buffer write할 크기만큼만 검증해야 함 = writesize = min(writesize, eof - 현 위치)
+        int until_eof = file_length((thread_current()->fds)[writefd]) - (int)file_tell((thread_current()->fds)[writefd]);
+        if(!check_user_mem(f->esp+12)) EXIT;
+        writesize = *(unsigned*)(f->esp + 12);
+        if (writesize > until_eof)
+          writesize = until_eof;
+
+        for(len=0; len < writesize; len++){
+          if( ! check_user_mem(writebuffer+len) ) EXIT;
+        }
+        
+        // can write less or equal to writesize
+        f->eax = file_write((thread_current()->fds)[writefd], writebuffer, writesize);
         return;
       }
       return;
@@ -233,13 +256,15 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_REMOVE:
       if(!check_user_mem(f->esp+4)) EXIT;
       const char* remove_file = *(int*)(f->esp + 4);
-      
-      for(len=0; len<size; len++){
+      len=0;
+      while(true){
         if( ! check_user_mem(remove_file+len) ) EXIT;
+        if( *( remove_file + len ) == NULL ) break; 
+        len++;
       }
-
       f->eax = filesys_remove (remove_file);
       return;
+
     case SYS_FILESIZE:
       if(!check_user_mem(f->esp+4)) EXIT;
       int filesize_arg1 = *(int*)(f->esp + 4);
@@ -248,7 +273,6 @@ syscall_handler (struct intr_frame *f UNUSED)
       return;
 
     case SYS_READ:
-
       if(!check_user_mem(f->esp+4)) EXIT;
       int read_fd = *(int*)(f->esp + 4);
 
@@ -277,11 +301,11 @@ syscall_handler (struct intr_frame *f UNUSED)
       file_seek ((thread_current()->fds)[seekfd], seekpos);
       return;
 
-      
+
     case SYS_TELL:
       if(!check_user_mem(f->esp+4)) EXIT;
       int tellfd = *(int*)(f->esp + 4);
-      f->eax = (int)file_tell ((thread_current()->fds)[tellfd]); 
+      f->eax = (int)file_tell((thread_current()->fds)[tellfd]); 
       return;
 
     
