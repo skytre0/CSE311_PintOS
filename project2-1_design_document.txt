@@ -1,0 +1,85 @@
+project2-1_design_document
+
+               ARGUMENT PASSING
+               ================
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+1. We used no struct, global, static, typedef, or enumeration for argument passing.
+
+
+---- ALGORITHMS ----
+
+>> A2: Briefly describe how you implemented argument parsing.  How do
+>> you arrange for the elements of argv[] to be in the right order?
+>> How do you avoid overflowing the stack page?
+1. By using strtok_r(), we was able to get argc and argv[i]'s address.
+2. We arranged elements to be in the right order by pushing arguments closest to argc.
+3. We lowered esp by exact size to the data to be pushed, thus never going beyond PHYS_BASE.
+
+---- RATIONALE ----
+
+>> A3: Why does Pintos implement strtok_r() but not strtok()?
+1. First, there was no strtok() function.
+2. Also, from research, it seemed strtok() used static argument, thus possibility of race condition.
+
+>> A4: In Pintos, the kernel separates commands into a executable name
+>> and arguments.  In Unix-like systems, the shell does this
+>> separation.  Identify at least two advantages of the Unix approach.
+1. Less load to the program since it doesn't have to parse the input
+2. program is more secure since if the program can do "ab, cde, abd, de", and if there was no shell, then the input would be abcde, then there is danger in program possible of doing (ab, cde), or (abc, de).
+
+                 SYSTEM CALLS
+                 ============
+
+---- DATA STRUCTURES ----
+
+>> B1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+1. In struct thread : 
+    struct thread* parent : to identify parent thread
+    struct list children : to save what thread is the child
+    struct list_elem am_child : used by parent to save this thread is the child
+    struct semaphore waitsema : used to wait & exit
+    int initialized : used in thread_create() to initialize semaphore, children list
+    int exitval : to save its exit status
+    struct file* fds[128] : to save its file descriptors
+2. In syscall.c
+    #define EXIT : to do exit(-1) when error occurs
+
+>> B2: Describe how file descriptors are associated with open files.
+>> Are file descriptors unique within the entire OS or just within a
+>> single process?
+1. Since this is single-threaded process, and each thread has unique struct file* fds[128], the file descriptors are unique just within a single process.
+
+---- ALGORITHMS ----
+
+>> B5: Briefly describe your implementation of the "wait" system call
+>> and how it interacts with process termination.
+1. process_wait() ensure the child_tid is the real child thread.
+2. Check if it is checking the same child again with status.
+3. use semaphore to increase the child's semaphore, and lower mine until the child exits.
+
+use semaphore linked with exit to ensure that the child doesn't exit before parent's process_wait(), and 
+
+
+
+==== Peer Evaluation ====
+
++----------------------------+---------------------------------+
+
+|            Name            |          Contribution        |
+
++----------------------------+---------------------------------+
+
+| Ho-Jun Lee                 | 50%, Implemented user memory access, system call
+
++----------------------------+---------------------------------+
+
+| Seong-Ji Yang              |  50%, Implemented argument passing, system call
+
++----------------------------+---------------------------------+
