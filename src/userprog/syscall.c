@@ -278,15 +278,18 @@ syscall_handler (struct intr_frame *f UNUSED)
 
       if(!check_user_mem(f->esp+8)) EXIT;
       void* read_buffer = *(int*)(f->esp + 8);
+      if(!check_user_mem(read_buffer)) EXIT;
+      
 
       if(!check_user_mem(f->esp+12)) EXIT;
-      unsigned read_size = *(unsigned*)(f->esp + 12);
+      unsigned int read_size = *(unsigned int*)(f->esp + 12);
 
       for(len=0; len<read_size; len++){
         if( ! check_user_mem(read_buffer+len) ) EXIT;
       }
 
       struct file* read_file = (thread_current()->fds)[read_fd];
+      if( read_file == NULL ) EXIT;
 
       f->eax = file_read (read_file, read_buffer, read_size);
 
