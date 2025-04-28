@@ -57,10 +57,15 @@ syscall_init (void)
 // 44 page 에 인자 꺼내는 법 써져 있음
 // system call 구현
 
-bool check_user_mem(void* addr) {
-  if (addr == NULL) return false;
-  if (!is_user_vaddr(addr)) return false;
-  if (pagedir_get_page(thread_current()->pagedir, addr) == NULL) return false;
+bool check_user_mem(void* addr, int addrsize, bool is_name) {
+  void* i;
+  for (i = addr; i < addr + addrsize; i++) {
+    if (i == NULL) return false;
+    if (!is_user_vaddr(i)) return false;
+    if (pagedir_get_page(thread_current()->pagedir, i) == NULL) return false;
+    if (is_name)
+      if (*(char *)(i) == NULL) break;
+  }
   return true;
 }
 
@@ -79,7 +84,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   // user process의 syscall
   int number;
   int len=0;
-  if(!check_user_mem(f->esp)) EXIT;
+  if(!check_user_mem(f->esp, 4, 0)) EXIT;
   number = *(int*)(f->esp);
   
   
@@ -94,7 +99,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 
       case SYS_EXIT:
       // printf("called sys_exit\n");
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       f->eax = *(int*)(f->esp + 4); //return status
       thread_current()->exitval = *(int*)(f->esp + 4);
 
@@ -121,20 +126,13 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_CREATE:
       // printf("called sys_create\n");
 
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       const char* name = *(int*)(f->esp + 4);
       // make it check buffer as well.
 
-      len=0;
-      while(true){
-        if( ! check_user_mem(name+len) ) EXIT;
-        if( *( name + len ) == NULL ) break; 
-        len++;
-      }
-
-      // if(!check_user_mem(name)) EXIT;
+      if( ! check_user_mem(name, 16, 1) ) EXIT;
       
-      if(!check_user_mem(f->esp+8)) EXIT;
+      if(!check_user_mem(f->esp+8, 4, 0)) EXIT;
       int32_t initial_size = *(int32_t*)(f->esp + 8);
       
       f->eax = filesys_create (name, initial_size);
@@ -142,16 +140,11 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_OPEN:;
       // printf("called sys_open\n");
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       const char *file = *(int*)(f->esp + 4);
       // same as buffer in create
 
-      len=0;
-      while(true){
-        if( ! check_user_mem(file+len) ) EXIT;
-        if( *( file + len ) == NULL ) break; 
-        len++;
-      }
+      if( ! check_user_mem(file, 16, 1) ) EXIT;
 
       // if(!check_user_mem(file)) EXIT;
 
@@ -175,10 +168,10 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_WRITE: ;
       // printf("called sys_write\n");
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int writefd = *(int*)(f->esp + 4);
 
-      if(!check_user_mem(f->esp+8)) EXIT;
+      if(!check_user_mem(f->esp+8, 4, 0)) EXIT;
       void* writebuffer = *(int*)(f->esp + 8);
       // printf("buffer : %x\n", buffer);
       unsigned writesize;
@@ -189,12 +182,10 @@ syscall_handler (struct intr_frame *f UNUSED)
   
         // if(!check_user_mem(buffer)) EXIT;
   
-        if(!check_user_mem(f->esp+12)) EXIT;
+        if(!check_user_mem(f->esp+12, 4, 0)) EXIT;
         writesize = *(unsigned*)(f->esp + 12);
   
-        for(len=0; len < writesize; len++){
-          if( ! check_user_mem(writebuffer+len) ) EXIT;
-        }
+        if( ! check_user_mem(writebuffer, writesize, 0) ) EXIT;
         putbuf(writebuffer, writesize);
         f->eax = writesize;
         return;
@@ -208,14 +199,12 @@ syscall_handler (struct intr_frame *f UNUSED)
 
         // buffer write할 크기만큼만 검증해야 함 = writesize = min(writesize, eof - 현 위치)
         int until_eof = file_length((thread_current()->fds)[writefd]) - (int)file_tell((thread_current()->fds)[writefd]);
-        if(!check_user_mem(f->esp+12)) EXIT;
+        if(!check_user_mem(f->esp+12, 4, 0)) EXIT;
         writesize = *(unsigned*)(f->esp + 12);
         if (writesize > until_eof)
           writesize = until_eof;
 
-        for(len=0; len < writesize; len++){
-          if( ! check_user_mem(writebuffer+len) ) EXIT;
-        }
+        if( ! check_user_mem(writebuffer, writesize, 0) ) EXIT;
         
         // can write less or equal to writesize
         f->eax = file_write((thread_current()->fds)[writefd], writebuffer, writesize);
@@ -225,68 +214,57 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     case SYS_CLOSE: ;
       // printf("called sys_close\n");
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int closefd = *(int*)(f->esp + 4);
       
       if (closefd > 1 && closefd < 128 && (thread_current()->fds)[closefd] != NULL) {
         file_close((thread_current()->fds)[closefd]);
         (thread_current()->fds)[closefd] = NULL;
       }
+      else
+        EXIT;
       return;
 
     // case SYS_EXEC:
-    //   if(!check_user_mem(f->esp+4)) EXIT;
+    //   if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
     //   const char *cmd_line = *(int*)(f->esp + 4);
-    //   len=0;
-    //   while(true){
-    //     if( ! check_user_mem(name+len) ) EXIT;
-    //     if( *( name + len ) == NULL ) break; 
-    //     len++;
-    //   }
+    //   if( ! check_user_mem(name, 16, 1) ) EXIT;
     //   return;
 
 
     case SYS_WAIT:
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int waitfd = *(int*)(f->esp + 4);
       process_wait(waitfd);
       return;
 
 
     case SYS_REMOVE:
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       const char* remove_file = *(int*)(f->esp + 4);
-      len=0;
-      while(true){
-        if( ! check_user_mem(remove_file+len) ) EXIT;
-        if( *( remove_file + len ) == NULL ) break; 
-        len++;
-      }
+      if( ! check_user_mem(remove_file, 16, 1) ) EXIT;
       f->eax = filesys_remove (remove_file);
       return;
 
     case SYS_FILESIZE:
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int filesize_arg1 = *(int*)(f->esp + 4);
       struct file* filesize_file = (thread_current()->fds)[filesize_arg1];
       f->eax = file_length(filesize_file);
       return;
 
     case SYS_READ:
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int read_fd = *(int*)(f->esp + 4);
 
-      if(!check_user_mem(f->esp+8)) EXIT;
+      if(!check_user_mem(f->esp+8, 4, 0)) EXIT;
       void* read_buffer = *(int*)(f->esp + 8);
-      if(!check_user_mem(read_buffer)) EXIT;
       
 
-      if(!check_user_mem(f->esp+12)) EXIT;
+      if(!check_user_mem(f->esp+12, 4, 0)) EXIT;
       unsigned int read_size = *(unsigned int*)(f->esp + 12);
 
-      for(len=0; len<read_size; len++){
-        if( ! check_user_mem(read_buffer+len) ) EXIT;
-      }
+      if( ! check_user_mem(read_buffer, read_size, 0) ) EXIT;
 
       struct file* read_file = (thread_current()->fds)[read_fd];
       if( read_file == NULL ) EXIT;
@@ -297,16 +275,16 @@ syscall_handler (struct intr_frame *f UNUSED)
 
 
     case SYS_SEEK:
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int seekfd = *(int*)(f->esp + 4);
-      if(!check_user_mem(f->esp+8)) EXIT;
+      if(!check_user_mem(f->esp+8, 4, 0)) EXIT;
       int32_t seekpos = *(int*)(f->esp + 8);
       file_seek ((thread_current()->fds)[seekfd], seekpos);
       return;
 
 
     case SYS_TELL:
-      if(!check_user_mem(f->esp+4)) EXIT;
+      if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int tellfd = *(int*)(f->esp + 4);
       f->eax = (int)file_tell((thread_current()->fds)[tellfd]); 
       return;
