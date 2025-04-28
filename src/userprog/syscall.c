@@ -256,6 +256,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_READ:
       if(!check_user_mem(f->esp+4, 4, 0)) EXIT;
       int read_fd = *(int*)(f->esp + 4);
+      if( read_fd < 0 || read_fd == 1 || read_fd > 127) EXIT;
 
       if(!check_user_mem(f->esp+8, 4, 0)) EXIT;
       void* read_buffer = *(int*)(f->esp + 8);
