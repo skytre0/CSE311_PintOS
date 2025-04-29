@@ -285,22 +285,23 @@ bool numcreate(const char* createname, unsigned createsize) {
 
 
 bool numremove(const char* removename) {
-  bool returnval = false;
   if( ! check_user_mem(removename, 14, 1) ) numexit(-1);
-  struct list_elem *removeele;
-  struct list* name_search_list = &(thread_current()->fds);
+  return filesys_remove (removename);
+  // struct list_elem *removeele;
+  // struct list* name_search_list = &(thread_current()->fds);
 
-  for (removeele = list_begin(name_search_list); removeele != list_end(name_search_list); removeele = list_next(removeele)) {
-    struct filedata *removefile = list_entry(removeele, struct filedata, fdselem);
-    if (strcmp(removefile->targetname, removename) == 0) {
-      returnval = filesys_remove (removename);
-      list_remove(&(removefile->fdselem));    // only remove from my list, could be open in other thread = don't close = don't free.
-      // free(removefile->targetname);
-      // free(removefile);
-      break;
-    }
-  }
-  return returnval;
+  // for (removeele = list_begin(name_search_list); removeele != list_end(name_search_list); removeele = list_next(removeele)) {
+  //   struct filedata *removefile = list_entry(removeele, struct filedata, fdselem);
+  //   if (strcmp(removefile->targetname, removename) == 0) {
+  //     removefile->targetname = NULL;
+  //     return filesys_remove (removename);
+  //     list_remove(&(removefile->fdselem));    // resource issue로 일단 지움
+  //     free(removefile->targetname);
+  //     free(removefile);
+  //     break;
+  //   }
+  // }
+  // return false;
 }
 
 
