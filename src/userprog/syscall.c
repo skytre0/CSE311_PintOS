@@ -231,10 +231,8 @@ syscall_handler (struct intr_frame *f UNUSED)
     return;
   } 
 
-
   return;
 }
-
 
 
 void numhalt(void) {
@@ -249,6 +247,11 @@ void numexit(int num) {
     struct thread *t = list_entry(list_begin(&(thread_current()->children)), struct thread, am_child);
     sema_up(&(t->waitsema));
     sema_down(&(thread_current()->waitsema));
+  }
+  // 여기서 remove all my files
+  while( list_begin( &(thread_current()->fds) ) != list_end( &(thread_current()->fds) ) ){
+    struct filedata *cf = list_entry(list_begin( &(thread_current()->fds) ), struct filedata, fdselem);
+    numclose(cf->targetfd);
   }
   // my sema down
   if(thread_current()->parent == NULL) thread_exit();

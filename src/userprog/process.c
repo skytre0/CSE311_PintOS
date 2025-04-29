@@ -161,8 +161,6 @@ process_wait (tid_t child_tid UNUSED)
   struct thread* target = find_child(thread_current(), child_tid);
   if (target == NULL)   // not child thread
     return -1;
-  else if (target->status == THREAD_DYING)    // child already killed
-    return -1;
   int retval = target->exitval;
   sema_up(&(target->waitsema));
   // my sema down
