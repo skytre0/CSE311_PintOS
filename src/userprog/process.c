@@ -49,8 +49,13 @@ process_execute (const char *file_name)
   tid = thread_create (exe_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy);
-  else
-    sema_down(&(thread_current()->withchild));
+  else{
+    // printf("my tid is %d, and waitting %d ", thread_current()->tid, tid);
+    // printf("wait val : %d\n",process_wait(tid));
+    if(  process_wait(tid) == -1 )
+     return -1;
+    // printf("loaded well\n");
+  }
   return tid;
 }
 
@@ -78,6 +83,11 @@ start_process (void *file_name_)
 
   success = load (argv[0], &if_.eip, &if_.esp);
 
+  if (!success) {
+    palloc_free_page (file_name);
+    numexit(-1);
+  }
+  
 
   // use later for address
   char *argv_addr[num_of_token];
@@ -132,7 +142,12 @@ start_process (void *file_name_)
   palloc_free_page (file_name);
   if (!success) 
     thread_exit ();
+
+  thread_current()->exitval=0;
+  
+  sema_down(&(thread_current()->withparent));
   sema_up(&(thread_current()->parent->withchild));
+  sema_down(&(thread_current()->withparent));
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -164,8 +179,9 @@ process_wait (tid_t child_tid UNUSED)
   
   sema_up(&(target->withparent));
   // my sema down
-  sema_down(&(thread_current()->withchild));
+  sema_down(& ( thread_current()->withchild ) );
   int retval = target->exitval;
+  sema_up(& (target->withparent) );
   return retval;
 }
 

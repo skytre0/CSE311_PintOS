@@ -263,6 +263,7 @@ void numexit(int num) {
   // parent's sema up
   printf ("%s: exit(%d)\n", thread_name(), num);
   sema_up(&(thread_current()->parent->withchild));
+  sema_down(& ( thread_current()->withparent) );
   thread_exit();
 }
 
