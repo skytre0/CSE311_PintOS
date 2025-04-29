@@ -49,8 +49,8 @@ process_execute (const char *file_name)
   tid = thread_create (exe_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy);
-  // else
-  //   sema_down(&(thread_current()->waitsema));
+  else
+    sema_down(&(thread_current()->withchild));
   return tid;
 }
 
@@ -132,7 +132,7 @@ start_process (void *file_name_)
   palloc_free_page (file_name);
   if (!success) 
     thread_exit ();
-  // sema_up(&(thread_current()->parent->waitsema));
+  sema_up(&(thread_current()->parent->withchild));
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -162,9 +162,9 @@ process_wait (tid_t child_tid UNUSED)
   if (target == NULL)   // not child thread
     return -1;
   int retval = target->exitval;
-  sema_up(&(target->waitsema));
+  sema_up(&(target->withparent));
   // my sema down
-  sema_down(&(thread_current()->waitsema));
+  sema_down(&(thread_current()->withchild));
   return retval;
   // while(true){
     

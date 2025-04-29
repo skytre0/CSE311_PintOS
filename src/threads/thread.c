@@ -214,14 +214,16 @@ thread_create (const char *name, int priority,
   sf->ebp = 0;
 
   //
-  sema_init(&(t->waitsema),0);
+  sema_init(&(t->withchild),0);
+  sema_init(&(t->withparent),0);
   t->parent = thread_current();
   list_init(&(t->children));
   list_init(&(t->fds));
   t->availablefd = 2;
   
   if (thread_current()->tid == 1 && thread_current()->initialized == 0) {
-    sema_init(&(thread_current()->waitsema),0);
+    sema_init(&(thread_current()->withchild),0);
+    sema_init(&(thread_current()->withparent),0);
     list_init(&(thread_current()->children));
     list_init(&(thread_current()->fds));
     thread_current()->availablefd = 2;

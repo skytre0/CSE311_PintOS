@@ -12,30 +12,30 @@ static void kill (struct intr_frame *);
 static void page_fault (struct intr_frame *);
 
 //
-void exit(int num){
-   thread_current()->exitval = num;
+// void numexit(int num) {
+//    // all child's sema up & mine down
+//    while( list_begin( &(thread_current()->children) ) != list_end( &(thread_current()->children) ) ){
+//      struct thread *t = list_entry(list_begin(&(thread_current()->children)), struct thread, am_child);
+//      sema_up(&(t->withparent));
+//      sema_down(&(thread_current()->withchild));
+//    }
+//    // 여기서 remove all my files
+//    while( list_begin( &(thread_current()->fds) ) != list_end( &(thread_current()->fds) ) ){
+//      struct filedata *cf = list_entry(list_begin( &(thread_current()->fds) ), struct filedata, fdselem);
+//      numclose(cf->targetfd);
+//    }
+//    // my sema down
+//    if(thread_current()->parent == NULL) thread_exit();
+//    sema_down(&(thread_current()->withparent));
  
-   // all child's sema up & mine down
-   struct list_elem *e;
-   while( list_begin( &(thread_current()->children) ) != list_end( &(thread_current()->children) ) ){
-     struct thread *t = list_begin( &(thread_current()->children) );
-     sema_up(&(t->waitsema));
-     sema_down(&(thread_current()->waitsema));
-   }
+//    // parent의 children에서 본인 제거.
+//    list_remove(&(thread_current()->am_child));
  
-   // my sema down
-   if(thread_current()->parent == NULL) thread_exit ();
-   sema_down(&(thread_current()->waitsema));
- 
-   // parent의 children에서 본인 제거.
-   list_remove(&(thread_current()->am_child));
- 
-   // parent's sema up
-   printf ("%s: exit(%d)\n", thread_name(), num);
-   sema_up(&(thread_current()->parent->waitsema));
- 
-   thread_exit ();
- }
+//    // parent's sema up
+//    printf ("%s: exit(%d)\n", thread_name(), num);
+//    sema_up(&(thread_current()->parent->withchild));
+//    thread_exit();
+//  }
 //
 
 /* Registers handlers for interrupts that can be caused by user
@@ -179,7 +179,7 @@ page_fault (struct intr_frame *f)
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
      which fault_addr refers. */
-  if( user ) exit(-1);
+  if( user ) numexit(-1);
   printf ("Page fault at %p: %s error %s page in %s context.\n",
           fault_addr,
           not_present ? "not present" : "rights violation",

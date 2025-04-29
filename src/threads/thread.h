@@ -111,7 +111,8 @@ struct thread
     struct thread* parent;       // parent 바로 확인 가능(tid만 가지고 있는 대신 더 편리함)
     struct list children;        // child 관리용.
     struct list_elem am_child;   // children list에 들어감.
-    struct semaphore waitsema;
+    struct semaphore withchild;
+    struct semaphore withparent;
     int initialized;
     int exitval;     // exit return value = eax
     struct list fds;        // child 관리용.

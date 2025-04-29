@@ -109,7 +109,6 @@ syscall_handler (struct intr_frame *f UNUSED)
 
       
     case SYS_EXEC:
-      shutdown_power_off();   // 이거로 인해 실행 안 되는 중
       if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
       const char *cmd_line = *(int*)(f->esp + 4);
       f->eax = numexec(cmd_line);
@@ -245,8 +244,8 @@ void numexit(int num) {
   // all child's sema up & mine down
   while( list_begin( &(thread_current()->children) ) != list_end( &(thread_current()->children) ) ){
     struct thread *t = list_entry(list_begin(&(thread_current()->children)), struct thread, am_child);
-    sema_up(&(t->waitsema));
-    sema_down(&(thread_current()->waitsema));
+    sema_up(&(t->withparent));
+    sema_down(&(thread_current()->withchild));
   }
   // 여기서 remove all my files
   while( list_begin( &(thread_current()->fds) ) != list_end( &(thread_current()->fds) ) ){
@@ -255,14 +254,14 @@ void numexit(int num) {
   }
   // my sema down
   if(thread_current()->parent == NULL) thread_exit();
-  sema_down(&(thread_current()->waitsema));
+  sema_down(&(thread_current()->withparent));
 
   // parent의 children에서 본인 제거.
   list_remove(&(thread_current()->am_child));
 
   // parent's sema up
   printf ("%s: exit(%d)\n", thread_name(), num);
-  sema_up(&(thread_current()->parent->waitsema));
+  sema_up(&(thread_current()->parent->withchild));
   thread_exit();
 }
 
