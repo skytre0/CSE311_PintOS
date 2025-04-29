@@ -241,6 +241,7 @@ void numhalt(void) {
 
 
 void numexit(int num) {
+  thread_current()->exitval = num;
   // all child's sema up & mine down
   while( list_begin( &(thread_current()->children) ) != list_end( &(thread_current()->children) ) ){
     struct thread *t = list_entry(list_begin(&(thread_current()->children)), struct thread, am_child);

@@ -167,11 +167,6 @@ process_wait (tid_t child_tid UNUSED)
   sema_down(&(thread_current()->withchild));
   int retval = target->exitval;
   return retval;
-  // while(true){
-    
-  //   printf("child's tid : %d, exiting thread : %d\n", child_tid, thread_current()->tid);
-  // } // 임시로 막아놓음
-  // return -1;
 }
 
 /* Free the current process's resources. */
