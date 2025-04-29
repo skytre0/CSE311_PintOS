@@ -51,9 +51,17 @@ syscall_init (void)
 
 void numhalt(void);
 void numexit(int);
-// int numwait(int);
-// bool numcreate(const char* createname, unsigned createsize);
-// bool remove(int);
+int numexec(const char* cmd_line);
+int numwait(int);
+bool numcreate(const char* createname, unsigned createsize);
+bool numremove(const char* removename);
+int numopen(const char* openname);
+int numfilesize(int sizefd);
+int numread(int readfd, void* readbuffer, unsigned readsize);
+int numwrite(int writefd, void* writebuffer, unsigned writesize);
+void numseek(int seekfd, unsigned seekpos);
+unsigned numtell(int tellfd);
+void numclose(int closefd);
 
 bool check_user_mem(void* addr, int addrsize, bool is_name) {
   void* i;
@@ -72,7 +80,6 @@ static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
   // printf ("system call!\n");
-  
   // int tmp=f->esp;
   // while(tmp+4<= 0xc0000000){
   //   printf("Address: %8x    Data: %8x\n", tmp, *(int*)tmp);  
@@ -80,10 +87,8 @@ syscall_handler (struct intr_frame *f UNUSED)
   // }
 
   // user process의 syscall
-  int number;
-  int len=0;
   if(!check_user_mem(f->esp, 4, 0)) numexit(-1);
-  number = *(int*)(f->esp);
+  int number = *(int*)(f->esp);
   
 
   switch (number)
@@ -91,6 +96,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_HALT:
       // printf("called sys_halt\n");
       numhalt();
+      return;
 
 
     case SYS_EXIT:
@@ -99,94 +105,94 @@ syscall_handler (struct intr_frame *f UNUSED)
       f->eax = *(int*)(f->esp + 4); //return status
       thread_current()->exitval = *(int*)(f->esp + 4);
       numexit(*(int*)(f->esp + 4));
+      return;
+
+      
+    case SYS_EXEC:
+      shutdown_power_off();   // 이거로 인해 실행 안 되는 중
+      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
+      const char *cmd_line = *(int*)(f->esp + 4);
+      f->eax = numexec(cmd_line);
+      return;
+
+
+    case SYS_WAIT:
+      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
+      int waitfd = *(int*)(f->esp + 4);
+      f->eax = numwait(waitfd);
+      return;
 
 
     case SYS_CREATE:
       // printf("called sys_create\n");
-
       if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
-      const char* createname = *(int*)(f->esp + 4);
-      // make it check buffer as well.
-
-      if( ! check_user_mem(createname, 14, 1) ) numexit(-1);
-      
+      const char* createname = *(int*)(f->esp + 4); 
       if(!check_user_mem(f->esp+8, 4, 0)) numexit(-1);
       int32_t initial_size = *(int32_t*)(f->esp + 8);
-      
-      f->eax = filesys_create (createname, initial_size);
-      // f->eax = numcreate(createname, initial_size);
+      f->eax = numcreate(createname, initial_size);
+      return;
+
+
+    case SYS_REMOVE:
+      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
+      const char* removename = *(int*)(f->esp + 4);
+      f->eax = numremove(removename);
       return;
 
 
     case SYS_OPEN:;
       // printf("called sys_open\n");
       if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
-      const char *file = *(int*)(f->esp + 4);
-      // same as buffer in create
-      if( ! check_user_mem(file, 14, 1) ) numexit(-1);
-
-      // if(!check_user_mem(file)) numexit(-1);
-      struct file* fl = filesys_open (file);
-      if(fl == NULL) {
-        f->eax = -1;
-        return;
-      }
-      struct filedata* openfile = calloc(1, sizeof(struct filedata));
-      openfile->targetfd = thread_current()->availablefd;
-      openfile->targetfile = fl;
-      openfile->targetname = file;
-      list_push_back(&(thread_current()->fds), &(openfile->fdselem));
-      f->eax = thread_current()->availablefd++;
+      const char *openname = *(int*)(f->esp + 4);
+      f->eax = numopen(openname);
       return;
+
+
+    case SYS_FILESIZE:
+      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
+      int sizefd = *(int*)(f->esp + 4);
+      f->eax = numfilesize(sizefd);
+      return;
+
+      
+    case SYS_READ:
+      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
+      int readfd = *(int*)(f->esp + 4);
+      if(!check_user_mem(f->esp+8, 4, 0)) numexit(-1);
+      void* readbuffer = *(int*)(f->esp + 8);
+      if(!check_user_mem(f->esp+12, 4, 0)) numexit(-1);
+      unsigned int readsize = *(unsigned int*)(f->esp + 12);
+      f->eax = numread(readfd, readbuffer, readsize);
+		  return;
 
 
     case SYS_WRITE: ;
       // printf("called sys_write\n");
       if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
       int writefd = *(int*)(f->esp + 4);
-
       if(!check_user_mem(f->esp+8, 4, 0)) numexit(-1);
       void* writebuffer = *(int*)(f->esp + 8);
+      if(!check_user_mem(f->esp+12, 4, 0)) numexit(-1);
+      unsigned writesize = *(unsigned*)(f->esp + 12);
       // printf("buffer : %x\n", buffer);
-      unsigned writesize;
       // printf("size : %d\n", writesize);
+      f->eax = numwrite(writefd, writebuffer, writesize);
+      return;
 
-      if (writefd == 1) {
-        // same as buffer in create
-  
-        // if(!check_user_mem(buffer)) numexit(-1);
-  
-        if(!check_user_mem(f->esp+12, 4, 0)) numexit(-1);
-        writesize = *(unsigned*)(f->esp + 12);
-  
-        if( ! check_user_mem(writebuffer, writesize, 0) ) numexit(-1);
-        putbuf(writebuffer, writesize);
-        f->eax = writesize;
-        return;
-      }
-      else if (writefd > 0) {
-        // check if writing unavilable
-        struct filedata* writefile = find_file(writefd);
-        if (writefd < 1 || writefile == NULL) {
-          f->eax = 0;
-          return;
-        }  
 
-        // buffer write할 크기만큼만 검증해야 함 = writesize = min(writesize, eof - 현 위치)
-        int until_eof = file_length(writefile->targetfile) - (int)file_tell(writefile->targetfile);
-        if(!check_user_mem(f->esp+12, 4, 0)) numexit(-1);
-        writesize = *(unsigned*)(f->esp + 12);
-        if (writesize > until_eof)
-          writesize = until_eof;
+    case SYS_SEEK:
+      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
+      int seekfd = *(int*)(f->esp + 4);
+      if(!check_user_mem(f->esp+8, 4, 0)) numexit(-1);
+      int32_t seekpos = *(int*)(f->esp + 8);
+      numseek(seekfd, seekpos);
+      return;
 
-        if( ! check_user_mem(writebuffer, writesize, 0) ) numexit(-1);
-        
-        // can write less or equal to writesize
-        f->eax = file_write(writefile->targetfile, writebuffer, writesize);
-        return;
-      }
-      else
-        numexit(-1);
+
+    case SYS_TELL:
+      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
+      int tellfd = *(int*)(f->esp + 4);
+      f->eax = numtell(tellfd);
       return;
 
 
@@ -194,97 +200,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       // printf("called sys_close\n");
       if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
       int closefd = *(int*)(f->esp + 4);
-      struct filedata* closefile = find_file(closefd);
-      if (closefd < 2 || closefile == NULL) numexit(-1);
-      file_close(closefile->targetfile);
-      list_remove(&(closefile->fdselem));
-      free(closefile);
-      return;
-
-      
-    case SYS_EXEC:
-      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
-      const char *cmd_line = *(int*)(f->esp + 4);
-      if( ! check_user_mem(cmd_line, PGSIZE, 1) ) numexit(-1);
-      f->eax = process_execute(cmd_line);
-      return;
-
-
-    case SYS_WAIT:
-      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
-      int waitfd = *(int*)(f->esp + 4);
-      f->eax = process_wait(waitfd);
-      // f->eax = numwait(waitfd);
-      return;
-
-
-    case SYS_REMOVE:
-      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
-      const char* remove_file = *(int*)(f->esp + 4);
-      if( ! check_user_mem(remove_file, 14, 1) ) numexit(-1);
-      struct list_elem *removeele;
-      struct list* name_search_list = &(thread_current()->fds);
-
-      for (removeele = list_begin(name_search_list); removeele != list_end(name_search_list); removeele = list_next(removeele)) {
-        struct filedata *removedata = list_entry(removeele, struct filedata, fdselem);
-        if (removedata->targetname == remove_file) {
-          f->eax = filesys_remove (remove_file);
-          list_remove(&(removedata->fdselem));
-          free(removedata);
-          break;
-        }
-      }
-      return;
-
-
-    case SYS_FILESIZE:
-      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
-      int filesizefd = *(int*)(f->esp + 4);
-      struct filedata* sizefile = find_file(filesizefd);
-      if (sizefile == NULL) numexit(-1);
-      f->eax = file_length(sizefile->targetfile);
-      return;
-
-      
-    case SYS_READ:
-      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
-      int readfd = *(int*)(f->esp + 4);
-      struct filedata* readfile = find_file(readfd);
-      if (readfile == NULL) numexit(-1);
-
-      if(!check_user_mem(f->esp+8, 4, 0)) numexit(-1);
-      void* read_buffer = *(int*)(f->esp + 8);
-
-      // fd == 0 구현 필요해보임.
-
-      if(!check_user_mem(f->esp+12, 4, 0)) numexit(-1);
-      unsigned int read_size = *(unsigned int*)(f->esp + 12);
-      if(!check_user_mem(read_buffer, read_size, 0)) numexit(-1);
-
-      f->eax = file_read (readfile->targetfile, read_buffer, read_size);
-		  return;
-
-
-    case SYS_SEEK:
-      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
-      int seekfd = *(int*)(f->esp + 4);
-      struct filedata* seekfile = find_file(seekfd);
-
-      if(!check_user_mem(f->esp+8, 4, 0)) numexit(-1);
-      int32_t seekpos = *(int*)(f->esp + 8);
-      if (seekfile == NULL)
-        return
-      file_seek(seekfile->targetfile, seekpos);
-      return;
-
-
-    case SYS_TELL:
-      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
-      int tellfd = *(int*)(f->esp + 4);
-      struct filedata* tellfile = find_file(tellfd);
-      if (tellfile == NULL)
-        f->eax = -1;
-      f->eax = (int)file_tell(tellfile->targetfile); 
+      numclose(closefd);
       return;
 
     
@@ -329,7 +245,6 @@ void numhalt(void) {
 
 void numexit(int num) {
   // all child's sema up & mine down
-  // *t = list_begin 이거 이상함.
   while( list_begin( &(thread_current()->children) ) != list_end( &(thread_current()->children) ) ){
     struct thread *t = list_entry(list_begin(&(thread_current()->children)), struct thread, am_child);
     sema_up(&(t->waitsema));
@@ -349,10 +264,121 @@ void numexit(int num) {
 }
 
 
-// int numwait(int num) {
-//   return process_wait(num);
-// }
+int numexec(const char* cmd_line) {
+  if( ! check_user_mem(cmd_line, PGSIZE, 1) ) numexit(-1);
+  return process_execute(cmd_line);
+}
 
-// bool numcreate(const char* createname, unsigned createsize) {
-//   return filesys_create (createname, createsize);
-// }
+
+int numwait(int num) {
+  return process_wait(num);
+}
+
+
+bool numcreate(const char* createname, unsigned createsize) {
+  if( !check_user_mem(createname, 14, 1) ) numexit(-1);
+  return filesys_create (createname, createsize);
+}
+
+
+bool numremove(const char* removename) {
+  bool returnval = false;
+  if( ! check_user_mem(removename, 14, 1) ) numexit(-1);
+  struct list_elem *removeele;
+  struct list* name_search_list = &(thread_current()->fds);
+
+  for (removeele = list_begin(name_search_list); removeele != list_end(name_search_list); removeele = list_next(removeele)) {
+    struct filedata *removefile = list_entry(removeele, struct filedata, fdselem);
+    if (strcmp(removefile->targetname, removename) == 0) {
+      returnval = filesys_remove (removename);
+      list_remove(&(removefile->fdselem));    // only remove from my list, could be open in other thread = don't close = don't free.
+      // free(removefile->targetname);
+      // free(removefile);
+      break;
+    }
+  }
+  return returnval;
+}
+
+
+int numopen(const char* openname) {
+  if( ! check_user_mem(openname, 14, 1) ) numexit(-1);
+  struct file* actualfile = filesys_open (openname);
+  if(actualfile == NULL) return -1;
+
+  struct filedata* openfile = calloc(1, sizeof(struct filedata));
+  openfile->targetfd = thread_current()->availablefd;
+  openfile->targetfile = actualfile;
+  openfile->targetname = calloc(1, strlen(openname) + 1);
+  strlcpy(openfile->targetname, openname, strlen(openname) + 1);\
+  list_push_back(&(thread_current()->fds), &(openfile->fdselem));
+  return thread_current()->availablefd++;
+}
+
+
+int numfilesize(int sizefd) {
+  struct filedata* sizefile = find_file(sizefd);
+  if (sizefile == NULL) numexit(-1);
+  return file_length(sizefile->targetfile);
+}
+
+
+int numread(int readfd, void* readbuffer, unsigned readsize) {
+  // fd == 0 구현 필요해보임.
+  struct filedata* readfile = find_file(readfd);
+  if (readfile == NULL) numexit(-1);
+  if(!check_user_mem(readbuffer, readsize, 0)) numexit(-1);
+  return file_read (readfile->targetfile, readbuffer, readsize);
+
+}
+
+
+int numwrite(int writefd, void* writebuffer, unsigned writesize) {
+  if (writefd == 1) {
+    if( !check_user_mem(writebuffer, writesize, 0) ) numexit(-1);
+    putbuf(writebuffer, writesize);
+    return writesize;
+  }
+  else if (writefd > 0) {
+    // check if writing unavilable
+    struct filedata* writefile = find_file(writefd);
+    if (writefd < 1 || writefile == NULL) return 0;
+
+    // buffer write할 크기만큼만 검증해야 함 = writesize = min(writesize, eof - 현 위치)
+    int until_eof = file_length(writefile->targetfile) - (int)file_tell(writefile->targetfile);
+    if (writesize > until_eof) writesize = until_eof;
+    if( ! check_user_mem(writebuffer, writesize, 0) ) numexit(-1);
+    
+    // can write less or equal to writesize
+    return file_write(writefile->targetfile, writebuffer, writesize);
+  }
+  else
+    numexit(-1);
+  return;
+}
+
+
+void numseek(int seekfd, unsigned seekpos) {
+  struct filedata* seekfile = find_file(seekfd);
+  if (seekfile == NULL) return;
+  file_seek(seekfile->targetfile, seekpos);
+  return;
+}
+
+
+unsigned numtell(int tellfd) {
+  struct filedata* tellfile = find_file(tellfd);
+  if (tellfile == NULL) numexit(-1);
+  return (int)file_tell(tellfile->targetfile);
+}
+
+
+void numclose(int closefd) {
+  struct filedata* closefile = find_file(closefd);
+  if (closefd < 2 || closefile == NULL) numexit(-1);
+  file_close(closefile->targetfile);
+  list_remove(&(closefile->fdselem));
+  free(closefile->targetname);
+  free(closefile);
+  return;
+}
