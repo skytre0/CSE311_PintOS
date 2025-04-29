@@ -161,10 +161,11 @@ process_wait (tid_t child_tid UNUSED)
   struct thread* target = find_child(thread_current(), child_tid);
   if (target == NULL)   // not child thread
     return -1;
-  int retval = target->exitval;
+  
   sema_up(&(target->withparent));
   // my sema down
   sema_down(&(thread_current()->withchild));
+  int retval = target->exitval;
   return retval;
   // while(true){
     
