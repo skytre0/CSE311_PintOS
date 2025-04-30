@@ -44,27 +44,26 @@ project2-1_design_document
     struct thread* parent : to identify parent thread
     struct list children : to save what thread is the child
     struct list_elem am_child : used by parent to save this thread is the child
-    struct semaphore waitsema : used to wait & exit
+    struct semaphore withchild : used to wait when parent need child to synchronize
+    struct semaphore withparent : used to wait when child need parent to synchronize
     int initialized : used in thread_create() to initialize semaphore, children list
     int exitval : to save its exit status
-    struct file* fds[128] : to save its file descriptors
-2. In syscall.c
-    #define EXIT : to do exit(-1) when error occurs
+    struct list fds : used as list of files + their fd
+    int availablefd : used to give the files their fd
 
 >> B2: Describe how file descriptors are associated with open files.
 >> Are file descriptors unique within the entire OS or just within a
 >> single process?
-1. Since this is single-threaded process, and each thread has unique struct file* fds[128], the file descriptors are unique just within a single process.
+1. Since this is single-threaded process, and each thread has unique struct list fds, the file descriptors are unique just within a single process.
 
 ---- ALGORITHMS ----
 
 >> B5: Briefly describe your implementation of the "wait" system call
 >> and how it interacts with process termination.
 1. process_wait() ensure the child_tid is the real child thread.
-2. Check if it is checking the same child again with status.
-3. use semaphore to increase the child's semaphore, and lower mine until the child exits.
-
-use semaphore linked with exit to ensure that the child doesn't exit before parent's process_wait(), and 
+2. use semaphore to increase the child's semaphore, and lower mine until the child exits.
+3. use semaphore linked with exit to ensure that the child doesn't exit before parent's process_wait(), and 
+ensure that the parent achieved the child's exit status.
 
 
 
