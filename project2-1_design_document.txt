@@ -50,12 +50,14 @@ project2-1_design_document
     int exitval : to save its exit status
     struct list fds : used as list of files + their fd
     int availablefd : used to give the files their fd
+	
 2. In syscall.c : 
 static struct semaphore filesema : to ensure critical section(file) when doing open, create, close
 
 >> B2: Describe how file descriptors are associated with open files.
 >> Are file descriptors unique within the entire OS or just within a
 >> single process?
+
 1. Since this is single-threaded process, and each thread has unique struct list fds, 
 the file descriptors are unique just within a single process.
 
@@ -63,10 +65,11 @@ the file descriptors are unique just within a single process.
 
 >> B5: Briefly describe your implementation of the "wait" system call
 >> and how it interacts with process termination.
-1. process_wait() ensure the child_tid is the real child thread.
-2. use semaphore to increase the child's semaphore, and lower mine until the child exits.
+1. process_wait() can know the child_tid is the real child thread, since each thread has a list of children tid.
+2. use semaphore to increase the child's semaphore, and lower mine. then parent wait until the child exits.
 3. use semaphore linked with exit to ensure that the child doesn't exit before parent's process_wait(), and 
 ensure that the parent achieved the child's exit status.
+4. and then, child process terminate and parent's wait system call return.
 
 
 
