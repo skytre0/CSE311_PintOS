@@ -19,6 +19,7 @@ project2-1_design_document
 1. By using strtok_r(), we was able to get argc and argv[i]'s address.
 2. We arranged elements to be in the right order by pushing arguments closest to argc.
 3. We lowered esp by exact size to the data to be pushed, thus never going beyond PHYS_BASE.
+ and also we check whether esp is lower than (PHYS_BASE - PGSIZE), if esp is lower then it means stack overflow.
 
 ---- RATIONALE ----
 
