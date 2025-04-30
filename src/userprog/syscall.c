@@ -342,15 +342,24 @@ int numfilesize(int sizefd) {
 
 
 int numread(int readfd, void* readbuffer, unsigned readsize) {
-  // fd == 0 구현 필요해보임.
-  struct filedata* readfile = find_file(readfd);
-  if (readfile == NULL) numexit(-1);
-  if(!check_user_mem(readbuffer, readsize, 0)) numexit(-1);
-  sema_down(&filesema);
-  int retval = file_read (readfile->targetfile, readbuffer, readsize);
-  sema_up(&filesema);
-  return retval;
-
+  if (readfd == 0) {
+    int i;
+    sema_down(&filesema);
+    for (i = 0; i < readsize; i++)
+      *((char *)readbuffer++) = input_getc();
+    sema_up(&filesema);
+    return readsize;
+  }
+  else if (readfd > 1) {
+    struct filedata* readfile = find_file(readfd);
+    if (readfile == NULL) return -1;
+    if(!check_user_mem(readbuffer, readsize, 0)) numexit(-1);
+    sema_down(&filesema);
+    int retval = file_read (readfile->targetfile, readbuffer, readsize);
+    sema_up(&filesema);
+    return retval;
+  }
+  else return -1;
 }
 
 
