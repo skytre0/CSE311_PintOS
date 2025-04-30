@@ -117,6 +117,7 @@ struct thread
     int exitval;     // exit return value = eax
     struct list fds;        // child 관리용.
     int availablefd;
+    struct file* execfile;
     //추가끝
 
 #ifdef USERPROG

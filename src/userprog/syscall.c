@@ -261,6 +261,8 @@ void numexit(int num) {
 
   // parent의 children에서 본인 제거.
   list_remove(&(thread_current()->am_child));
+  if (thread_current()->execfile != NULL) file_allow_write(thread_current()->execfile);
+  file_close(thread_current()->execfile);
 
   // parent's sema up
   printf ("%s: exit(%d)\n", thread_name(), num);
@@ -374,7 +376,7 @@ int numwrite(int writefd, void* writebuffer, unsigned writesize) {
   else if (writefd > 0) {
     // check if writing unavilable
     struct filedata* writefile = find_file(writefd);
-    if (writefd < 1 || writefile == NULL) return 0;
+    if (writefd < 1 || writefile == NULL || writefile->targetfile == thread_current()->execfile) return 0;
     if( ! check_user_mem(writebuffer, writesize, 0) ) numexit(-1);
     
     // can write less or equal to writesize
