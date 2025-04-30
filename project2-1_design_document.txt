@@ -30,7 +30,9 @@ project2-1_design_document
 >> and arguments.  In Unix-like systems, the shell does this
 >> separation.  Identify at least two advantages of the Unix approach.
 1. Less load to the program since it doesn't have to parse the input
-2. program is more secure since if the program can do "ab, cde, abd, de", and if there was no shell, then the input would be abcde, then there is danger in program possible of doing (ab, cde), or (abc, de).
+2. program is more secure since if the program can do "ab, cde, abd, de", 
+and if there was no shell, then the input would be abcde, 
+then there is danger in program possible of doing (ab, cde), or (abc, de).
 
                  SYSTEM CALLS
                  ============
@@ -40,7 +42,10 @@ project2-1_design_document
 >> B1: Copy here the declaration of each new or changed `struct' or
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
-1. In struct thread : 
+1. In thread.h : 
+struct filedata : has arguments of int for fd, file* to save the file accoring to the fd, 
+list_elem to save it in list fds, and char* for remove operation.
+2. In struct thread : 
     struct thread* parent : to identify parent thread
     struct list children : to save what thread is the child
     struct list_elem am_child : used by parent to save this thread is the child
@@ -50,8 +55,7 @@ project2-1_design_document
     int exitval : to save its exit status
     struct list fds : used as list of files + their fd
     int availablefd : used to give the files their fd
-	
-2. In syscall.c : 
+3. In syscall.c : 
 static struct semaphore filesema : to ensure critical section(file) when doing open, create, close
 
 >> B2: Describe how file descriptors are associated with open files.
