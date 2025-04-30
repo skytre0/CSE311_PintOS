@@ -8,11 +8,13 @@
 #include "threads/vaddr.h"
 
 static void syscall_handler (struct intr_frame *);
+static struct semaphore filesema;
 
 void
 syscall_init (void) 
 {
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
+  sema_init(&filesema, 1);    // will be used as lock
 }
 
 // enum 
@@ -281,13 +283,19 @@ int numwait(int num) {
 
 bool numcreate(const char* createname, unsigned createsize) {
   if( !check_user_mem(createname, 14, 1) ) numexit(-1);
-  return filesys_create (createname, createsize);
+  sema_down(&filesema);
+  bool retval = filesys_create (createname, createsize);
+  sema_up(&filesema);
+  return retval;
 }
 
 
 bool numremove(const char* removename) {
   if( ! check_user_mem(removename, 14, 1) ) numexit(-1);
-  return filesys_remove (removename);
+  sema_down(&filesema);
+  bool retval = filesys_remove (removename);
+  sema_up(&filesema);
+  return retval;
   // struct list_elem *removeele;
   // struct list* name_search_list = &(thread_current()->fds);
 
@@ -308,7 +316,9 @@ bool numremove(const char* removename) {
 
 int numopen(const char* openname) {
   if( ! check_user_mem(openname, 14, 1) ) numexit(-1);
+  sema_down(&filesema);
   struct file* actualfile = filesys_open (openname);
+  sema_up(&filesema);
   if(actualfile == NULL) return -1;
 
   struct filedata* openfile = calloc(1, sizeof(struct filedata));
@@ -324,7 +334,10 @@ int numopen(const char* openname) {
 int numfilesize(int sizefd) {
   struct filedata* sizefile = find_file(sizefd);
   if (sizefile == NULL) numexit(-1);
-  return file_length(sizefile->targetfile);
+  sema_down(&filesema);
+  int retval = file_length(sizefile->targetfile);
+  sema_up(&filesema);
+  return retval;
 }
 
 
@@ -333,7 +346,10 @@ int numread(int readfd, void* readbuffer, unsigned readsize) {
   struct filedata* readfile = find_file(readfd);
   if (readfile == NULL) numexit(-1);
   if(!check_user_mem(readbuffer, readsize, 0)) numexit(-1);
-  return file_read (readfile->targetfile, readbuffer, readsize);
+  sema_down(&filesema);
+  int retval = file_read (readfile->targetfile, readbuffer, readsize);
+  sema_up(&filesema);
+  return retval;
 
 }
 
@@ -341,21 +357,22 @@ int numread(int readfd, void* readbuffer, unsigned readsize) {
 int numwrite(int writefd, void* writebuffer, unsigned writesize) {
   if (writefd == 1) {
     if( !check_user_mem(writebuffer, writesize, 0) ) numexit(-1);
+    sema_down(&filesema);
     putbuf(writebuffer, writesize);
+    sema_up(&filesema);
     return writesize;
   }
   else if (writefd > 0) {
     // check if writing unavilable
     struct filedata* writefile = find_file(writefd);
     if (writefd < 1 || writefile == NULL) return 0;
-
-    // buffer write할 크기만큼만 검증해야 함 = writesize = min(writesize, eof - 현 위치)
-    int until_eof = file_length(writefile->targetfile) - (int)file_tell(writefile->targetfile);
-    if (writesize > until_eof) writesize = until_eof;
     if( ! check_user_mem(writebuffer, writesize, 0) ) numexit(-1);
     
     // can write less or equal to writesize
-    return file_write(writefile->targetfile, writebuffer, writesize);
+    sema_down(&filesema);
+    int retval = file_write(writefile->targetfile, writebuffer, writesize);
+    sema_up(&filesema);
+    return retval;
   }
   else
     numexit(-1);
@@ -366,7 +383,9 @@ int numwrite(int writefd, void* writebuffer, unsigned writesize) {
 void numseek(int seekfd, unsigned seekpos) {
   struct filedata* seekfile = find_file(seekfd);
   if (seekfile == NULL) return;
+  sema_down(&filesema);
   file_seek(seekfile->targetfile, seekpos);
+  sema_up(&filesema);
   return;
 }
 
@@ -374,14 +393,19 @@ void numseek(int seekfd, unsigned seekpos) {
 unsigned numtell(int tellfd) {
   struct filedata* tellfile = find_file(tellfd);
   if (tellfile == NULL) numexit(-1);
-  return (int)file_tell(tellfile->targetfile);
+  sema_down(&filesema);
+  int retval = (int)file_tell(tellfile->targetfile);
+  sema_up(&filesema);
+  return retval;
 }
 
 
 void numclose(int closefd) {
   struct filedata* closefile = find_file(closefd);
   if (closefd < 2 || closefile == NULL) numexit(-1);
+  sema_down(&filesema);
   file_close(closefile->targetfile);
+  sema_up(&filesema);
   list_remove(&(closefile->fdselem));
   free(closefile->targetname);
   free(closefile);
