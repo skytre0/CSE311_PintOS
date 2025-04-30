@@ -43,8 +43,8 @@ then there is danger in program possible of doing (ab, cde), or (abc, de).
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 1. In thread.h : 
-struct filedata : has arguments of int for fd, file* to save the file accoring to the fd, 
-list_elem to save it in list fds, and char* for remove operation.
+struct filedata : int for fd, file* to save the file accoring to fd, 
+list_elem to save in list fds, and char* for remove operation.
 2. In struct thread : 
     struct thread* parent : to identify parent thread
     struct list children : to save what thread is the child
