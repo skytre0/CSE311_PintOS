@@ -1,0 +1,86 @@
+pintos project 3 : 
+
+4.1
+machine의 main memory size limit 제거 필요 = virtual memory
+pintos 2의 bug -> pintos 3까지 이어짐.
+이제 make하면 "-DVM"(virtual memory 관련으로 보임) -> turn on함
+definition 명확하게 해야 함 -> terminology 제공함
+PAGE : 
+page = virtual page
+page size = 4096 byte, page-aligned
+각 process independent user pages 존재 = PHYS_BASE 아래 = kernel page는 global하게 공유
+
+FRAME : 
+frame = physical frame (page frame)
+frame도 page와 size, align 동일.
+direct access 불가능 = physical memory를 kernel virtual memory와 mapping하는 것으로 해결
+-> first page = first frame....으로 해결함 -> 관련 translate function 제공함.
+
+PAGE TABLE : 
+virtual address(page) -> physical address(frame) 으로 translate에 사용함.
+-> offset은 그대로, page number만 frame number로 변환해서 접근.
+
+SWAP SLOTS : 
+continuous, page-size의 swap partition 내부 region -> page-align되어야 함.
+4.1.3
+bitmap 쓰고 싶으면 lib/kernel/bitmap에 있음 -> track usage of same type of resources -> size 내가 조정해야 함
+4.1.4
+supplemental page table : page fault 다루기 위해 사용 -> kernel이 여기서 fault한 virtual page 확인, process terminate할 때 free할 resource 여기서 결정
+구현 방법 2가지 (segment / page). option으로 page table을 index로 추적 가능
+page fault handler 필요 -> project 2에서 무조건 user / kernel 문제 -> 이제는 page가 file / swap에서 온 가능성 존재 -> 이런 거 전부 다뤄야 함.
+4.1.5
+1 frame = 1 entry = pointer to page(혹은 선택으로 다른 data도 가능), 새로운 data 필요하지만 다 차면 eviction policy에 의거해서 교체할 frame 선택
+user page의 frame은 user pool에서 선택 (palloc_get_page(PAL_USER)로 kernel 접근 방지) -> palloc.c 바꿔도 이 규칙 유지해야 함.
+unused frame 얻는 것이 frame table에서 중요함 -> frame이 free면 바로 고르지만, full이면 page 교체 필요 -> 심지어 swap을 해야 교체 가능하지만, swap도 full이면 kernel panic 유도
+access & dirty bit handle 필요함
+4.1.6
+swap handle은 unused slot을 evicting에 사용, 필요 시 free swap slot해야 함 -> BLOCK_SWAP + block_get_role() 이용해야 함, lazy하게 다뤄야 함
+4.1.7
+mmap 구현해야 함
+
+4.2 구현 순서 추천 : 
+Frame table(이거 해도 project 2 모두 통과해야 함) -> 아직 swapping X -> supplemental page table & page fault handler(process.c 일부 변경 - load로 보임) -> 아직 valid access만 고려 -> robust 일부 제외 project 2 모두 통과 -> 이제 stack growth, mapped file, page reclamation on process exit 구현 가능 -> eviction 구현 (access,dirty bit, alias 고려) -> synchronize 고려 -> random eviction에서 strategy 구현
+
+project 3 design doc : 
+https://web.stanford.edu/~ouster/cgi-bin/cs140-spring20/pintos/vm.tmpl
+
+exe에서 load된 segments 위한 paging 구현해야 함 -> page fault일 때만 하게 lazy 구현.
+eviction swap하는 거 read only는 swap에 적으면 안 됨
+LRU 관련 global page implement해야 함 -> sec chance / clock algorithm 수준 작동 목표
+parallelism 필요 -> I/O page fault = I/O 필요 없으면 계속 작동 필요
+
+4.3.3
+stack grow 필요해지면 제공 가능함 -> ebp 사용 좋을지도?
+작성 중단.
+
+
+필요 : 
+devices/block.c -> 확인해야 할 것 (sector based read & write access) -> block device로 swap partition할 때 사용
+page-aligned : page size에 따라 even하게 divide 가능한 address에 있음 -> 32-bit에서
+page number = 20-bit (31~12), page offset = 12-bit (11~0)
+frame도 page-size & page-aligned = 20, 12로 동일하게 나눠짐.
+구현 필요 : 
+Supplemental page table : enable page fault handling = supplement page table -> pagedir.c에서 track, exception.c에서 page fault 예정
+Frame table : allow efficient eviction policy
+Swap table : track usage of swap slots
+table of file mappings : file이 virtual memory space로 mapping되는 것을 keep track (which file to which page)
+You do not necessarily need to implement four completely distinct data structures: 
+it may be convenient to wholly or partially merge related resources into a unified data structure.
+-> 이 주석이 있긴 함.
+-> design simple하게 하기 위해 nonpageable mem에 저장 가능 = poiner always valid -> 구현 방식으로 array, list, bitmap, hash table 있음
+-> array 기본, 대신 sparse하면 time waste, list는 find 위한 traverse가 waste -> 크기 조절 등으로 list 추천.
+
+page_fault() 구현 개요 : 
+1. fault한 page locate -> reference가 valid하면 supplemental로 data locate (장소는 file system, swap slot, 그냥 0) -> sharing 구현 시 data가 page table이 아니라 frame에 존재 가능 -> invalid한 locate의 access 가능성 있음(종류 약 3개) -> terminate & free all resource
+2. page 저장할 frame 얻기, sharing 구현 시 frame을 locate 가능해야 함
+3. frame에 data 넣기 -> 가능한 장소들에서 read해서
+4. fault의 경우 pte를 physical page로 point해라 -> userprog/pagedir.c 확인
+
+frame table eviction : 
+choose frame to evict -> accessed & dirty bit 유용할 것 -> 이 frame reference하는 page table의 ref remove(sharing 없으면 1 page ref) -> 필요하다면 page를 file sys에 write or swap해야 다른 page 저장 가능
+
+accessed & dirty bit : read/write : access = 1, write : dirty = 1 -> CPU는 이 bit 0으로 안 하지만, OS는 함.
+aliases : 다수 page가 same frame 접근 -> 현재 접근하는 page만 access, dirty bit 변경 = 다른 page는 변경 X -> 주의점은 모든  user virtual이 kernel virtual과 alias 됨 = 이거 handle 필요 (ex로 both address bit check, only access user data through user virtual address 등)
+
+load_segment() 바꿔야 함
+
