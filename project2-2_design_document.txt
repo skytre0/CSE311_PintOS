@@ -4,9 +4,6 @@
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
->> B2: Describe how file descriptors are associated with open files.
->> Are file descriptors unique within the entire OS or just within a
->> single process?
 
 ---- ALGORITHMS ----
 
@@ -61,3 +58,21 @@
 
 >> B11: The default tid_t to pid_t mapping is the identity mapping.
 >> If you changed it, what advantages are there to your approach?
+
+
+
+==== Peer Evaluation ====
+
++----------------------------+---------------------------------+
+
+|            Name            |          Contribution        |
+
++----------------------------+---------------------------------+
+
+| Ho-Jun Lee                 | 50%, Implemented read, exec, wait, remove, filesize
+
++----------------------------+---------------------------------+
+
+| Seong-Ji Yang              |  50%, Implemented write, exec, wait, seek, tell
+
++----------------------------+---------------------------------+
