@@ -3,12 +3,26 @@
 >> B1: Copy here the declaration of each new or changed `struct' or
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
+1. in struct thread, 
+    struct file* execfile : to remember what file is currently opened.
+
+2. in syscall.c
+static struct semaphore filesema : to protect critical section (struct inode *inode)
 
 
 ---- ALGORITHMS ----
 
 >> B3: Describe your code for reading and writing user data from the
 >> kernel.
+1. read : first, check if esp that we need are in the user memory. then, if fd == 0, 
+wait in the for loop until input has reached readsize. Otherwise, get the file 
+accoring to the fd. If not, return -1. Now, check if all of the data in the buffer is in the user memory.
+Now, use file_read(), which will return the number actually read, and return it to eax.
+
+2. write : similar to read, first, check if esp that we need are in the user memory. then, if fd == 1, 
+use putbuf. Otherwise, get the file accoring to the fd. If it is null or file executing, return 0. else, return -1. 
+check if all of the data in the buffer is in the user memory.
+Now, use file_write(), which will return the number actually writen, and return it to eax.
 
 >> B4: Suppose a system call causes a full page (4,096 bytes) of data
 >> to be copied from user space into the kernel.  What is the least

@@ -386,7 +386,7 @@ int numwrite(int writefd, void* writebuffer, unsigned writesize) {
     return retval;
   }
   else
-    numexit(-1);
+    return -1;
   return;
 }
 
