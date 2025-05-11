@@ -34,6 +34,14 @@ Now, use file_write(), which will return the number actually writen, and return 
 
 >> B5: Briefly describe your implementation of the "wait" system call
 >> and how it interacts with process termination.
+each process has two semaphore. one is for its parent and the other is for its child.
+when we call wait system call, parent try to down its child semaphore. (child sema is for communication with child)
+case 1)
+	if its child has not finished, then the parent wait. And after finishing its child, child semaup parent's child sema.
+then it starts.
+case 2)
+	if its child has already finished, then parent's child sema is greater than 1. thus parent just lower the sema and continue.
+
 
 >> B6: Any access to user program memory at a user-specified address
 >> can fail due to a bad pointer value.  Such accesses must cause the
@@ -56,6 +64,9 @@ Now, use file_write(), which will return the number actually writen, and return 
 >> loading.  How does your code ensure this?  How is the load
 >> success/failure status passed back to the thread that calls "exec"?
 
+new process is made by process_execute. and new process started to run start_process.
+thus on our implementation, process_execute waits start_process.
+
 >> B8: Consider parent process P with child process C.  How do you
 >> ensure proper synchronization and avoid race conditions when P
 >> calls wait(C) before C exits?  After C exits?  How do you ensure
@@ -63,16 +74,34 @@ Now, use file_write(), which will return the number actually writen, and return 
 >> terminates without waiting, before C exits?  After C exits?  Are
 >> there any special cases?
 
+exit() system call tries to lower its parentsema ( for communication with parent process )
+then we have two case.
+1) parent has already waited its child.
+then, parent already increase child's parent semaphore by 1. thus child can be terminated.
+2) parent has not waited its child.
+then, child wait until its parent call wait system call.
+
+
 ---- RATIONALE ----
 
 >> B9: Why did you choose to implement access to user memory from the
 >> kernel in the way that you did?
 
+we checked an address is lower than PHYS_BASE and not Null. then checked given address is mapped to page.
+given address is in user memory and well mapped.
+then now we can try to access that memory
+
 >> B10: What advantages or disadvantages can you see to your design
 >> for file descriptors?
 
+we used list instead of fixed size array. So if our computer do not have physical memory limitation,
+our OS can open files infinitly.
+But, when we access to a file opened later, we have more overhead than a file having lower fd number.
+
 >> B11: The default tid_t to pid_t mapping is the identity mapping.
 >> If you changed it, what advantages are there to your approach?
+
+we did not change.
 
 
 
