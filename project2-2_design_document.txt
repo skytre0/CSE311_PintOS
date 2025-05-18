@@ -32,6 +32,18 @@ Now, use file_write(), which will return the number actually writen, and return 
 >> for improvement in these numbers, and how much?
 
 
+The data to be copied starts from the middle of a page, we need two page inspection.
+But the data starts from the beginning of the page. Then, we only need one page inspection.
+
+In the same reason, when we copies 2 bytes of data. If that data starts from the end of page, we need two inspection.
+else we only need one.
+
+No improvement can be done. 
+
+
+
+
+
 >> B5: Briefly describe your implementation of the "wait" system call
 >> and how it interacts with process termination.
 each process has two semaphore. one is for its parent and the other is for its child.
@@ -56,6 +68,16 @@ case 2)
 >> allocated resources (locks, buffers, etc.) are freed?  In a few
 >> paragraphs, describe the strategy or strategies you adopted for
 >> managing these issues.  Give an example.
+
+
+First, if bad pointer caused page fault, we check if it occured in the user level, then it calls system call exit.
+
+Second, if it successfully arrived inside the system call function, we check whether the address is null, 
+address is above PHYS_BASE, and pagedir_get_page's return is false. if any of these is satisfied, 
+we call system call exit.
+
+Now, in the exit function, all allocated resources will be freed.
+
 
 ---- SYNCHRONIZATION ----
 
