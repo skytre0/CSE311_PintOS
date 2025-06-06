@@ -50,6 +50,7 @@ static bool format_filesys;
 static const char *filesys_bdev_name;
 static const char *scratch_bdev_name;
 #ifdef VM
+#include "vm/frame.h"
 static const char *swap_bdev_name;
 #endif
 #endif /* FILESYS */
@@ -97,6 +98,10 @@ main (void)
   /* Initialize memory system. */
   palloc_init (user_page_limit);
   malloc_init ();
+  
+  #ifdef VM
+  list_init ( &frame_table );
+  #endif
   paging_init ();
 
   /* Segmentation. */

@@ -11,6 +11,7 @@
         "inode.h": "c",
         "vaddr.h": "c",
         "malloc.h": "c",
-        "debug.h": "c"
+        "debug.h": "c",
+        "stdint.h": "c"
     }
 }
