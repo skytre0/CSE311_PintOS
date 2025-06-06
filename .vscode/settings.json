@@ -12,6 +12,7 @@
         "vaddr.h": "c",
         "malloc.h": "c",
         "debug.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "filesys.h": "c"
     }
 }
