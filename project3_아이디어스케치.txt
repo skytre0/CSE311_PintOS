@@ -84,3 +84,9 @@ aliases : 다수 page가 same frame 접근 -> 현재 접근하는 page만 access
 
 load_segment() 바꿔야 함
 
+
+
+
+
+frame table 구현 : 
+frame.c, frame.h에 구현, load_segment에서 palloc_get_page를 부르기 때문에, 이거 cover하는 함수 만들어서 get_page한 거를 list에 새로 추가하고, 어떤 
