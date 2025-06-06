@@ -4,6 +4,7 @@
 #include "userprog/gdt.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "threads/vaddr.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -179,6 +180,22 @@ page_fault (struct intr_frame *f)
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
      which fault_addr refers. */
+
+// 일단 널이랑 커널은 쳐내
+if( fault_addr == NULL || is_kernel_vaddr(fault_addr) ) {
+   numexit(-1);
+}
+
+// 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
+
+// 유효하지 않은 경우 : 뒤졌는데 안나오거나, 권한이 없거나 -> 프로세스를 강제 종료(Segmentation Fault).
+// 유효한 경우: 단순히 디스크 등에서 메모리로 아직 안 올라온 페이지
+
+// 빈 프레임 확보: 물리 메모리에서 비어있는 공간(프레임)을 찾습니다. 만약 없다면, 기존에 사용 중인 프레임 중 하나를 비웁니다 (페이지 교체 알고리즘 사용)
+// 데이터 로딩: 필요한 페이지 데이터를 디스크(파일 시스템 또는 스왑 영역)에서 2번에서 확보한 프레임으로 읽어옵니다.
+// 페이지 테이블 갱신: 해당 가상 주소가 방금 데이터를 로드한 물리 프레임을 가리키도록 페이지 테이블을 수정합니다.
+// 명령 재시작: 폴트를 발생시켰던 명령어를 다시 실행합니다. 이제는 메모리에 데이터가 있으므로 정상적으로 수행됩니다.
+
   if( user ) numexit(-1);
   printf ("Page fault at %p: %s error %s page in %s context.\n",
           fault_addr,

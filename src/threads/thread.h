@@ -127,6 +127,9 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+
+
+    // SPT 를 추가해야함.
   };
 
 /* If false (default), use round-robin scheduler.
