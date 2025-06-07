@@ -11,4 +11,4 @@ struct frame {
 
 struct list frame_table;
 
-void* frame_append(void* page, int tid);
+void* frame_require(int tid);
