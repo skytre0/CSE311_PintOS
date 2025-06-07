@@ -100,9 +100,6 @@ unsigned hash_bytes (const void *, size_t);
 unsigned hash_string (const char *);
 unsigned hash_int (int);
 
-unsigned hashing_func(struct hash_elem *he, void * aux);
-bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void * aux);
 
-struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr);
 
 #endif /* lib/kernel/hash.h */

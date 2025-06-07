@@ -320,12 +320,16 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
 bool
 load (const char *file_name, void (**eip) (void), void **esp) 
 {
+  
   struct thread *t = thread_current ();
+   // project 3 -> 제작 중
+  hash_init(&t->spt, hashing_func , hash_less_page , NULL);
   struct Elf32_Ehdr ehdr;
   struct file *file = NULL;
   off_t file_ofs;
   bool success = false;
   int i;
+  
 
   /* Allocate and activate page directory. */
   t->pagedir = pagedir_create ();
@@ -501,7 +505,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
   ASSERT (pg_ofs (upage) == 0);
   ASSERT (ofs % PGSIZE == 0);
   
-  file_seek (file, ofs);
+  // file_seek (file, ofs);
   while (read_bytes > 0 || zero_bytes > 0) 
     {
       /* Calculate how to fill this page.
@@ -532,11 +536,13 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
       struct supplemental_page* new_sp = create_new_sp(file, ofs, upage, page_read_bytes, page_zero_bytes, writable);
       hash_insert(&thread_current()->spt, &new_sp->hash_elem);
+      // printf("[LOAD_SEGMENT] Inserted page for upage: %p\n", new_sp->upage); // 디버깅용
 
       /* Advance. */
       read_bytes -= page_read_bytes;
       zero_bytes -= page_zero_bytes;
       upage += PGSIZE;
+      ofs += page_read_bytes;
     }
   return true;
 }

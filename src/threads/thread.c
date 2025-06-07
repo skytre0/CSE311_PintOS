@@ -235,8 +235,7 @@ thread_create (const char *name, int priority,
   // printf("pushed child : %d\n", find_child(thread_current(), t->tid)->tid);
   //
 
-  // project 3 -> 제작 중
-  hash_init(&t->spt, hashing_func , hash_less_page , NULL);
+ 
 
   //
 

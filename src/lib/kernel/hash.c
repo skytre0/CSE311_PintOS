@@ -9,7 +9,7 @@
 #include "../vm/page.h"
 #include "../debug.h"
 #include "threads/malloc.h"
-#include "vm/page.h"
+// #include "vm/page.h"
 
 #include "threads/vaddr.h"
 
@@ -430,32 +430,4 @@ remove_elem (struct hash *h, struct hash_elem *e)
 {
   h->elem_cnt--;
   list_remove (&e->list_elem);
-}
-
-unsigned hashing_func (struct hash_elem *he, void *aux) {
-  struct supplemental_page *sp = hash_entry (he, struct supplemental_page, hash_elem);
-
-  return hash_bytes (&sp->upage, sizeof (sp->upage));
-}
-
-bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void * aux){
-  struct supplemental_page *sa = hash_entry(a, struct supplemental_page, hash_elem);
-  struct supplemental_page *sb = hash_entry(b, struct supplemental_page, hash_elem);
-
-  return sa->upage < sb->upage;
-}
-
-
-// spt 찾아주는 함수
-struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr) {
-    struct supplemental_page tmp_sp;
-    struct hash_elem *e;
-
-    tmp_sp.upage = pg_round_down(vaddr);
-
-    e = hash_find(spt, &tmp_sp.hash_elem);
-
-    if (e != NULL) return hash_entry(e, struct supplemental_page, hash_elem);
-    
-    return NULL;
 }

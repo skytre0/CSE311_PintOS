@@ -13,7 +13,6 @@ struct supplemental_page{
     uint32_t zero_bytes;
     bool writable;
 
-    void* addr; // 주소
     bool dirty; //더티 빗
     uint8_t access_time; // LRU 할라면, 접근 시간.
     struct hash_elem hash_elem;
@@ -27,5 +26,7 @@ struct supplemental_page* create_new_sp (struct file* file,
                                             uint32_t zero_bytes,
                                             bool writable);
 
-
+unsigned hashing_func(struct hash_elem *he, void * aux);
+bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void * aux);
+struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr);
 #endif PAGE_H

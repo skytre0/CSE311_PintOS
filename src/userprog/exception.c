@@ -192,6 +192,8 @@ page_fault (struct intr_frame *f)
    if( fault_addr == NULL || is_kernel_vaddr(fault_addr) ) {
       numexit(-1);
    }
+   int32_t* page_vaddr = pg_round_down(fault_addr); // 페이지 단위로 정렬
+  //  printf("[PAGE_FAULT] Fault occurred for vaddr: %p\n", page_vaddr); // 디버깅용
 
    // 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
    struct supplemental_page *sp = spt_find_page(&thread_current()->spt, fault_addr);
@@ -200,43 +202,48 @@ page_fault (struct intr_frame *f)
       // 진짜 fault 임 런치면 됌
       // 유효하지 않은 경우 : 뒤졌는데 안나오거나, 권한이 없거나 -> 프로세스를 강제 종료(Segmentation Fault)
    }
-printf("===============1st thread in page fault : %d===================\n", thread_current()->tid);
+// printf("===============1st thread in page fault : %d===================\n", thread_current()->tid);
    // struct hash_elem *hash_find (struct hash *, struct hash_elem *);
 
    // 유효한 경우: 단순히 디스크 등에서 메모리로 아직 안 올라온 페이지
 
          /* Get a page of memory. */
 
-   
+   file_seek (sp->file, sp->ofs);
    uint8_t *kpage = palloc_get_page(PAL_USER);
    if (kpage == NULL)
-      return false;
+      numexit(-1);
 
    /* Load this page. */
    if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
       {
          palloc_free_page (kpage);
-         return false; 
+         numexit(-1);
       }
    memset (kpage + sp->read_bytes, 0, sp->zero_bytes);
 
-   /* Add the page to the process's address space. */
-   if (!(pagedir_get_page (thread_current()->pagedir, sp->upage) == NULL)) {
-      if (!(pagedir_set_page (thread_current()->pagedir, sp->upage, kpage, sp->writable))) {
-         palloc_free_page (kpage);
-         return false; 
-
-      }
+   bool success = pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);
+   if(!success) {
+    palloc_free_page(kpage);
+    numexit(-1);
    }
+
+
+   /* Add the page to the process's address space. */
+  //  if (!(pagedir_get_page (thread_current()->pagedir, sp->upage) == NULL)) {
+  //     if (!(pagedir_set_page (thread_current()->pagedir, sp->upage, kpage, sp->writable))) {
+  //        palloc_free_page (kpage);
+  //        return false; 
+
+  //     }
+  //  }
    // if (!(pagedir_get_page (thread_current()->pagedir, sp->upage) == NULL
    //        && pagedir_set_page (thread_current()->pagedir, sp->upage, kpage, sp->writable))) 
    //    {
    //       palloc_free_page (kpage);
    //       return false; 
    //    }
-printf("===============2nd thread in page fault : %d===================\n", thread_current()->tid);
-
-return true;
+// printf("===============2nd thread in page fault : %d===================\n", thread_current()->tid);
 
 // spt 가지고 로드하면 됌.
 
