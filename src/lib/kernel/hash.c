@@ -6,6 +6,7 @@
    See hash.h for basic information. */
 
 #include "hash.h"
+#include "src/vm/page.h"
 #include "../debug.h"
 #include "threads/malloc.h"
 
@@ -428,3 +429,10 @@ remove_elem (struct hash *h, struct hash_elem *e)
   list_remove (&e->list_elem);
 }
 
+
+bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void * aux){
+  struct supplemental_page *sa = hash_entry(a, struct supplemental_page, hash_elem);
+  struct supplemental_page *sb = hash_entry(b, struct supplemental_page, hash_elem);
+
+  return sa->addr < sb->addr;
+}
