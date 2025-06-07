@@ -18,6 +18,7 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 #include "vm/frame.h"
+#include "vm/page.h"
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
@@ -513,6 +514,15 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       uint8_t *kpage = frame_append(palloc_get_page (PAL_USER), thread_current()->tid);
       if (kpage == NULL)
         return false;
+      
+      struct supplemental_page newsptpage = {
+        .addr = upage,
+        .dirty = false,
+        .access_time = 0,
+        .valid = true,
+      };
+
+      hash_insert( thread_current()->spt , &newsptpage.hash_elem );
 
       /* Load this page. */
       if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes)
