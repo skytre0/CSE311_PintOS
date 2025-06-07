@@ -28,3 +28,11 @@ void* free_frame(struct thread* tc, void *page) {
         else ft_elem = list_next(ft_elem);
     }
 }
+
+void* frame_append(struct thread* tc, void* page){
+    struct frame* new_frame = calloc(1, sizeof(struct frame));
+    new_frame->page = page;
+    new_frame->thread = tc;
+    list_push_back(&frame_table, &new_frame->frame_elem);
+    return new_frame->page;
+}

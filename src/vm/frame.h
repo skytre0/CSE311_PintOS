@@ -17,8 +17,10 @@ struct list frame_table;
 
 void* frame_alloc(struct thread* tc);
 
-void* free_frame(struct thread* tc);
+void* free_frame(struct thread* tc, void *page);
 
 // void* frame_evict();
+
+void* frame_append(struct thread* tc, void* page);
 
 #endif
