@@ -236,7 +236,7 @@ thread_create (const char *name, int priority,
   //
 
   // project 3 -> 제작 중
-  hash_init(&thread_current()->spt, &hash_bytes(), );
+  hash_init(&thread_current()->spt, hash_bytes , hash_less_page , NULL);
   //
 
   intr_set_level (old_level);
