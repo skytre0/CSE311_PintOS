@@ -435,23 +435,20 @@ bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void *
   struct supplemental_page *sa = hash_entry(a, struct supplemental_page, hash_elem);
   struct supplemental_page *sb = hash_entry(b, struct supplemental_page, hash_elem);
 
-  return sa->addr < sb->addr;
+  return sa->upage < sb->upage;
 }
 
 
-// spt 찾아주는 함수수
+// spt 찾아주는 함수
 struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr) {
-    struct supplemental_page tmp;
-    tmp.upage = pg_round_down(vaddr);
+    struct supplemental_page tmp_sp;
+    struct hash_elem *e;
 
-    // 2. hash_find()로 검색
-    struct hash_elem *found_elem = hash_find(spt, &tmp.hash_elem);
+    tmp_sp.upage = pg_round_down(vaddr);
+    
+    e = hash_find(spt, &tmp_sp.hash_elem);
 
-    if (found_elem == NULL) {
-        // 못 찾았으면 NULL 반환
-        return NULL;
-    }
-
-    // 3. hash_entry()로 실제 구조체 포인터 변환 후 반환
-    return hash_entry(found_elem, struct supplemental_page, hash_elem);
+    if (e != NULL) return hash_entry(e, struct supplemental_page, hash_elem);
+    
+    return NULL;
 }
