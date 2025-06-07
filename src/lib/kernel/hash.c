@@ -432,6 +432,11 @@ remove_elem (struct hash *h, struct hash_elem *e)
   list_remove (&e->list_elem);
 }
 
+unsigned hashing_func (struct hash_elem *he, void *aux) {
+  struct supplemental_page *sp = hash_entry (he, struct supplemental_page, hash_elem);
+
+  return hash_bytes (&sp->upage, sizeof (sp->upage));
+}
 
 bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void * aux){
   struct supplemental_page *sa = hash_entry(a, struct supplemental_page, hash_elem);
@@ -447,7 +452,7 @@ struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr) {
     struct hash_elem *e;
 
     tmp_sp.upage = pg_round_down(vaddr);
-    
+
     e = hash_find(spt, &tmp_sp.hash_elem);
 
     if (e != NULL) return hash_entry(e, struct supplemental_page, hash_elem);

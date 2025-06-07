@@ -11,6 +11,7 @@
 #include "lib/kernel/hash.h"
 
 #include "threads/palloc.h"
+#include "userprog/process.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -193,12 +194,13 @@ page_fault (struct intr_frame *f)
    }
 
    // 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
-   struct supplemental_page *sp = spt_find_page(thread_current()->spt, fault_addr);
+   struct supplemental_page *sp = spt_find_page(&thread_current()->spt, fault_addr);
    if ( sp == NULL){
       numexit(-1);
       // 진짜 fault 임 런치면 됌
       // 유효하지 않은 경우 : 뒤졌는데 안나오거나, 권한이 없거나 -> 프로세스를 강제 종료(Segmentation Fault)
    }
+printf("===============1st thread in page fault : %d===================\n", thread_current()->tid);
    // struct hash_elem *hash_find (struct hash *, struct hash_elem *);
 
    // 유효한 경우: 단순히 디스크 등에서 메모리로 아직 안 올라온 페이지
@@ -206,7 +208,6 @@ page_fault (struct intr_frame *f)
          /* Get a page of memory. */
 
    
-
    uint8_t *kpage = palloc_get_page(PAL_USER);
    if (kpage == NULL)
       return false;
@@ -220,12 +221,22 @@ page_fault (struct intr_frame *f)
    memset (kpage + sp->read_bytes, 0, sp->zero_bytes);
 
    /* Add the page to the process's address space. */
-   if (!install_page (sp->upage, kpage, sp->writable)) 
-      {
+   if (!(pagedir_get_page (thread_current()->pagedir, sp->upage) == NULL)) {
+      if (!(pagedir_set_page (thread_current()->pagedir, sp->upage, kpage, sp->writable))) {
          palloc_free_page (kpage);
          return false; 
-      }
 
+      }
+   }
+   // if (!(pagedir_get_page (thread_current()->pagedir, sp->upage) == NULL
+   //        && pagedir_set_page (thread_current()->pagedir, sp->upage, kpage, sp->writable))) 
+   //    {
+   //       palloc_free_page (kpage);
+   //       return false; 
+   //    }
+printf("===============2nd thread in page fault : %d===================\n", thread_current()->tid);
+
+return true;
 
 // spt 가지고 로드하면 됌.
 

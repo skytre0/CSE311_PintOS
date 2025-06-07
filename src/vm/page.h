@@ -1,3 +1,6 @@
+#ifndef PAGE_H
+#define PAGE_H
+
 #include "hash.h"
 #include "../userprog/process.h"
 
@@ -23,3 +26,6 @@ struct supplemental_page* create_new_sp (struct file* file,
                                             uint32_t read_bytes,
                                             uint32_t zero_bytes,
                                             bool writable);
+
+
+#endif PAGE_H

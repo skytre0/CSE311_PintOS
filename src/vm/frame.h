@@ -1,3 +1,6 @@
+#ifndef FRAME_H
+#define FRAME_H
+
 #include <list.h>
 
 struct frame {
@@ -12,3 +15,5 @@ struct frame {
 struct list frame_table;
 
 void* frame_require(int tid);
+
+#endif FRAME_H
