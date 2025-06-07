@@ -565,6 +565,10 @@ setup_stack (void **esp)
       else
         palloc_free_page (kpage);
     }
+    
+    struct supplemental_page* new_sp = create_new_sp(NULL, NULL, kpage, 0, 0, true);
+    hash_insert(&thread_current()->spt, &new_sp->hash_elem);
+
   return success;
 }
 
