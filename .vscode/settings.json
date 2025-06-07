@@ -13,6 +13,8 @@
         "malloc.h": "c",
         "debug.h": "c",
         "stdint.h": "c",
-        "filesys.h": "c"
+        "filesys.h": "c",
+        "bitmap.h": "c",
+        "list.h": "c"
     }
 }

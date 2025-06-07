@@ -1,3 +1,5 @@
+#include "hash.h"
+
 struct supplemental_page{
     void* addr; // 주소
     bool dirty; //더티 빗
