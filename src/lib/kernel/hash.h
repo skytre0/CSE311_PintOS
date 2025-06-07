@@ -102,4 +102,6 @@ unsigned hash_int (int);
 
 bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void * aux);
 
+struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr);
+
 #endif /* lib/kernel/hash.h */

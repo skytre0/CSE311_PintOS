@@ -10,6 +10,8 @@
 #include "vm/frame.h"
 #include "lib/kernel/hash.h"
 
+#include "threads/palloc.h"
+
 /* Number of page faults processed. */
 static long long page_fault_cnt;
 
@@ -186,20 +188,45 @@ page_fault (struct intr_frame *f)
      which fault_addr refers. */
 
 // 일단 널이랑 커널은 쳐내
-if( fault_addr == NULL || is_kernel_vaddr(fault_addr) ) {
-   numexit(-1);
-}
+   if( fault_addr == NULL || is_kernel_vaddr(fault_addr) ) {
+      numexit(-1);
+   }
 
-// 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
-struct supplemental_page *sp = spt_find_page(thread_current()->spt, fault_addr);
-if ( sp == NULL){
-   numexit(-1);
-   // 진짜 fault 임 런치면 됌
-   // 유효하지 않은 경우 : 뒤졌는데 안나오거나, 권한이 없거나 -> 프로세스를 강제 종료(Segmentation Fault)
-}
-// struct hash_elem *hash_find (struct hash *, struct hash_elem *);
+   // 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
+   struct supplemental_page *sp = spt_find_page(thread_current()->spt, fault_addr);
+   if ( sp == NULL){
+      numexit(-1);
+      // 진짜 fault 임 런치면 됌
+      // 유효하지 않은 경우 : 뒤졌는데 안나오거나, 권한이 없거나 -> 프로세스를 강제 종료(Segmentation Fault)
+   }
+   // struct hash_elem *hash_find (struct hash *, struct hash_elem *);
 
-// 유효한 경우: 단순히 디스크 등에서 메모리로 아직 안 올라온 페이지
+   // 유효한 경우: 단순히 디스크 등에서 메모리로 아직 안 올라온 페이지
+
+         /* Get a page of memory. */
+
+   
+
+   uint8_t *kpage = palloc_get_page(PAL_USER);
+   if (kpage == NULL)
+      return false;
+
+   /* Load this page. */
+   if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
+      {
+         palloc_free_page (kpage);
+         return false; 
+      }
+   memset (kpage + sp->read_bytes, 0, sp->zero_bytes);
+
+   /* Add the page to the process's address space. */
+   if (!install_page (sp->upage, kpage, sp->writable)) 
+      {
+         palloc_free_page (kpage);
+         return false; 
+      }
+
+
 // spt 가지고 로드하면 됌.
 
 // 빈 프레임 확보: 물리 메모리에서 비어있는 공간(프레임)을 찾습니다. 만약 없다면, 기존에 사용 중인 프레임 중 하나를 비웁니다 (페이지 교체 알고리즘 사용)
@@ -207,12 +234,12 @@ if ( sp == NULL){
 // 페이지 테이블 갱신: 해당 가상 주소가 방금 데이터를 로드한 물리 프레임을 가리키도록 페이지 테이블을 수정합니다.
 // 명령 재시작: 폴트를 발생시켰던 명령어를 다시 실행합니다. 이제는 메모리에 데이터가 있으므로 정상적으로 수행됩니다.
 
-  if( user ) numexit(-1);
-  printf ("Page fault at %p: %s error %s page in %s context.\n",
-          fault_addr,
-          not_present ? "not present" : "rights violation",
-          write ? "writing" : "reading",
-          user ? "user" : "kernel");
-  kill (f);
+  // if( user ) numexit(-1);
+  // printf ("Page fault at %p: %s error %s page in %s context.\n",
+  //         fault_addr,
+  //         not_present ? "not present" : "rights violation",
+  //         write ? "writing" : "reading",
+  //         user ? "user" : "kernel");
+  // kill (f);
 }
 
