@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "threads/synch.h"
+#include "hash.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -130,6 +131,8 @@ struct thread
 
 
     // SPT 를 추가해야함.
+    struct hash spt;
+
   };
 
 /* If false (default), use round-robin scheduler.
