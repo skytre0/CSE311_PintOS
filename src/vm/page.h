@@ -29,4 +29,4 @@ struct supplemental_page* create_new_sp (struct file* file,
 unsigned hashing_func(struct hash_elem *he, void * aux);
 bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void * aux);
 struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr);
-#endif PAGE_H
+#endif

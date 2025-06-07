@@ -15,6 +15,11 @@
         "stdint.h": "c",
         "filesys.h": "c",
         "bitmap.h": "c",
-        "list.h": "c"
+        "list.h": "c",
+        "frame.h": "c",
+        "exception.h": "c",
+        "stdio.h": "c",
+        "flags.h": "c",
+        "random.h": "c"
     }
 }

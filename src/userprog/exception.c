@@ -192,8 +192,9 @@ page_fault (struct intr_frame *f)
    if( fault_addr == NULL || is_kernel_vaddr(fault_addr) ) {
       numexit(-1);
    }
-   int32_t* page_vaddr = pg_round_down(fault_addr); // 페이지 단위로 정렬
-  //  printf("[PAGE_FAULT] Fault occurred for vaddr: %p\n", page_vaddr); // 디버깅용
+
+   // int32_t* page_vaddr = pg_round_down(fault_addr); // 페이지 단위로 정렬
+   //  printf("[PAGE_FAULT] Fault occurred for vaddr: %p\n", page_vaddr); // 디버깅용
 
    // 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
    struct supplemental_page *sp = spt_find_page(&thread_current()->spt, fault_addr);
@@ -209,8 +210,10 @@ page_fault (struct intr_frame *f)
 
          /* Get a page of memory. */
 
+   // 이제는 ofs 만큼 가서 읽어야 함.
    file_seek (sp->file, sp->ofs);
-   uint8_t *kpage = palloc_get_page(PAL_USER);
+   uint8_t *kpage = frame_alloc(thread_current());
+
    if (kpage == NULL)
       numexit(-1);
 

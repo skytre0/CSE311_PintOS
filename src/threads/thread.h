@@ -121,6 +121,9 @@ struct thread
     struct file* execfile;
     //추가끝
 
+    // project 3
+    
+
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */

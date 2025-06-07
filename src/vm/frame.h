@@ -5,8 +5,9 @@
 
 struct frame {
     void *address;
-    void *page;           /* Saved page directory. */
-    int tid;
+    void *page;           /* Saved page directory address. */
+    struct hash* spte;
+    struct thread* thread;      // need to know thread tid
     struct list_elem frame_elem;   /* List element for the frame list. */
 };
 
@@ -14,6 +15,10 @@ struct frame {
 
 struct list frame_table;
 
-void* frame_require(int tid);
+void* frame_alloc(struct thread* tc);
 
-#endif FRAME_H
+void* free_frame(struct thread* tc);
+
+// void* frame_evict();
+
+#endif
