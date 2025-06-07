@@ -6,6 +6,10 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+#include "vm/page.h"
+#include "vm/frame.h"
+#include "lib/kernel/hash.h"
+
 /* Number of page faults processed. */
 static long long page_fault_cnt;
 
@@ -187,9 +191,16 @@ if( fault_addr == NULL || is_kernel_vaddr(fault_addr) ) {
 }
 
 // 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
+struct supplemental_page *sp = spt_find_page(thread_current()->spt, fault_addr);
+if ( sp == NULL){
+   numexit(-1);
+   // 진짜 fault 임 런치면 됌
+   // 유효하지 않은 경우 : 뒤졌는데 안나오거나, 권한이 없거나 -> 프로세스를 강제 종료(Segmentation Fault)
+}
+// struct hash_elem *hash_find (struct hash *, struct hash_elem *);
 
-// 유효하지 않은 경우 : 뒤졌는데 안나오거나, 권한이 없거나 -> 프로세스를 강제 종료(Segmentation Fault).
 // 유효한 경우: 단순히 디스크 등에서 메모리로 아직 안 올라온 페이지
+// spt 가지고 로드하면 됌.
 
 // 빈 프레임 확보: 물리 메모리에서 비어있는 공간(프레임)을 찾습니다. 만약 없다면, 기존에 사용 중인 프레임 중 하나를 비웁니다 (페이지 교체 알고리즘 사용)
 // 데이터 로딩: 필요한 페이지 데이터를 디스크(파일 시스템 또는 스왑 영역)에서 2번에서 확보한 프레임으로 읽어옵니다.

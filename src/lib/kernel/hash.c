@@ -9,6 +9,7 @@
 #include "../vm/page.h"
 #include "../debug.h"
 #include "threads/malloc.h"
+#include "vm/page.h"
 
 #define list_elem_to_hash_elem(LIST_ELEM)                       \
         list_entry(LIST_ELEM, struct hash_elem, list_elem)
@@ -435,4 +436,22 @@ bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void *
   struct supplemental_page *sb = hash_entry(b, struct supplemental_page, hash_elem);
 
   return sa->addr < sb->addr;
+}
+
+
+// spt 찾아주는 함수수
+struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr) {
+    struct supplemental_page tmp;
+    tmp.upage = pg_round_down(vaddr);
+
+    // 2. hash_find()로 검색
+    struct hash_elem *found_elem = hash_find(spt, &tmp.hash_elem);
+
+    if (found_elem == NULL) {
+        // 못 찾았으면 NULL 반환
+        return NULL;
+    }
+
+    // 3. hash_entry()로 실제 구조체 포인터 변환 후 반환
+    return hash_entry(found_elem, struct supplemental_page, hash_elem);
 }
