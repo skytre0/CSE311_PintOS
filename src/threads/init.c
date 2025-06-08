@@ -39,6 +39,7 @@
 #endif
 
 #include "vm/frame.h"
+#include "vm/swap.h"
 
 /* Page directory with kernel mappings only. */
 uint32_t *init_page_dir;
@@ -101,6 +102,7 @@ main (void)
   malloc_init ();
   
   list_init ( &frame_table );
+  swap_init();
 
   paging_init ();
 
