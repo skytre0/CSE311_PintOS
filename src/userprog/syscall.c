@@ -444,6 +444,7 @@ int nummmap(int fd, void* addr) {
   newm->pagenum = (limit - (int)addr) / PGSIZE;
 
   list_push_back(&thread_current()->mmaps, &newm->mmap_elem);
+  i = 0;
   for ( ; addr + (PGSIZE * i) < pg_round_up(addr + limit); i++) {
     struct supplemental_page* new_sp = create_new_sp(mmapfile, (PGSIZE * i), 
                                                     (int)addr + (PGSIZE * i), 

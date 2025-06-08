@@ -235,6 +235,7 @@ thread_create (const char *name, int priority,
   // printf("pushed child : %d\n", find_child(thread_current(), t->tid)->tid);
 
   // project 3
+  list_init(&thread_current()->mmaps);
   t->mapid = 1;
  
 
