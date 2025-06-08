@@ -13,7 +13,7 @@ static struct lock swap_lock; // 세마로할까?
 
 void swap_init(void);
 
-void swap_in(void *kaddr);
-void swap_out(void *kaddr);
+void swap_in(void *kaddr , size_t swap_index);
+size_t swap_out(void *kaddr);
 
 #endif

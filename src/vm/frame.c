@@ -49,3 +49,27 @@ void* frame_append(struct thread* tc, void* page){
     list_push_back(&frame_table, &new_frame->frame_elem);
     return new_frame->page;
 }
+
+struct frame* frame_evict(){ // 죽일놈 선택하기만
+    while(1){
+        struct list_elem* frame_elem = list_begin(&frame_table); // 우리는 맨 앞만 본다, 앞에꺼 뺴서 맨 뒤에 넣기
+        struct frame* frame = list_entry(frame_elem, struct frame, frame_elem);
+
+        list_remove(frame_elem);
+        list_push_back(&frame_table, frame_elem);
+
+        if (frame->thread == NULL) {
+            // 사용하지 않는 프레임 발견
+            return frame;
+        }
+
+        if (pagedir_is_accessed(frame->thread->pagedir, frame->spte->vaddr)) { // 최근에 접근했다면, Accessed Bit를 0으로
+            pagedir_set_accessed(frame->thread->pagedir, frame->spte->vaddr, false);
+            continue;
+        }
+
+        // 맨 앞을 뺴고, 맨뒤에 넣음.
+        return frame;
+    }
+    return NULL;
+}

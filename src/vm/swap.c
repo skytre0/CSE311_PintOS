@@ -13,13 +13,18 @@ void swap_init(void){
 // swap_in
 void swap_in(void *kaddr, size_t swap_index) {
     lock_acquire(&swap_lock);
-    // TODO: Implement swap_in
+    // 스왑 in 구현해야함
+
+    for (int i = 0; i < (PGSIZE / BLOCK_SECTOR_SIZE); i++) {
+        block_read(swap_block, swap_index * (PGSIZE / BLOCK_SECTOR_SIZE), kaddr); // 메모리로 슛
+    }
+
     bitmap_set(swap_bitmap, swap_index, false);
     lock_release(&swap_lock);
 }
 
 // swap_out
-void swap_out(void *kaddr) {
+size_t swap_out(void *kaddr) {
     lock_acquire(&swap_lock);
     // 비어있는 공간 찾기
     size_t swap_index = bitmap_scan_and_flip (swap_bitmap, 0, 1, false);
@@ -27,4 +32,5 @@ void swap_out(void *kaddr) {
         block_write (swap_block, swap_index * (PGSIZE / BLOCK_SECTOR_SIZE) + i, kaddr + i * BLOCK_SECTOR_SIZE); // block_write(스왑디바이스, 쓸 위치, 데이터소스 주소)
     }
     lock_release(&swap_lock); // 풀어주기
+    return swap_index;
 }
