@@ -144,6 +144,13 @@ kill (struct intr_frame *f)
     }
 }
 
+
+void paging_simple(struct supplemental_page *sp, uint8_t *kpage);
+
+
+
+
+
 /* Page fault handler.  This is a skeleton that must be filled in
    to implement virtual memory.  Some solutions to project 2 may
    also require modifying this code.
@@ -217,19 +224,27 @@ page_fault (struct intr_frame *f)
    if (kpage == NULL)
       numexit(-1);
 
-   /* Load this page. */
-   if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
-      {
-         palloc_free_page (kpage);
-         numexit(-1);
-      }
-   memset (kpage + sp->read_bytes, 0, sp->zero_bytes);
-
+   paging_simple(sp, kpage);     // paging according to read_byte / zero_byte size (PGSIZE)
+   
    bool success = pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);
    if(!success) {
-    palloc_free_page(kpage);
-    numexit(-1);
+      palloc_free_page(kpage);
+      numexit(-1);
    }
+
+   /* Load this page. */
+   // if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
+   //    {
+   //       palloc_free_page (kpage);
+   //       numexit(-1);
+   //    }
+   // memset (kpage + sp->read_bytes, 0, sp->zero_bytes);
+
+   // bool success = pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);
+   // if(!success) {
+   //  palloc_free_page(kpage);
+   //  numexit(-1);
+   // }
 
 
    /* Add the page to the process's address space. */
@@ -264,3 +279,26 @@ page_fault (struct intr_frame *f)
   // kill (f);
 }
 
+void paging_simple(struct supplemental_page *sp, uint8_t *kpage) {
+   if (sp->read_bytes == PGSIZE) {
+      if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
+         {
+            palloc_free_page (kpage);
+            numexit(-1);
+         }
+   }
+
+   else if (sp->zero_bytes == PGSIZE) {
+      memset (kpage, 0, sp->zero_bytes);
+   }
+
+   else {
+      if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
+         {
+            palloc_free_page (kpage);
+            numexit(-1);
+         }
+      memset (kpage + sp->read_bytes, 0, sp->zero_bytes);
+   }
+   return;
+}
