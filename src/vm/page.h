@@ -4,6 +4,8 @@
 #include "hash.h"
 #include "../userprog/process.h"
 
+enum page_type {FILE, SWAP, MMAP};
+
 struct supplemental_page{
     // load_segment   
     struct file* file;
@@ -12,6 +14,7 @@ struct supplemental_page{
     uint32_t read_bytes;
     uint32_t zero_bytes;
     bool writable;
+    enum page_type from_where;
 
     bool dirty; //더티 빗
     bool access; // LRU 할라면, 접근 시간.
