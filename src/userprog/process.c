@@ -537,7 +537,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       //     return false; 
       //   }
 
-      struct supplemental_page* new_sp = create_new_sp(file, ofs, upage, page_read_bytes, page_zero_bytes, writable);
+      struct supplemental_page* new_sp = create_new_sp(file, ofs, upage, page_read_bytes, page_zero_bytes, writable, FILE);
       hash_insert(&thread_current()->spt, &new_sp->hash_elem);
       // printf("[LOAD_SEGMENT] Inserted page for upage: %p\n", new_sp->upage); // 디버깅용
 
@@ -559,7 +559,7 @@ setup_stack (void **esp)
   uint8_t *kpage;
   bool success = false;
   
-  struct supplemental_page* new_sp = create_new_sp(NULL, NULL, (PHYS_BASE - PGSIZE), 0, PGSIZE, true);
+  struct supplemental_page* new_sp = create_new_sp(NULL, NULL, (PHYS_BASE - PGSIZE), 0, PGSIZE, true, SWAP);
   hash_insert(&thread_current()->spt, &new_sp->hash_elem);
 
   kpage = stack_frame_alloc(thread_current());

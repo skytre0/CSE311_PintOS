@@ -219,7 +219,7 @@ page_fault (struct intr_frame *f)
       printf("in the stack growth area 2\n");
 
       uint8_t *upage = pg_round_down(fault_addr);
-      struct supplemental_page* new_sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true);
+      struct supplemental_page* new_sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true, SWAP);
       hash_insert(&thread_current()->spt, &new_sp->hash_elem);
       kpage = stack_frame_alloc(thread_current()); // 스택 할당하기
 

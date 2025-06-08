@@ -431,9 +431,30 @@ int nummmap(int fd, void* addr) {
   // page 단위 검사 여부는 보류 -> 일단 시작과 끝만.
   if ((fd == 0 || fd == 1) || numfilesize(fd) == 0 || addr == 0 || (int)addr % PGSIZE != 0)  return -1;
   int i = 0;
-  for ( ; addr + (PGSIZE * i) < pg_round_up(addr + numfilesize(fd)); i++) {
+  int limit = pg_round_up(addr + numfilesize(fd));
+  for ( ; addr + (PGSIZE * i) < limit; i++) {
     if (spt_find_page(&thread_current()->spt, addr + (PGSIZE * i)) != NULL)   return -1;
   }
+
+  struct file* mmapfile = (find_file(fd))->targetfile;
+  mmapfile = file_reopen(mmapfile);
+  struct mapinfo* newm = calloc(1, sizeof(struct mapinfo));
+  newm->vaddr = addr;
+  newm->fd = thread_current()->mapid++;
+  newm->pagenum = (limit - (int)addr) / PGSIZE;
+
+  list_push_back(&thread_current()->mmaps, &newm->mmap_elem);
+  for ( ; addr + (PGSIZE * i) < pg_round_up(addr + limit); i++) {
+    struct supplemental_page* new_sp = create_new_sp(mmapfile, (PGSIZE * i), 
+                                                    (int)addr + (PGSIZE * i), 
+                                                    min(limit, addr + (PGSIZE * (i+1))) - (int)addr + (PGSIZE * i), 
+                                                    addr + (PGSIZE * (i+1)) - min(limit, addr + (PGSIZE * (i+1))), 
+                                                    true, MMAP);
+    hash_insert(&thread_current()->spt, &new_sp->hash_elem);
+  }
+
+
+  
 
 }
 

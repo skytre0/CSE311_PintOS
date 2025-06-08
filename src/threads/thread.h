@@ -91,6 +91,13 @@ struct filedata {
    char* targetname    // for sys_remove -> got when opened
 };
 
+struct mapinfo {
+   void* vaddr;
+   int fd;
+   int pagenum;
+   struct list_elem mmap_elem;
+};
+
 struct thread
   {
     /* Owned by thread.c. */
@@ -122,6 +129,8 @@ struct thread
     //추가끝
 
     // project 3
+    struct list mmaps;        // mmap 정보 모음
+    int mapid;
     
 
 #ifdef USERPROG

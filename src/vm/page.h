@@ -27,7 +27,7 @@ struct supplemental_page* create_new_sp (struct file* file,
                                             uint8_t* upage,
                                             uint32_t read_bytes,
                                             uint32_t zero_bytes,
-                                            bool writable);
+                                            bool writable, enum page_type pt);
 
 unsigned hashing_func(struct hash_elem *he, void * aux);
 bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void * aux);

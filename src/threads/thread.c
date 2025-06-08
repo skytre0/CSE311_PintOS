@@ -233,8 +233,9 @@ thread_create (const char *name, int priority,
   // printf("cur : %d, new : %d\n", thread_current()->tid, t->tid);
   list_push_back( &(thread_current()->children), &(t->am_child));
   // printf("pushed child : %d\n", find_child(thread_current(), t->tid)->tid);
-  //
 
+  // project 3
+  t->mapid = 1;
  
 
   //
