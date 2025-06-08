@@ -206,9 +206,15 @@ page_fault (struct intr_frame *f)
    // 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
    struct supplemental_page *sp = spt_find_page(&thread_current()->spt, fault_addr);
    if ( sp == NULL){
-      numexit(-1);
-      // 진짜 fault 임 런치면 됌
-      // 유효하지 않은 경우 : 뒤졌는데 안나오거나, 권한이 없거나 -> 프로세스를 강제 종료(Segmentation Fault)
+      // fault_addr >= f->esp - 32); 32 안에 있으면 스택키우는 거임.
+      bool is_stack_growth = fault_addr >= f->esp - 32 && PHYS_BASE - fault_addr <= (1<<23); // 8mb 보고
+      if (!is_stack_growth) {
+         numexit(-1);
+      }
+      // 스택 키우기
+      struct frame* newframe = frame_alloc(thread_current()); // 스택 할당하기
+      // 페이징 할당하기
+      //매핑하기
    }
 // printf("===============1st thread in page fault : %d===================\n", thread_current()->tid);
    // struct hash_elem *hash_find (struct hash *, struct hash_elem *);
