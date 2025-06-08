@@ -21,6 +21,7 @@
         "stdio.h": "c",
         "flags.h": "c",
         "random.h": "c",
-        "swap.h": "c"
+        "swap.h": "c",
+        "synch.h": "c"
     }
 }
