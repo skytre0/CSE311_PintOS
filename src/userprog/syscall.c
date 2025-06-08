@@ -66,6 +66,12 @@ void numseek(int seekfd, unsigned seekpos);
 unsigned numtell(int tellfd);
 void numclose(int closefd);
 
+// project 3
+int nummmap(int fd, void* addr);
+void nummunmap(int mapping);
+
+
+
 bool check_user_mem(void* addr, int addrsize, bool is_name) {
   void* i;
   for (i = addr; i < addr + addrsize; i++) {
@@ -208,10 +214,19 @@ syscall_handler (struct intr_frame *f UNUSED)
 
     
     // /* Project 3 and optionally project 4. */
-    // case SYS_MMAP:
-    //     break;
-    // case SYS_MUNMAP:
-    //     break;
+    case SYS_MMAP:  ;
+      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
+      int mmapfd = *(int*)(f->esp + 4);
+      if(!check_user_mem(f->esp+8, 4, 0)) numexit(-1);
+      void* mmapaddr = *(int*)(f->esp + 8);
+      f->eax = nummmap(mmapfd, mmapaddr);
+      return;
+
+    case SYS_MUNMAP: ;
+      if(!check_user_mem(f->esp+4, 4, 0)) numexit(-1);
+      int mapping = *(int*)(f->esp + 4);
+      nummunmap(mapping);
+      return;
     
     // /* Project 4 only. */
     // case SYS_CHDIR:
@@ -300,21 +315,6 @@ bool numremove(const char* removename) {
   bool retval = filesys_remove (removename);
   sema_up(&filesema);
   return retval;
-  // struct list_elem *removeele;
-  // struct list* name_search_list = &(thread_current()->fds);
-
-  // for (removeele = list_begin(name_search_list); removeele != list_end(name_search_list); removeele = list_next(removeele)) {
-  //   struct filedata *removefile = list_entry(removeele, struct filedata, fdselem);
-  //   if (strcmp(removefile->targetname, removename) == 0) {
-  //     removefile->targetname = NULL;
-  //     return filesys_remove (removename);
-  //     list_remove(&(removefile->fdselem));    // resource issue로 일단 지움
-  //     free(removefile->targetname);
-  //     free(removefile);
-  //     break;
-  //   }
-  // }
-  // return false;
 }
 
 
@@ -424,3 +424,18 @@ void numclose(int closefd) {
   free(closefile);
   return;
 }
+
+
+int nummmap(int fd, void* addr) {
+  // validate cond to fail
+  // page 단위 검사 여부는 보류 -> 일단 시작과 끝만.
+  if ((fd == 0 || fd == 1) || numfilesize(fd) == 0 || addr == 0 || (int)addr % PGSIZE != 0)  return -1;
+  int i = 0;
+  for ( ; addr + (PGSIZE * i) < pg_round_up(addr + numfilesize(fd)); i++) {
+    if (spt_find_page(&thread_current()->spt, addr + (PGSIZE * i)) != NULL)   return -1;
+  }
+
+}
+
+
+void nummunmap(int mapping) {}
