@@ -20,6 +20,7 @@
         "exception.h": "c",
         "stdio.h": "c",
         "flags.h": "c",
-        "random.h": "c"
+        "random.h": "c",
+        "gdt.h": "c"
     }
 }

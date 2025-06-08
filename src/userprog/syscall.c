@@ -9,7 +9,7 @@
 #include "vm/page.h"
 
 static void syscall_handler (struct intr_frame *);
-static struct semaphore filesema;
+struct semaphore filesema;
 
 void
 syscall_init (void) 
