@@ -6,6 +6,7 @@
 #include "userprog/pagedir.h"
 
 #include "threads/vaddr.h"
+#include "vm/page.h"
 
 static void syscall_handler (struct intr_frame *);
 static struct semaphore filesema;
@@ -70,7 +71,8 @@ bool check_user_mem(void* addr, int addrsize, bool is_name) {
   for (i = addr; i < addr + addrsize; i++) {
     if (i == NULL) return false;
     if (!is_user_vaddr(i)) return false;
-    if (pagedir_get_page(thread_current()->pagedir, i) == NULL) return false;
+    if ((pagedir_get_page(thread_current()->pagedir, i) == NULL) && 
+        (spt_find_page(&thread_current()->spt, i) == NULL)) return false;
     if (is_name)
       if (*(char *)(i) == NULL) break;
   }

@@ -5,7 +5,7 @@
 #include "../userprog/exception.h"
 
 
-void* frame_alloc(struct thread* tc) {
+void* file_frame_alloc(struct thread* tc) {
     struct frame* new_frame = calloc(1, sizeof(struct frame));
     new_frame->page = palloc_get_page (PAL_USER);
     // swapping 이후 추가 필요.
@@ -15,6 +15,19 @@ void* frame_alloc(struct thread* tc) {
 
     return new_frame->page;
 }
+
+
+void* stack_frame_alloc(struct thread* tc) {
+    struct frame* new_frame = calloc(1, sizeof(struct frame));
+    new_frame->page = palloc_get_page (PAL_USER | PAL_ZERO);
+    // swapping 이후 추가 필요.
+    list_push_back(&frame_table, &new_frame->frame_elem);
+    new_frame->thread = tc;
+    new_frame->spte = &tc->spt;
+
+    return new_frame->page;
+}
+
 
 void* free_frame(struct thread* tc, void *page) {
     struct list_elem* ft_elem = list_begin(&frame_table);

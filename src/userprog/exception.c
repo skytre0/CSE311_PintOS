@@ -205,16 +205,28 @@ page_fault (struct intr_frame *f)
 
    // 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
    struct supplemental_page *sp = spt_find_page(&thread_current()->spt, fault_addr);
-   if ( sp == NULL){
+   uint8_t *kpage;
+
+   if ( sp == NULL){    // file이 아님 = stack을 연장해야 함.
+      printf("in the stack growth area 1\n");
+
       // fault_addr >= f->esp - 32); 32 안에 있으면 스택키우는 거임.
-      bool is_stack_growth = fault_addr >= f->esp - 32 && PHYS_BASE - fault_addr <= (1<<23); // 8mb 보고
+      bool is_stack_growth = (fault_addr >= f->esp - 32 && PHYS_BASE - fault_addr <= (1<<23)); // 8mb 보고
       if (!is_stack_growth) {
          numexit(-1);
       }
       // 스택 키우기
-      struct frame* newframe = frame_alloc(thread_current()); // 스택 할당하기
+      printf("in the stack growth area 2\n");
+
+      uint8_t *upage = pg_round_down(fault_addr);
+      struct supplemental_page* new_sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true);
+      hash_insert(&thread_current()->spt, &new_sp->hash_elem);
+      kpage = stack_frame_alloc(thread_current()); // 스택 할당하기
+
+      if (kpage == NULL)
+         numexit(-1);
       // 페이징 할당하기
-      //매핑하기
+      // 매핑하기
    }
 // printf("===============1st thread in page fault : %d===================\n", thread_current()->tid);
    // struct hash_elem *hash_find (struct hash *, struct hash_elem *);
@@ -223,15 +235,17 @@ page_fault (struct intr_frame *f)
 
          /* Get a page of memory. */
 
-   // 이제는 ofs 만큼 가서 읽어야 함.
-   file_seek (sp->file, sp->ofs);
-   uint8_t *kpage = frame_alloc(thread_current());
+   else {      // file에 있는 page 발견
+      // 이제는 ofs 만큼 가서 읽어야 함.
+      file_seek (sp->file, sp->ofs);
+      kpage = file_frame_alloc(thread_current());
 
-   if (kpage == NULL)
-      numexit(-1);
+      if (kpage == NULL)
+         numexit(-1);
 
-   paging_simple(sp, kpage);     // paging according to read_byte / zero_byte size (PGSIZE)
-   
+      paging_simple(sp, kpage);     // paging according to read_byte / zero_byte size (PGSIZE)
+   }
+
    bool success = pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);
    if(!success) {
       palloc_free_page(kpage);

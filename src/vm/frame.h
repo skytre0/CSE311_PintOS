@@ -15,7 +15,8 @@ struct frame {
 
 struct list frame_table;
 
-void* frame_alloc(struct thread* tc);
+void* file_frame_alloc(struct thread* tc);
+void* stack_frame_alloc(struct thread* tc);
 
 void* free_frame(struct thread* tc, void *page);
 
