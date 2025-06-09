@@ -15,11 +15,11 @@ struct supplemental_page{
     uint32_t zero_bytes;
     bool writable;
     enum page_type from_where;
-
-    bool dirty; //더티 빗
-    bool access; // LRU 할라면, 접근 시간.
     struct hash_elem hash_elem;
-    bool valid; // 유효한 페이지인지
+
+    // bool dirty; //더티 빗
+    // bool access; // LRU 할라면, 접근 시간.
+    // bool valid; // 유효한 페이지인지
 };
 
 struct supplemental_page* create_new_sp (struct file* file,

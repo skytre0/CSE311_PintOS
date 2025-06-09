@@ -281,6 +281,11 @@ void numexit(int num) {
   if (thread_current()->execfile != NULL) file_allow_write(thread_current()->execfile);
   file_close(thread_current()->execfile);
 
+
+  // project 3로 spt, frame 등 모두 free
+  // spt 순회하면서 검사, MMAP이면 nummunmap 호출, 아니면 frame에 있는지 확인, 있으면 free_frame -> sp free
+
+
   // parent's sema up
   printf ("%s: exit(%d)\n", thread_name(), num);
   sema_up(&(thread_current()->parent->withchild));
@@ -430,34 +435,70 @@ int nummmap(int fd, void* addr) {
   // validate cond to fail
   // page 단위 검사 여부는 보류 -> 일단 시작과 끝만.
   if ((fd == 0 || fd == 1) || numfilesize(fd) == 0 || addr == 0 || (int)addr % PGSIZE != 0)  return -1;
-  int i = 0;
-  int limit = pg_round_up(addr + numfilesize(fd));
-  for ( ; addr + (PGSIZE * i) < limit; i++) {
-    if (spt_find_page(&thread_current()->spt, addr + (PGSIZE * i)) != NULL)   return -1;
+  void *uaddr = addr;
+  int limit = numfilesize(fd);
+  for ( ; uaddr < addr + limit; uaddr += PGSIZE) {
+    if (spt_find_page(&thread_current()->spt, uaddr) != NULL)   return -1;
   }
 
   struct file* mmapfile = (find_file(fd))->targetfile;
+  sema_down(&filesema);
   mmapfile = file_reopen(mmapfile);
+  sema_up(&filesema);
   struct mapinfo* newm = calloc(1, sizeof(struct mapinfo));
   newm->vaddr = addr;
-  newm->fd = thread_current()->mapid++;
-  newm->pagenum = (limit - (int)addr) / PGSIZE;
+  newm->fd = fd;
+  newm->file = mmapfile;
+  newm->mapid = thread_current()->mapid++;
+  newm->pagenum = (uaddr - addr) / PGSIZE;
 
   list_push_back(&thread_current()->mmaps, &newm->mmap_elem);
-  i = 0;
-  for ( ; addr + (PGSIZE * i) < pg_round_up(addr + limit); i++) {
-    struct supplemental_page* new_sp = create_new_sp(mmapfile, (PGSIZE * i), 
-                                                    (int)addr + (PGSIZE * i), 
-                                                    min(limit, addr + (PGSIZE * (i+1))) - (int)addr + (PGSIZE * i), 
-                                                    addr + (PGSIZE * (i+1)) - min(limit, addr + (PGSIZE * (i+1))), 
-                                                    true, MMAP);
-    hash_insert(&thread_current()->spt, &new_sp->hash_elem);
+  int ofs = 0;
+  for (uaddr = addr; uaddr < addr + limit; uaddr += PGSIZE) {
+      int read_bytes = (limit - ofs < PGSIZE) ? (limit - ofs) : PGSIZE;
+      int zero_bytes = PGSIZE - read_bytes;
+
+      struct supplemental_page* new_sp = create_new_sp(mmapfile,
+                                                        ofs,
+                                                        uaddr,
+                                                        read_bytes,
+                                                        zero_bytes,
+                                                        true, MMAP);
+      ofs += PGSIZE;
+      hash_insert(&thread_current()->spt, &new_sp->hash_elem);
   }
 
-
-  
-
+  return newm->mapid;
 }
 
 
-void nummunmap(int mapping) {}
+void nummunmap(int mapping) {
+  struct mapinfo* mapfile = find_mapfile(mapping);
+  if (mapfile == NULL)  numexit(-1);
+  int i = 0;
+  for ( ; i < mapfile->pagenum; i++) {
+    struct supplemental_page* sp = spt_find_page(&thread_current()->spt, mapfile->vaddr + (PGSIZE * i));
+    void* kaddr = pagedir_get_page(thread_current()->pagedir, sp->upage);
+    if (kaddr != NULL) {    // frame에 있음 = palloc_free_page 해야 함
+      if (pagedir_is_dirty(thread_current()->pagedir, sp->upage)) {   // 내용 복사해야 함.
+        sema_down(&filesema);
+        file_write_at(sp->file, kaddr, sp->read_bytes, sp->ofs);   // file에, kpage의 내용을, read_bytes만큼, pg_round_down(ofs)부터 작성해라.
+        sema_up(&filesema);
+      }
+      // 해당 frame 찾고 free해야 함.
+      pagedir_clear_page(thread_current()->pagedir, sp->upage);     // 이거 안 하면 double free 일어남 -> free frame 내부로 옮기는 것 상의할 것.
+      free_frame(thread_current(), kaddr);
+    }
+    else {} // frame에 없음 = eviction 당했든지, 애초에 mmap만 하고 사용한 적 없음
+    // spt에서 제거 & 본인 spt 제거
+    hash_delete(&thread_current()->spt, &sp->hash_elem);
+    free(sp);
+  }
+  // reopen 제거 -> 이거 syscall numopen으로 한 거 아니라 file_reopen으로 한 거라서 syscall numclose 대신 이거 씀
+  sema_down(&filesema);
+  file_close(mapfile->file);
+  sema_up(&filesema);
+  list_remove(&mapfile->mmap_elem);
+  free(mapfile);
+  return;
+}

@@ -545,7 +545,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       read_bytes -= page_read_bytes;
       zero_bytes -= page_zero_bytes;
       upage += PGSIZE;
-      // 이거 안 하면 ofs 고정이란 같은 거만 계속 추가됨.
+      // 이거 안 하면 ofs 고정이라 같은 거만 계속 추가됨 = 중복 생김.
       ofs += page_read_bytes;
     }
   return true;

@@ -235,7 +235,7 @@ thread_create (const char *name, int priority,
   // printf("pushed child : %d\n", find_child(thread_current(), t->tid)->tid);
 
   // project 3
-  list_init(&thread_current()->mmaps);
+  list_init(&t->mmaps);
   t->mapid = 1;
  
 
@@ -649,6 +649,16 @@ struct filedata* find_file(int searchingfd) {
   for (e = list_begin(searchlist); e != list_end(searchlist); e = list_next(e)) {
     struct filedata *t = list_entry(e, struct filedata, fdselem);
     if (t->targetfd == searchingfd) return t;
+  }
+  return NULL;
+}
+
+struct mapinfo* find_mapfile(int mapid) {
+  struct list_elem *e;
+  struct list* searchlist = &(thread_current()->mmaps);
+  for (e = list_begin(searchlist); e != list_end(searchlist); e = list_next(e)) {
+    struct mapinfo *t = list_entry(e, struct mapinfo, mmap_elem);
+    if (t->mapid == mapid) return t;
   }
   return NULL;
 }

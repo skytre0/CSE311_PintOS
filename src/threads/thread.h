@@ -94,7 +94,9 @@ struct filedata {
 struct mapinfo {
    void* vaddr;
    int fd;
+   struct file* file;
    int pagenum;
+   int mapid;
    struct list_elem mmap_elem;
 };
 
@@ -129,6 +131,7 @@ struct thread
     //추가끝
 
     // project 3
+    struct hash spt;          // SPT 를 추가해야함.
     struct list mmaps;        // mmap 정보 모음
     int mapid;
     
@@ -142,8 +145,6 @@ struct thread
     unsigned magic;                     /* Detects stack overflow. */
 
 
-    // SPT 를 추가해야함.
-    struct hash spt;
 
   };
 
@@ -186,5 +187,6 @@ int thread_get_load_avg (void);
 //
 struct thread* find_child(struct thread* parent, tid_t child_tid);
 struct filedata* find_file(int searchingfd);
+struct mapinfo* find_mapfile(int mapid);
 //
 #endif /* threads/thread.h */

@@ -208,7 +208,6 @@ page_fault (struct intr_frame *f)
    uint8_t *kpage;
 
    if ( sp == NULL){    // file이 아님 = stack을 연장해야 함.
-      printf("in the stack growth area 1\n");
 
       // fault_addr >= f->esp - 32); 32 안에 있으면 스택키우는 거임.
       bool is_stack_growth = (fault_addr >= f->esp - 32 && PHYS_BASE - fault_addr <= (1<<23)); // 8mb 보고
@@ -216,7 +215,6 @@ page_fault (struct intr_frame *f)
          numexit(-1);
       }
       // 스택 키우기
-      printf("in the stack growth area 2\n");
 
       uint8_t *upage = pg_round_down(fault_addr);
       struct supplemental_page* new_sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true, SWAP);
@@ -301,7 +299,7 @@ page_fault (struct intr_frame *f)
 
 void paging_simple(struct supplemental_page *sp, uint8_t *kpage) {
    if (sp->read_bytes == PGSIZE) {
-      if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
+      if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)      // file seek로 원하는 위치에 현재 있음 = file_read_at 안 해도 됨.
          {
             palloc_free_page (kpage);
             numexit(-1);
