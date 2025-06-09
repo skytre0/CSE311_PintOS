@@ -52,9 +52,34 @@ void free_hash_elem(struct hash_elem *he, void * aux) {
   if (kaddr != NULL) {    // frame에 있음
     free_frame(thread_current(), kaddr);
   }
-  else {  // frame에 없음 = eviction 당해서 swap된 상태
+  else if (sp->in_swap) {  // frame에 없고, eviction 당해서 swap된 상태
     // swapping 구현 이후에 구현 필요.
+    rm_swap(sp);
   }
   // spt에서 제거 & 본인 spt 제거
   free(sp);
+}
+
+void paging_simple(struct supplemental_page *sp, uint8_t *kpage) {
+   if (sp->read_bytes == PGSIZE) {
+      if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)      // file seek로 원하는 위치에 현재 있음 = file_read_at 안 해도 됨.
+         {
+            palloc_free_page (kpage);
+            numexit(-1);
+         }
+   }
+
+   else if (sp->zero_bytes == PGSIZE) {
+      memset (kpage, 0, sp->zero_bytes);
+   }
+
+   else {
+      if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
+         {
+            palloc_free_page (kpage);
+            numexit(-1);
+         }
+      memset (kpage + sp->read_bytes, 0, sp->zero_bytes);
+   }
+   return;
 }

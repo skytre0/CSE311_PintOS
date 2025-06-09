@@ -88,7 +88,7 @@ struct filedata {
    int targetfd;
    struct file* targetfile;
    struct list_elem fdselem;
-   char* targetname    // for sys_remove -> got when opened
+   char* targetname;    // for sys_remove -> got when opened
 };
 
 struct mapinfo {

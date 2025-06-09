@@ -145,11 +145,6 @@ kill (struct intr_frame *f)
 }
 
 
-void paging_simple(struct supplemental_page *sp, uint8_t *kpage);
-
-
-
-
 
 /* Page fault handler.  This is a skeleton that must be filled in
    to implement virtual memory.  Some solutions to project 2 may
@@ -200,8 +195,6 @@ page_fault (struct intr_frame *f)
       numexit(-1);
    }
 
-   // int32_t* page_vaddr = pg_round_down(fault_addr); // 페이지 단위로 정렬
-   //  printf("[PAGE_FAULT] Fault occurred for vaddr: %p\n", page_vaddr); // 디버깅용
 
    // 폴트인데 유효성 판단 해야함. 이제 보조 테이블이 필요함.
    struct supplemental_page *sp = spt_find_page(&thread_current()->spt, fault_addr);
@@ -210,32 +203,27 @@ page_fault (struct intr_frame *f)
    if ( sp == NULL){    // file이 아님 = stack을 연장해야 함.
 
       // fault_addr >= f->esp - 32); 32 안에 있으면 스택키우는 거임.
-      bool is_stack_growth = (fault_addr >= f->esp - 32 && PHYS_BASE - fault_addr <= (1<<23)); // 8mb 보고
+      if (PHYS_BASE - fault_addr > (1<<23))  numexit(-1);
+
+      if (user)
+      else
+      
+      bool is_stack_growth = (fault_addr >= f->esp - 32); // 8mb 보고
       if (!is_stack_growth) {
          numexit(-1);
       }
       // 스택 키우기
 
       uint8_t *upage = pg_round_down(fault_addr);
-      struct supplemental_page* new_sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true, -1);
-      hash_insert(&thread_current()->spt, &new_sp->hash_elem);
-      kpage = stack_frame_alloc(thread_current(), new_sp); // 스택 할당하기
+      sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true, -1);
+      hash_insert(&thread_current()->spt, &sp->hash_elem);
+      kpage = stack_frame_alloc(thread_current(), sp); // 스택 할당하기
 
       if (kpage == NULL)
          numexit(-1);
-      // 페이징 할당하기
-      // 매핑하기
    }
-// printf("===============1st thread in page fault : %d===================\n", thread_current()->tid);
-   // struct hash_elem *hash_find (struct hash *, struct hash_elem *);
-
-   // 유효한 경우: 단순히 디스크 등에서 메모리로 아직 안 올라온 페이지
-
-         /* Get a page of memory. */
 
    else {      // file에 있는 page 발견
-      // read-only에 write하려고 하면 exit해야 함.
-      if (write && !sp->writable)   numexit(-1);
 
       // 이제는 ofs 만큼 가서 읽어야 함.
       file_seek (sp->file, sp->ofs);
@@ -243,83 +231,12 @@ page_fault (struct intr_frame *f)
 
       if (kpage == NULL)
          numexit(-1);
-
-      paging_simple(sp, kpage);     // paging according to read_byte / zero_byte size (PGSIZE)
    }
 
-   bool success = pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);
-   if(!success) {
-      palloc_free_page(kpage);
-      numexit(-1);
-   }
+   // read-only에 write하려고 하면 exit해야 함.
+   if (write && !sp->writable)   numexit(-1);         // trying to write to read_only
 
-   /* Load this page. */
-   // if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
-   //    {
-   //       palloc_free_page (kpage);
-   //       numexit(-1);
-   //    }
-   // memset (kpage + sp->read_bytes, 0, sp->zero_bytes);
-
-   // bool success = pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);
-   // if(!success) {
-   //  palloc_free_page(kpage);
-   //  numexit(-1);
-   // }
-
-
-   /* Add the page to the process's address space. */
-  //  if (!(pagedir_get_page (thread_current()->pagedir, sp->upage) == NULL)) {
-  //     if (!(pagedir_set_page (thread_current()->pagedir, sp->upage, kpage, sp->writable))) {
-  //        palloc_free_page (kpage);
-  //        return false; 
-
-  //     }
-  //  }
-   // if (!(pagedir_get_page (thread_current()->pagedir, sp->upage) == NULL
-   //        && pagedir_set_page (thread_current()->pagedir, sp->upage, kpage, sp->writable))) 
-   //    {
-   //       palloc_free_page (kpage);
-   //       return false; 
-   //    }
-// printf("===============2nd thread in page fault : %d===================\n", thread_current()->tid);
-
-// spt 가지고 로드하면 됌.
-
-// 빈 프레임 확보: 물리 메모리에서 비어있는 공간(프레임)을 찾습니다. 만약 없다면, 기존에 사용 중인 프레임 중 하나를 비웁니다 (페이지 교체 알고리즘 사용)
-// 데이터 로딩: 필요한 페이지 데이터를 디스크(파일 시스템 또는 스왑 영역)에서 2번에서 확보한 프레임으로 읽어옵니다.
-// 페이지 테이블 갱신: 해당 가상 주소가 방금 데이터를 로드한 물리 프레임을 가리키도록 페이지 테이블을 수정합니다.
-// 명령 재시작: 폴트를 발생시켰던 명령어를 다시 실행합니다. 이제는 메모리에 데이터가 있으므로 정상적으로 수행됩니다.
-
-  // if( user ) numexit(-1);
-  // printf ("Page fault at %p: %s error %s page in %s context.\n",
-  //         fault_addr,
-  //         not_present ? "not present" : "rights violation",
-  //         write ? "writing" : "reading",
-  //         user ? "user" : "kernel");
-  // kill (f);
-}
-
-void paging_simple(struct supplemental_page *sp, uint8_t *kpage) {
-   if (sp->read_bytes == PGSIZE) {
-      if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)      // file seek로 원하는 위치에 현재 있음 = file_read_at 안 해도 됨.
-         {
-            palloc_free_page (kpage);
-            numexit(-1);
-         }
-   }
-
-   else if (sp->zero_bytes == PGSIZE) {
-      memset (kpage, 0, sp->zero_bytes);
-   }
-
-   else {
-      if (file_read (sp->file, kpage, sp->read_bytes) != (int) sp->read_bytes)
-         {
-            palloc_free_page (kpage);
-            numexit(-1);
-         }
-      memset (kpage + sp->read_bytes, 0, sp->zero_bytes);
-   }
-   return;
+   // 이거 frame alloc에 넣으면 process의 setup stack의 install page로 인해 kernel panic 뜨는 걸로 보임.
+   // 만약 넣으려면, setup stack의 내용 바꾸고 무조건 true 반환하는 방식 쓰면 되긴 함.
+   pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);     
 }

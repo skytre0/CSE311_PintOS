@@ -3,6 +3,7 @@
 
 #include "hash.h"
 #include "../userprog/process.h"
+#include "userprog/pagedir.h"
 
 
 struct supplemental_page{
@@ -35,4 +36,5 @@ unsigned hashing_func(struct hash_elem *he, void * aux);
 bool hash_less_page(const struct hash_elem *a, const struct hash_elem *b, void * aux);
 struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr);
 void free_hash_elem(struct hash_elem *he, void * aux);
+void paging_simple(struct supplemental_page *sp, uint8_t *kpage);
 #endif

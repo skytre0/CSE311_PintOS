@@ -101,7 +101,7 @@ main (void)
   palloc_init (user_page_limit);
   malloc_init ();
   
-  list_init ( &frame_table );
+  frame_init();
   swap_init();
 
   paging_init ();

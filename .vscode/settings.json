@@ -23,6 +23,7 @@
         "random.h": "c",
         "swap.h": "c",
         "synch.h": "c",
-        "page.h": "c"
+        "page.h": "c",
+        "stddef.h": "c"
     }
 }
