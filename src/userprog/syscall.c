@@ -85,6 +85,14 @@ bool check_user_mem(void* addr, int addrsize, bool is_name) {
   return true;
 }
 
+void buffer_check(void* addr, int addrsize) {
+  void* check;
+  for (check = addr; check < addr + addrsize; check += PGSIZE) {
+    struct supplemental_page* sp = spt_find_page(&thread_current()->spt, check);
+    if (!sp->writable)  numexit(-1);
+  }
+}
+
 
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
@@ -282,8 +290,17 @@ void numexit(int num) {
   file_close(thread_current()->execfile);
 
 
+
   // project 3로 spt, frame 등 모두 free
   // spt 순회하면서 검사, MMAP이면 nummunmap 호출, 아니면 frame에 있는지 확인, 있으면 free_frame -> sp free
+  while( list_begin( &(thread_current()->mmaps) ) != list_end( &(thread_current()->mmaps) ) ){
+    struct mapinfo* mi = list_entry(list_begin(&(thread_current()->mmaps)), struct mapinfo, mmap_elem);
+    nummunmap(mi->mapid);
+  }
+
+  // 이제 남은 거 무조건 MMAP 아닌 것들만 spt에 남아 있음 -> hash_destroy가 알아서 hash에서 지우고, free_hash_elem이 알아서 frame, sp 지움.
+  hash_destroy(&thread_current()->spt, free_hash_elem);
+  
 
 
   // parent's sema up
@@ -363,6 +380,8 @@ int numread(int readfd, void* readbuffer, unsigned readsize) {
     struct filedata* readfile = find_file(readfd);
     if (readfile == NULL) return -1;
     if(!check_user_mem(readbuffer, readsize, 0)) numexit(-1);
+    // in project 3, testcase check whether buffer address valid or not -> read syscall write on buffer
+    buffer_check(readbuffer, readsize);
     sema_down(&filesema);
     int retval = file_read (readfile->targetfile, readbuffer, readsize);
     sema_up(&filesema);
@@ -445,6 +464,8 @@ int nummmap(int fd, void* addr) {
   sema_down(&filesema);
   mmapfile = file_reopen(mmapfile);
   sema_up(&filesema);
+
+  // mmap할 파일에 정보 기록
   struct mapinfo* newm = calloc(1, sizeof(struct mapinfo));
   newm->vaddr = addr;
   newm->fd = fd;
@@ -458,12 +479,13 @@ int nummmap(int fd, void* addr) {
       int read_bytes = (limit - ofs < PGSIZE) ? (limit - ofs) : PGSIZE;
       int zero_bytes = PGSIZE - read_bytes;
 
+      // mapid 바로 기록 -> nummunmap 바로 가능해짐
       struct supplemental_page* new_sp = create_new_sp(mmapfile,
                                                         ofs,
                                                         uaddr,
                                                         read_bytes,
                                                         zero_bytes,
-                                                        true, MMAP);
+                                                        true, newm->mapid);
       ofs += PGSIZE;
       hash_insert(&thread_current()->spt, &new_sp->hash_elem);
   }
@@ -486,12 +508,12 @@ void nummunmap(int mapping) {
         sema_up(&filesema);
       }
       // 해당 frame 찾고 free해야 함.
-      pagedir_clear_page(thread_current()->pagedir, sp->upage);     // 이거 안 하면 double free 일어남 -> free frame 내부로 옮기는 것 상의할 것.
       free_frame(thread_current(), kaddr);
     }
-    else {} // frame에 없음 = eviction 당했든지, 애초에 mmap만 하고 사용한 적 없음
-    // spt에서 제거 & 본인 spt 제거
+    else {} // frame에 없음 = eviction 당해서 반영된 상태든지, 애초에 mmap만 하고 사용한 적 없음
+    // spt에서 제거 & mmaps에서도 제거 -> 본인 spt 제거
     hash_delete(&thread_current()->spt, &sp->hash_elem);
+    list_remove(&mapfile->mmap_elem);
     free(sp);
   }
   // reopen 제거 -> 이거 syscall numopen으로 한 거 아니라 file_reopen으로 한 거라서 syscall numclose 대신 이거 씀

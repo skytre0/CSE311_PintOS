@@ -2,7 +2,7 @@
 #include "../threads/vaddr.h"
 
 struct supplemental_page* create_new_sp (struct file* file, int32_t ofs, uint8_t* upage, 
-                                        uint32_t read_bytes, uint32_t zero_bytes, bool writable, enum page_type pt) {
+                                        uint32_t read_bytes, uint32_t zero_bytes, bool writable, int pt) {
     struct supplemental_page* new_sp = calloc(1, sizeof(struct supplemental_page));
     new_sp->file = file;
     new_sp->ofs = ofs;
@@ -10,7 +10,10 @@ struct supplemental_page* create_new_sp (struct file* file, int32_t ofs, uint8_t
     new_sp->read_bytes = read_bytes;
     new_sp->zero_bytes = zero_bytes;
     new_sp->writable = writable;
+    
     new_sp->from_where = pt;
+    new_sp->in_swap = false;
+    new_sp->swap_pos = -1;
     return new_sp;
 }
 
@@ -40,4 +43,18 @@ struct supplemental_page *spt_find_page(struct hash *spt, void *vaddr) {
     if (e != NULL) return hash_entry(e, struct supplemental_page, hash_elem);
     
     return NULL;
+}
+
+
+void free_hash_elem(struct hash_elem *he, void * aux) {
+  struct supplemental_page *sp = hash_entry (he, struct supplemental_page, hash_elem);
+  void* kaddr = pagedir_get_page(thread_current()->pagedir, sp->upage);
+  if (kaddr != NULL) {    // frame에 있음
+    free_frame(thread_current(), kaddr);
+  }
+  else {  // frame에 없음 = eviction 당해서 swap된 상태
+    // swapping 구현 이후에 구현 필요.
+  }
+  // spt에서 제거 & 본인 spt 제거
+  free(sp);
 }

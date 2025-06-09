@@ -217,9 +217,9 @@ page_fault (struct intr_frame *f)
       // 스택 키우기
 
       uint8_t *upage = pg_round_down(fault_addr);
-      struct supplemental_page* new_sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true, SWAP);
+      struct supplemental_page* new_sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true, -1);
       hash_insert(&thread_current()->spt, &new_sp->hash_elem);
-      kpage = stack_frame_alloc(thread_current()); // 스택 할당하기
+      kpage = stack_frame_alloc(thread_current(), new_sp); // 스택 할당하기
 
       if (kpage == NULL)
          numexit(-1);
@@ -234,9 +234,12 @@ page_fault (struct intr_frame *f)
          /* Get a page of memory. */
 
    else {      // file에 있는 page 발견
+      // read-only에 write하려고 하면 exit해야 함.
+      if (write && !sp->writable)   numexit(-1);
+
       // 이제는 ofs 만큼 가서 읽어야 함.
       file_seek (sp->file, sp->ofs);
-      kpage = file_frame_alloc(thread_current());
+      kpage = file_frame_alloc(thread_current(), sp);
 
       if (kpage == NULL)
          numexit(-1);

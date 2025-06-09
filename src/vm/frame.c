@@ -5,25 +5,37 @@
 #include "../userprog/exception.h"
 
 
-void* file_frame_alloc(struct thread* tc) {
+void* file_frame_alloc(struct thread* tc, struct supplemental_page* sp) {
     struct frame* new_frame = calloc(1, sizeof(struct frame));
     new_frame->page = palloc_get_page (PAL_USER);
     // swapping 이후 추가 필요.
-    list_push_back(&frame_table, &new_frame->frame_elem);
+    if (new_frame->page == NULL) {      // swapping으로 기존 frame_table 사용.
+        // new_frame = swap_out();
+    }
+    else {      // 새 frame 만들었으면, frame_table에 저장.
+        list_push_back(&frame_table, &new_frame->frame_elem);
+    }
+    // swap_in(new_frame, sp);
     new_frame->thread = tc;
-    new_frame->spte = &tc->spt;
+    new_frame->sp = sp;
 
     return new_frame->page;
 }
 
 
-void* stack_frame_alloc(struct thread* tc) {
+void* stack_frame_alloc(struct thread* tc, struct supplemental_page* sp) {
     struct frame* new_frame = calloc(1, sizeof(struct frame));
     new_frame->page = palloc_get_page (PAL_USER | PAL_ZERO);
     // swapping 이후 추가 필요.
-    list_push_back(&frame_table, &new_frame->frame_elem);
+    if (new_frame->page == NULL) {      // swapping으로 기존 frame_table 사용.
+        // new_frame = swap_out();
+    }
+    else {      // 새 frame 만들었으면, frame_table에 저장.
+        list_push_back(&frame_table, &new_frame->frame_elem);
+    }
+    // swap_in(new_frame, sp);
     new_frame->thread = tc;
-    new_frame->spte = &tc->spt;
+    new_frame->sp = sp;
 
     return new_frame->page;
 }
@@ -34,6 +46,7 @@ void* free_frame(struct thread* tc, void *page) {
     for ( ;ft_elem != list_end(&frame_table); ) {
         struct frame* frame = list_entry(ft_elem, struct frame, frame_elem);
         if (frame->thread == tc && frame->page == page) {
+            pagedir_clear_page(tc->pagedir, frame->sp->upage);     // 이거 안 하면 double free 일어남
             palloc_free_page(page);
             ft_elem = list_remove(ft_elem);
             free(frame);
@@ -51,26 +64,26 @@ void* frame_append(struct thread* tc, void* page){
     return new_frame->page;
 }
 
-// struct frame* frame_evict(){ // 죽일놈 선택하기만
-//     while(1){
-//         struct list_elem* frame_elem = list_begin(&frame_table); // 우리는 맨 앞만 본다, 앞에꺼 뺴서 맨 뒤에 넣기
-//         struct frame* frame = list_entry(frame_elem, struct frame, frame_elem);
+struct frame* frame_evict() { // 죽일놈 선택하기만
+    while(1){
+        struct list_elem* frame_elem = list_begin(&frame_table); // 우리는 맨 앞만 본다, 앞에꺼 뺴서 맨 뒤에 넣기
+        struct frame* frame = list_entry(frame_elem, struct frame, frame_elem);
 
-//         list_remove(frame_elem);
-//         list_push_back(&frame_table, frame_elem);
+        if (pagedir_is_accessed(frame->thread->pagedir, frame->sp->upage)) {    // give a second chance
+            pagedir_set_accessed(frame->thread->pagedir, frame->sp->upage, false);      // 확인함
+            // 맨 앞을 빼고, 맨뒤에 넣음.
+            list_remove(frame_elem);
+            list_push_back(&frame_table, frame_elem);
+        }
+        else {  // found frame to evict
+            return frame;
+        }
 
-//         if (frame->thread == NULL) {
-//             // 사용하지 않는 프레임 발견
-//             return frame;
-//         }
 
-//         if (pagedir_is_accessed(frame->thread->pagedir, frame->spte->page)) { // 최근에 접근했다면, Accessed Bit를 0으로
-//             pagedir_set_accessed(frame->thread->pagedir, frame->spte->page, false);
-//             continue;
-//         }
-
-//         // 맨 앞을 뺴고, 맨뒤에 넣음.
-//         return frame;
-//     }
-//     return NULL;
-// }
+        // if (frame->thread == NULL) {
+        //     // 사용하지 않는 프레임 발견
+        //     return frame;
+        // }
+    }
+    return NULL;
+}
