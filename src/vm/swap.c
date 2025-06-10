@@ -68,14 +68,14 @@ struct frame* swap_out() {
         }
         // pagedir_set_dirty(frame->thread->pagedir, frame->sp->upage, false);
     }
-    else {      // nothing written = don't save to swap = just overwrite
+    else {      // pintos testcase problem -> file 변경되더라도 dirty 반영 안 됨 = 그냥 전부 swap 대상으로 함.
         size_t swap_index = bitmap_scan_and_flip (swap_bitmap, 0, 1, false);
-            frame->sp->in_swap = true;
-            frame->sp->swap_pos = swap_index;
-            int i = 0;
-            for (i = 0; i < (PGSIZE / BLOCK_SECTOR_SIZE); i++) {        // swap_index에 1/8만큼 작성 가능해서, 1 page = 0~7, 2page = 8~15 ... 라서 쓸 위치 이렇게 작성함.
-                block_write (swap_block, swap_index * (PGSIZE / BLOCK_SECTOR_SIZE) + i, frame->page + i * BLOCK_SECTOR_SIZE); // block_write(스왑디바이스, 쓸 위치, 데이터소스 주소)
-            }
+        frame->sp->in_swap = true;
+        frame->sp->swap_pos = swap_index;
+        int i = 0;
+        for (i = 0; i < (PGSIZE / BLOCK_SECTOR_SIZE); i++) {        // swap_index에 1/8만큼 작성 가능해서, 1 page = 0~7, 2page = 8~15 ... 라서 쓸 위치 이렇게 작성함.
+            block_write (swap_block, swap_index * (PGSIZE / BLOCK_SECTOR_SIZE) + i, frame->page + i * BLOCK_SECTOR_SIZE); // block_write(스왑디바이스, 쓸 위치, 데이터소스 주소)
+        }
     }
     pagedir_clear_page(frame->thread->pagedir, frame->sp->upage);
     // printf("swap_out: ""upage %p, in_swap %d, swap_pos %d\n", frame->sp->upage, frame->sp->in_swap, frame->sp->swap_pos);

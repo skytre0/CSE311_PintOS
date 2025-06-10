@@ -10,6 +10,15 @@ void frame_init(void){
     lock_init (&frame_lock);
 }
 
+struct supplemental_page* stack_grow(void* fault_addr, void* esp) {
+    // fault_addr >= f->esp - 32); 32 안에 있으면 스택키우는 거임.
+    if (PHYS_BASE - fault_addr > (1<<23))  numexit(-1);
+    if (fault_addr < esp - 32)  numexit(-1); // 8mb 보고
+    uint8_t *upage = pg_round_down(fault_addr);
+    struct supplemental_page* sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true, -1);
+    hash_insert(&thread_current()->spt, &sp->hash_elem);
+    return sp;
+}
 
 void* file_frame_alloc(struct thread* tc, struct supplemental_page* sp) {
     struct frame* new_frame;             // swapping 여부에 따라 나뉘기에

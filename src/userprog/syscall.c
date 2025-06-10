@@ -78,7 +78,7 @@ bool check_user_mem(void* addr, int addrsize, bool is_name) {
     if (i == NULL) return false;
     if (!is_user_vaddr(i)) return false;
     if ((pagedir_get_page(thread_current()->pagedir, i) == NULL) && 
-        (spt_find_page(&thread_current()->spt, i) == NULL)) return false;
+        (spt_find_page(&thread_current()->spt, i) == NULL)) stack_grow(i, thread_current()->kernelesp);
     if (is_name)
       if (*(char *)(i) == NULL) break;
   }
@@ -107,6 +107,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   // user process의 syscall
   if(!check_user_mem(f->esp, 4, 0)) numexit(-1);
   int number = *(int*)(f->esp);
+  thread_current()->kernelesp = f->esp;
   
 
   switch (number)

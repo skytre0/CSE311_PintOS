@@ -134,7 +134,7 @@ struct thread
     struct hash spt;          // SPT 를 추가해야함.
     struct list mmaps;        // mmap 정보 모음
     int mapid;
-    
+    void* kernelesp;
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */

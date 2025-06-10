@@ -202,21 +202,7 @@ page_fault (struct intr_frame *f)
 
    if ( sp == NULL){    // file이 아님 = stack을 연장해야 함.
 
-      // fault_addr >= f->esp - 32); 32 안에 있으면 스택키우는 거임.
-      if (PHYS_BASE - fault_addr > (1<<23))  numexit(-1);
-
-      // if (user)
-      // else
-      
-      bool is_stack_growth = (fault_addr >= f->esp - 32); // 8mb 보고
-      if (!is_stack_growth) {
-         numexit(-1);
-      }
-      // 스택 키우기
-
-      uint8_t *upage = pg_round_down(fault_addr);
-      sp = create_new_sp(NULL, NULL, upage, 0, PGSIZE, true, -1);
-      hash_insert(&thread_current()->spt, &sp->hash_elem);
+      sp = stack_grow(fault_addr, f->esp);
       kpage = stack_frame_alloc(thread_current(), sp); // 스택 할당하기
 
       if (kpage == NULL)
