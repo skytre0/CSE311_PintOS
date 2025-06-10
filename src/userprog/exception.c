@@ -205,8 +205,8 @@ page_fault (struct intr_frame *f)
       // fault_addr >= f->esp - 32); 32 안에 있으면 스택키우는 거임.
       if (PHYS_BASE - fault_addr > (1<<23))  numexit(-1);
 
-      if (user)
-      else
+      // if (user)
+      // else
       
       bool is_stack_growth = (fault_addr >= f->esp - 32); // 8mb 보고
       if (!is_stack_growth) {

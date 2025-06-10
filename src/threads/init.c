@@ -102,7 +102,6 @@ main (void)
   malloc_init ();
   
   frame_init();
-  swap_init();
 
   paging_init ();
 
@@ -133,7 +132,8 @@ main (void)
   locate_block_devices ();
   filesys_init (format_filesys);
 #endif
-
+  
+  swap_init();// 블락 찾으려면 파일 시스템이 있어야가능. 그래서 뒤로 이동했음.
   printf ("Boot complete.\n");
   
   /* Run actions specified on kernel command line. */
