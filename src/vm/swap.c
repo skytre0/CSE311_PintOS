@@ -19,6 +19,9 @@ void swap_init(void){
 // swap_in
 void swap_in(struct frame* new_frame, struct supplemental_page* sp) {
     lock_acquire(&swap_lock);
+    // printf("swap_in: ""upage %p, in_swap %d, swap_pos %d\n", sp->upage, sp->in_swap, sp->swap_pos);
+    
+
     if (sp->in_swap == true) {      // swap에 있음 = 그냥 file이나 stack.
         size_t swap_index = sp->swap_pos;
         sp->in_swap = false;
@@ -34,7 +37,7 @@ void swap_in(struct frame* new_frame, struct supplemental_page* sp) {
     else {      // swap에 없음 = mmap / 처음 읽는 것 = in_swap, swap_pos 바꿀 거 없음.
         paging_simple(sp, new_frame->page);     // paging according to read_byte / zero_byte size (PGSIZE)
     }
-
+    
     lock_release(&swap_lock);
 }
 
@@ -42,11 +45,13 @@ void swap_in(struct frame* new_frame, struct supplemental_page* sp) {
 struct frame* swap_out() {
     lock_acquire(&swap_lock);
     // victim인 frame 찾기
+
+
     struct frame* frame = frame_evict();
 
     if (pagedir_is_dirty(frame->thread->pagedir, frame->sp->upage)) {   // something written = save to swap
         // 비어있는 공간 찾기
-        pagedir_set_dirty(frame->thread->pagedir, frame->sp->upage, false);
+        
         if (frame->sp->from_where > 0) {   // is mmap = save to file = 그냥 나중에 file에서 다시 가져오는 거라서 in_swap 변경할 필요 없음.
             sema_down(&filesema);
             file_write_at(frame->sp->file, frame->page, frame->sp->read_bytes, frame->sp->ofs);   // nummunmap하면 frame 포함 전부 날려서 못 씀.
@@ -61,11 +66,19 @@ struct frame* swap_out() {
                 block_write (swap_block, swap_index * (PGSIZE / BLOCK_SECTOR_SIZE) + i, frame->page + i * BLOCK_SECTOR_SIZE); // block_write(스왑디바이스, 쓸 위치, 데이터소스 주소)
             }
         }
+        // pagedir_set_dirty(frame->thread->pagedir, frame->sp->upage, false);
     }
     else {      // nothing written = don't save to swap = just overwrite
-
+        size_t swap_index = bitmap_scan_and_flip (swap_bitmap, 0, 1, false);
+            frame->sp->in_swap = true;
+            frame->sp->swap_pos = swap_index;
+            int i = 0;
+            for (i = 0; i < (PGSIZE / BLOCK_SECTOR_SIZE); i++) {        // swap_index에 1/8만큼 작성 가능해서, 1 page = 0~7, 2page = 8~15 ... 라서 쓸 위치 이렇게 작성함.
+                block_write (swap_block, swap_index * (PGSIZE / BLOCK_SECTOR_SIZE) + i, frame->page + i * BLOCK_SECTOR_SIZE); // block_write(스왑디바이스, 쓸 위치, 데이터소스 주소)
+            }
     }
     pagedir_clear_page(frame->thread->pagedir, frame->sp->upage);
+    // printf("swap_out: ""upage %p, in_swap %d, swap_pos %d\n", frame->sp->upage, frame->sp->in_swap, frame->sp->swap_pos);
     lock_release(&swap_lock); // 풀어주기
     return frame;
 }

@@ -244,5 +244,5 @@ page_fault (struct intr_frame *f)
 
    // 이거 frame alloc에 넣으면 process의 setup stack의 install page로 인해 kernel panic 뜨는 걸로 보임.
    // 만약 넣으려면, setup stack의 내용 바꾸고 무조건 true 반환하는 방식 쓰면 되긴 함.
-   pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);     
+   pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);
 }
