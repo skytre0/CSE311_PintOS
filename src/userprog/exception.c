@@ -203,7 +203,7 @@ page_fault (struct intr_frame *f)
    if ( sp == NULL){    // file이 아님 = stack을 연장해야 함.
 
       sp = stack_grow(fault_addr, f->esp);
-      kpage = stack_frame_alloc(thread_current(), sp); // 스택 할당하기
+      kpage = frame_alloc(thread_current(), sp); // 스택 할당하기
 
       if (kpage == NULL)
          numexit(-1);
@@ -212,12 +212,12 @@ page_fault (struct intr_frame *f)
    else {      // file에 있는 page 발견
       
       if (sp->file == NULL) {
-         kpage = stack_frame_alloc(thread_current(), sp); // 스택 할당하기
+         kpage = frame_alloc(thread_current(), sp); // 스택 할당하기
       }
       else {
          // 이제는 ofs 만큼 가서 읽어야 함.
          file_seek (sp->file, sp->ofs);
-         kpage = file_frame_alloc(thread_current(), sp);
+         kpage = frame_alloc(thread_current(), sp);
       }
 
 

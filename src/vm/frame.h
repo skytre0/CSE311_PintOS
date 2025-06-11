@@ -24,8 +24,7 @@ void frame_init(void);
 
 struct supplemental_page* stack_grow(void* fault_addr, void* esp);
 
-void* file_frame_alloc(struct thread* tc, struct supplemental_page* sp);
-void* stack_frame_alloc(struct thread* tc, struct supplemental_page* sp);
+void* frame_alloc(struct thread* tc, struct supplemental_page* sp);
 
 void* free_frame(struct thread* tc, void *page);
 

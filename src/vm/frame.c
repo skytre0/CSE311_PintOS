@@ -20,52 +20,32 @@ struct supplemental_page* stack_grow(void* fault_addr, void* esp) {
     return sp;
 }
 
-void* file_frame_alloc(struct thread* tc, struct supplemental_page* sp) {
+void* frame_alloc(struct thread* tc, struct supplemental_page* sp) {
     struct frame* new_frame;             // swapping 여부에 따라 나뉘기에
-    void* kaddr = palloc_get_page (PAL_USER);   // 동일 이유
-    // swapping 이후 추가 필요.
-    lock_acquire(&frame_lock);
-    if (kaddr == NULL) {      // swapping으로 기존 frame_table 사용.
-        new_frame = swap_out();       // 기존 frame 재활용.
+    void* kaddr;
+    // lock_acquire(&frame_lock);
+    if (sp->file != NULL)
+        kaddr = palloc_get_page (PAL_USER);   // 동일 이유
+    else
+        kaddr = palloc_get_page (PAL_USER | PAL_ZERO);   // 동일 이유
+    if (kaddr == NULL) {
+        new_frame = swap_out();
     }
     else {      // 새 frame 만들고, frame_table에 저장.
         new_frame = calloc(1, sizeof(struct frame));
         new_frame->page = kaddr;
         list_push_back(&frame_table, &new_frame->frame_elem);
     }
-    swap_in(new_frame, sp);
     new_frame->thread = tc;
     new_frame->sp = sp;
-
-    // synchronize 하기 -> setup stack 변경 싫어서 그냥 page_fault에 넣음
-    // pagedir_set_page(tc->pagedir, sp->upage, new_frame->page, sp->writable);
-
-    lock_release(&frame_lock);
-    return new_frame->page;
-}
-
-
-void* stack_frame_alloc(struct thread* tc, struct supplemental_page* sp) {
-    struct frame* new_frame;             // swapping 여부에 따라 나뉘기에
-    void* kaddr = palloc_get_page (PAL_USER | PAL_ZERO);   // 동일 이유
-    // swapping 이후 추가 필요.
-    lock_acquire(&frame_lock);
-    if (kaddr == NULL) {      // swapping으로 기존 frame_table 사용.
-        new_frame = swap_out();       // 기존 frame 재활용.
-    }
-    else {      // 새 frame 만들고, frame_table에 저장.
-        new_frame = calloc(1, sizeof(struct frame));
-        new_frame->page = kaddr;
-        list_push_back(&frame_table, &new_frame->frame_elem);
-    }
+    // new_frame->pinned = true;
+    // lock_release(&frame_lock);
     swap_in(new_frame, sp);
-    new_frame->thread = tc;
-    new_frame->sp = sp;
 
+    
     // synchronize 하기
     // pagedir_set_page(tc->pagedir, sp->upage, new_frame->page, sp->writable);
 
-    lock_release(&frame_lock);
     return new_frame->page;
 }
 

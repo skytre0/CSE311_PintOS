@@ -562,7 +562,7 @@ setup_stack (void **esp)
   struct supplemental_page* new_sp = create_new_sp(NULL, NULL, (PHYS_BASE - PGSIZE), 0, PGSIZE, true, -1);
   hash_insert(&thread_current()->spt, &new_sp->hash_elem);
 
-  kpage = stack_frame_alloc(thread_current(), new_sp);
+  kpage = frame_alloc(thread_current(), new_sp);
   if (kpage != NULL) 
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
