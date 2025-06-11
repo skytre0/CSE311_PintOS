@@ -189,9 +189,24 @@ page_fault (struct intr_frame *f)
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
      which fault_addr refers. */
+   if( ! is_init ) {
+      lock_init(& fpl);
+      fpl_cnt = 0;
+      ft = thread_current()->tid;
+   }
+
+   // if(ft == thread_current()->tid){
+   //    fpl_cnt++;
+   // }else{
+   //    lock_acquire(& fpl);
+   //    fpl_cnt = 0;
+   //    fpl_cnt++;
+   // }
+   lock_acquire(& fpl);
 
 // 일단 널이랑 커널은 쳐내
    if( fault_addr == NULL || is_kernel_vaddr(fault_addr) ) {
+      lock_release(&fpl);
       numexit(-1);
    }
 
@@ -205,8 +220,11 @@ page_fault (struct intr_frame *f)
       sp = stack_grow(fault_addr, f->esp);
       kpage = frame_alloc(thread_current(), sp); // 스택 할당하기
 
-      if (kpage == NULL)
+      if (kpage == NULL){
+         lock_release(&fpl);
          numexit(-1);
+      }
+         
    }
 
    else {      // file에 있는 page 발견
@@ -221,14 +239,21 @@ page_fault (struct intr_frame *f)
       }
 
 
-      if (kpage == NULL)
+      if (kpage == NULL){
+         lock_release(&fpl);
          numexit(-1);
+      }
+         
    }
 
    // read-only에 write하려고 하면 exit해야 함.
-   if (write && !sp->writable)   numexit(-1);         // trying to write to read_only
+   if (write && !sp->writable){
+      lock_release(&fpl);
+      numexit(-1);
+   }            // trying to write to read_only
 
    // 이거 frame alloc에 넣으면 process의 setup stack의 install page로 인해 kernel panic 뜨는 걸로 보임.
    // 만약 넣으려면, setup stack의 내용 바꾸고 무조건 true 반환하는 방식 쓰면 되긴 함.
    pagedir_set_page(thread_current()->pagedir, sp->upage, kpage, sp->writable);
+   lock_release(&fpl);
 }

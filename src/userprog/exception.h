@@ -9,4 +9,8 @@
 void exception_init (void);
 void exception_print_stats (void);
 
+static struct lock fpl;
+static int is_init;
+static int fpl_cnt;
+static int ft;
 #endif /* userprog/exception.h */
