@@ -90,3 +90,10 @@ load_segment() 바꿔야 함
 
 frame table 구현 : 
 frame.c, frame.h에 구현, load_segment에서 palloc_get_page를 부르기 때문에, 이거 cover하는 함수 만들어서 get_page한 거를 list에 새로 추가하고, 어떤 
+
+
+
+
+syscall : create, open, write, seek, tell, filesize, close
+write -> file_write -> inode_write_at을 file size를 확장하게 해야 함.
+write가 끝에만 쓰면, 처음부터 끝 사이는 모두 0으로 초기화.
