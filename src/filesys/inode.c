@@ -46,7 +46,7 @@ struct inode
    Returns -1 if INODE does not contain data for a byte at offset
    POS. */
 static block_sector_t
-byte_to_sector (const struct inode *inode, off_t pos)     // 변경 대상.
+byte_to_sector (const struct inode *inode, off_t pos, bool is_write)     // 변경 대상.
 {
   // 연속 사이즈가 아니니까 , 파일도 인자로 받아와야함.
   
@@ -307,19 +307,26 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,           
   if (inode->deny_write_cnt)
     return 0;
 
-  while (size > 0) 
+
+  if (offset > inode_length(inode)) { // 더 쓰면 디스크의 최대길이 늘려
+      inode->data.length = offset;
+  }
+
+  while (size > 0) //여기서 다 처리함.
     {
       /* Sector to write, starting byte offset within sector. */
-      block_sector_t sector_idx = byte_to_sector (inode, offset);
+      block_sector_t sector_idx = byte_to_sector (inode, offset, true);
+      // 섹터 불러오고 없으면 할당까지 해야함. (할당은 아직 미구현) 
+
       int sector_ofs = offset % BLOCK_SECTOR_SIZE;
 
       /* Bytes left in inode, bytes left in sector, lesser of the two. */
       off_t inode_left = inode_length (inode) - offset;
       int sector_left = BLOCK_SECTOR_SIZE - sector_ofs;
-      int min_left = inode_left < sector_left ? inode_left : sector_left;
+      // int min_left = inode_left < sector_left ? inode_left : sector_left; 이제는 걍 쓰면됌 확장해야해
 
       /* Number of bytes to actually write into this sector. */
-      int chunk_size = size < min_left ? size : min_left;
+      int chunk_size = size < sector_left ? size : sector_left;
       if (chunk_size <= 0)
         break;
 
