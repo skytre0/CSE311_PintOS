@@ -247,33 +247,97 @@ inode_get_inumber (const struct inode *inode)
   return inode->sector;
 }
 
-/* Closes INODE and writes it to disk.
-   If this was the last reference to INODE, frees its memory.
-   If INODE was also a removed inode, frees its blocks. */
-void
-inode_close (struct inode *inode)         // 변경 대상.
+//
+
+void inode_free(struct inode_disk* disk_inode) 
 {
-  /* Ignore null pointer. */
-  if (inode == NULL)
-    return;
+    int i, j;
+    int blocksize = BLOCK_SECTOR_SIZE / sizeof(uint32_t);
+    uint32_t buff1[blocksize];
+    uint32_t buff2[blocksize];
 
-  /* Release resources if this was the last opener. */
-  if (--inode->open_cnt == 0)
-    {
-      /* Remove from inode list and release lock. */
-      list_remove (&inode->elem);
- 
-      /* Deallocate blocks if removed. */
-      if (inode->removed) 
-        {
-          free_map_release (inode->sector, 1);
-          free_map_release (inode->data.start,
-                            bytes_to_sectors (inode->data.length)); 
+    // direct 해제
+    for (i = 0; i < 123; i++) {
+        // disk_inode로 통일
+        if (disk_inode->direct[i] > 0)
+            free_map_release(disk_inode->direct[i], 1);
+    }
+
+    // indirect 해제
+    if (disk_inode->indirect > 0) {
+        block_read(fs_device, disk_inode->indirect, buff1);
+        for (i = 0; i < blocksize; i++) {
+            if (buff1[i] > 0) {
+                free_map_release(buff1[i], 1);
+            }
         }
+        free_map_release(disk_inode->indirect, 1);
+    }
 
-      free (inode); 
+    // dindirect 해제
+    if (disk_inode->dindirect > 0) {
+        block_read(fs_device, disk_inode->dindirect, buff1);
+        for (i = 0; i < blocksize; i++) { 
+            block_sector_t indirect_sector = buff1[i];
+            if (indirect_sector > 0) {
+                block_read(fs_device, indirect_sector, buff2);
+                for (j = 0; j < blocksize; j++) { 
+                    if (buff2[j] > 0) {
+                        free_map_release(buff2[j], 1);
+                    }
+                }
+                free_map_release(indirect_sector, 1);
+            }
+        }
+        free_map_release(disk_inode->dindirect, 1);
     }
 }
+
+
+void
+inode_close (struct inode *inode){
+    if (inode == NULL) return;
+
+    if (--inode->open_cnt == 0){
+        list_remove (&inode->elem);
+        if (inode->removed){
+            inode_free(&inode->data);
+            free_map_release(inode->sector, 1);
+        }
+        free (inode); 
+    }
+}
+
+//
+
+// 원본
+// /* Closes INODE and writes it to disk.
+//    If this was the last reference to INODE, frees its memory.
+//    If INODE was also a removed inode, frees its blocks. */
+// void
+// inode_close (struct inode *inode)         // 변경 대상.
+// {
+//   /* Ignore null pointer. */
+//   if (inode == NULL)
+//     return;
+
+//   /* Release resources if this was the last opener. */
+//   if (--inode->open_cnt == 0)
+//     {
+//       /* Remove from inode list and release lock. */
+//       list_remove (&inode->elem);
+ 
+//       /* Deallocate blocks if removed. */
+//       if (inode->removed) 
+//         {
+//           free_map_release (inode->sector, 1);
+//           free_map_release (inode->data.start,
+//                             bytes_to_sectors (inode->data.length)); 
+//         }
+
+//       free (inode); 
+//     }
+// }
 
 /* Marks INODE to be deleted when it is closed by the last caller who
    has it open. */
