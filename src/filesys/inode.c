@@ -41,6 +41,24 @@ struct inode
     struct inode_disk data;             /* Inode content. */
   };
 
+uint32_t create_sector(block_sector_t *sectorp, bool datablock) {
+  // datablock = true = 1 -> data 담으니까 0이 됨, datablock = false = inner direct block -> -1로 initialize
+  off_t new_sector;
+  int blocksize = BLOCK_SECTOR_SIZE / sizeof(uint32_t);
+  uint32_t initblock[blocksize];
+  memset (initblock, (uint32_t)datablock-1, blocksize);
+  free_map_allocate(1, sectorp);
+  block_write(fs_device, &sectorp, initblock);
+  return *sectorp;
+}
+
+
+
+
+
+
+
+
 /* Returns the block device sector that contains byte offset POS
    within INODE.
    Returns -1 if INODE does not contain data for a byte at offset
@@ -52,28 +70,43 @@ byte_to_sector (const struct inode *inode, off_t pos, bool is_write)     // 변�
   
     // 바이트를 블락 사이즈로 나눠서 몇번쨰인지 번호 찾음.
   off_t blockoff = pos / BLOCK_SECTOR_SIZE;
+  uint32_t blocksize = BLOCK_SECTOR_SIZE / sizeof(uint32_t);
     // 다이렉트일떄
   if ( blockoff < 123){ // direct
+    if (is_write && (inode->data.direct)[blockoff] == -1) return create_sector(&(inode->data.direct)[blockoff], 1);
     return (inode->data.direct)[blockoff]; //근데 sparse 하면 어떡함? 아직 생각 안해봄.
   }
 
   blockoff -= 123;
-  if(blockoff < BLOCK_SECTOR_SIZE / sizeof(uint32_t)){ //indirect
-    uint32_t indirectblock[BLOCK_SECTOR_SIZE / sizeof(uint32_t)]; // 참조해서 새로운 inode block 가져오고
+  if(blockoff < blocksize){ //indirect
+    if (!is_write && inode->data.indirect == -1)  return -1; 
+    if (inode->data.indirect == -1) create_sector(&inode->data.indirect, 0);    // inner direct block
+
+    uint32_t indirectblock[blocksize]; // 참조해서 새로운 inode block 가져오고
     block_read(fs_device, inode->data.indirect, indirectblock);
+
+    if (is_write && indirectblock[blockoff] == -1) return create_sector(&indirectblock[blockoff], 1);
     return indirectblock[blockoff];  // 직접참조.
   }
 
-  blockoff -= BLOCK_SECTOR_SIZE / sizeof(uint32_t);
-  if(blockoff < (BLOCK_SECTOR_SIZE / sizeof(uint32_t)) * (BLOCK_SECTOR_SIZE / sizeof(uint32_t))){ // dindirect
-    uint32_t dindirectblock[BLOCK_SECTOR_SIZE / sizeof(uint32_t)];
-    block_read(fs_device, inode->data.dindirect, dindirectblock);
-    uint32_t indirectblock[BLOCK_SECTOR_SIZE / sizeof(uint32_t)];
-    block_read(fs_device, dindirectblock[blockoff / (BLOCK_SECTOR_SIZE / sizeof(uint32_t))], indirectblock);
+  blockoff -= blocksize;
+  if (blockoff < blocksize * blocksize) { // dindirect
+    if (!is_write && inode->data.dindirect == -1)  return -1; 
+    if (inode->data.dindirect == -1) create_sector(&inode->data.dindirect, 0);    // 1st inner indirect block
 
-    return indirectblock[dindirectblock[blockoff % (BLOCK_SECTOR_SIZE / sizeof(uint32_t))]];
+    uint32_t dindirectblock[blocksize];
+    block_read(fs_device, inode->data.dindirect, dindirectblock);
+    if (!is_write && dindirectblock[blockoff / blocksize] == -1)  return -1;
+    if (dindirectblock[blockoff / blocksize] == -1) create_sector(&dindirectblock[blockoff / blocksize], 0);    // 2nd inner indirect block
+
+
+    uint32_t indirectblock[blocksize];
+    block_read(fs_device, dindirectblock[blockoff / blocksize], indirectblock);
+
+    if (is_write && indirectblock[blockoff % blocksize] == -1) return create_sector(&indirectblock[blockoff % blocksize], 1);
+    return indirectblock[blockoff % blocksize];
   }else{
-    PANIC("버그임 ㅈ됨");
+    PANIC("버그\n");
     return -1;
   }
   // 리턴은 섹터 주소로 해야할 듯함.
