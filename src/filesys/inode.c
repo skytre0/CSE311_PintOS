@@ -48,11 +48,41 @@ struct inode
 static block_sector_t
 byte_to_sector (const struct inode *inode, off_t pos)     // 변경 대상.
 {
-  ASSERT (inode != NULL);
-  if (pos < inode->data.length)
-    return inode->data.start + pos / BLOCK_SECTOR_SIZE;
-  else
+  // 연속 사이즈가 아니니까 , 파일도 인자로 받아와야함.
+  
+    // 바이트를 블락 사이즈로 나눠서 몇번쨰인지 번호 찾음.
+  off_t blockoff = pos / BLOCK_SECTOR_SIZE;
+    // 다이렉트일떄
+  if ( blockoff < 123){ // direct
+    return (inode->data.direct)[blockoff]; //근데 sparse 하면 어떡함? 아직 생각 안해봄.
+  }
+
+  blockoff -= 123;
+  if(blockoff < BLOCK_SECTOR_SIZE / sizeof(uint32_t)){ //indirect
+    uint32_t indirectblock[BLOCK_SECTOR_SIZE / sizeof(uint32_t)]; // 참조해서 새로운 inode block 가져오고
+    block_read(fs_device, inode->data.indirect, indirectblock);
+    return indirectblock[blockoff];  // 직접참조.
+  }
+
+  blockoff -= BLOCK_SECTOR_SIZE / sizeof(uint32_t);
+  if(blockoff < (BLOCK_SECTOR_SIZE / sizeof(uint32_t)) * (BLOCK_SECTOR_SIZE / sizeof(uint32_t))){ // dindirect
+    uint32_t dindirectblock[BLOCK_SECTOR_SIZE / sizeof(uint32_t)];
+    block_read(fs_device, inode->data.dindirect, dindirectblock);
+    uint32_t indirectblock[BLOCK_SECTOR_SIZE / sizeof(uint32_t)];
+    block_read(fs_device, dindirectblock[blockoff / (BLOCK_SECTOR_SIZE / sizeof(uint32_t))], indirectblock);
+
+    return indirectblock[dindirectblock[blockoff % (BLOCK_SECTOR_SIZE / sizeof(uint32_t))]];
+  }else{
+    PANIC("버그임 ㅈ됨");
     return -1;
+  }
+  // 리턴은 섹터 주소로 해야할 듯함.
+
+  // ASSERT (inode != NULL); 유산
+  // if (pos < inode->data.length)
+  //   return inode->data.start + pos / BLOCK_SECTOR_SIZE;
+  // else
+  //   return -1;
 }
 
 /* List of open inodes, so that opening a single inode twice
