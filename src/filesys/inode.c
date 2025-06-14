@@ -17,7 +17,9 @@ struct inode_disk
     block_sector_t start;               /* First data sector. */
     off_t length;                       /* File size in bytes. */
     unsigned magic;                     /* Magic number. */
-    uint32_t unused[125];               /* Not used. */
+    uint32_t direct[123];               /* Not used. */   // 125 - 1 - 1
+    uint32_t indirect;               /* Not used. */
+    uint32_t dindirect;               /* Not used. */
   };
 
 /* Returns the number of sectors to allocate for an inode SIZE
@@ -44,7 +46,7 @@ struct inode
    Returns -1 if INODE does not contain data for a byte at offset
    POS. */
 static block_sector_t
-byte_to_sector (const struct inode *inode, off_t pos) 
+byte_to_sector (const struct inode *inode, off_t pos)     // 변경 대상.
 {
   ASSERT (inode != NULL);
   if (pos < inode->data.length)
@@ -70,7 +72,7 @@ inode_init (void)
    Returns true if successful.
    Returns false if memory or disk allocation fails. */
 bool
-inode_create (block_sector_t sector, off_t length)
+inode_create (block_sector_t sector, off_t length)      // 변경 대상.
 {
   struct inode_disk *disk_inode = NULL;
   bool success = false;
@@ -161,7 +163,7 @@ inode_get_inumber (const struct inode *inode)
    If this was the last reference to INODE, frees its memory.
    If INODE was also a removed inode, frees its blocks. */
 void
-inode_close (struct inode *inode) 
+inode_close (struct inode *inode)         // 변경 대상.
 {
   /* Ignore null pointer. */
   if (inode == NULL)
@@ -255,7 +257,7 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
    (Normally a write at end of file would extend the inode, but
    growth is not yet implemented.) */
 off_t
-inode_write_at (struct inode *inode, const void *buffer_, off_t size,
+inode_write_at (struct inode *inode, const void *buffer_, off_t size,           // 변경 대상.
                 off_t offset) 
 {
   const uint8_t *buffer = buffer_;
