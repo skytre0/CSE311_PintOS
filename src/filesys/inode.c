@@ -128,6 +128,7 @@ inode_create (block_sector_t sector, off_t length)      // 변경 대상.
       success = true; 
       
       free (disk_inode);
+    }
     //   if (free_map_allocate (sectors, &disk_inode->start))     // 유기
     //     {
     //       block_write (fs_device, sector, disk_inode);
