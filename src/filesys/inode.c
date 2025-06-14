@@ -116,24 +116,33 @@ inode_create (block_sector_t sector, off_t length)      // 변경 대상.
   disk_inode = calloc (1, sizeof *disk_inode);
   if (disk_inode != NULL)
     {
-      size_t sectors = bytes_to_sectors (length);
-      disk_inode->length = length;
+      // size_t sectors = bytes_to_sectors (length);
+      disk_inode->length = 0;
       disk_inode->magic = INODE_MAGIC;
-      if (free_map_allocate (sectors, &disk_inode->start)) 
-        {
-          block_write (fs_device, sector, disk_inode);
-          if (sectors > 0) 
-            {
-              static char zeros[BLOCK_SECTOR_SIZE];
-              size_t i;
-              
-              for (i = 0; i < sectors; i++) 
-                block_write (fs_device, disk_inode->start + i, zeros);
-            }
-          success = true; 
-        } 
+      // 추가 -> initilaize -1로 = 없음
+      memset (disk_inode->direct, -1, sizeof disk_inode->direct);
+      disk_inode->indirect = -1;
+      disk_inode->dindirect = -1;
+      // disk_inode가 disk(sector)에 mapping
+      block_write (fs_device, sector, disk_inode);
+      success = true; 
+      
       free (disk_inode);
-    }
+    //   if (free_map_allocate (sectors, &disk_inode->start))     // 유기
+    //     {
+    //       block_write (fs_device, sector, disk_inode);
+    //       if (sectors > 0) 
+    //         {
+    //           static char zeros[BLOCK_SECTOR_SIZE];
+    //           size_t i;
+              
+    //           for (i = 0; i < sectors; i++) 
+    //             block_write (fs_device, disk_inode->start + i, zeros);
+    //         }
+    //       success = true; 
+    //     } 
+    //   free (disk_inode);
+    // }
   return success;
 }
 
