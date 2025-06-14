@@ -48,14 +48,9 @@ uint32_t create_sector(block_sector_t *sectorp, bool datablock) {
   uint32_t initblock[blocksize];
   memset (initblock, (uint32_t)datablock-1, blocksize);
   free_map_allocate(1, sectorp);
-  block_write(fs_device, &sectorp, initblock);
+  block_write(fs_device, *sectorp, initblock);
   return *sectorp;
 }
-
-
-
-
-
 
 
 
@@ -64,7 +59,7 @@ uint32_t create_sector(block_sector_t *sectorp, bool datablock) {
    Returns -1 if INODE does not contain data for a byte at offset
    POS. */
 static block_sector_t
-byte_to_sector (const struct inode *inode, off_t pos, bool is_write)     // 변경 대상.
+byte_to_sector (struct inode *inode, off_t pos, bool is_write)     // 변경 대상.
 {
   // 연속 사이즈가 아니니까 , 파일도 인자로 받아와야함.
   
@@ -73,38 +68,58 @@ byte_to_sector (const struct inode *inode, off_t pos, bool is_write)     // 변�
   uint32_t blocksize = BLOCK_SECTOR_SIZE / sizeof(uint32_t);
     // 다이렉트일떄
   if ( blockoff < 123){ // direct
-    if (is_write && (inode->data.direct)[blockoff] == -1) return create_sector(&(inode->data.direct)[blockoff], 1);
+    if (is_write && (inode->data.direct)[blockoff] == -1) {
+      (inode->data.direct)[blockoff] = create_sector(&(inode->data.direct)[blockoff], 1);
+      block_write(fs_device, inode->sector, &inode->data);
+    }
     return (inode->data.direct)[blockoff]; //근데 sparse 하면 어떡함? 아직 생각 안해봄.
   }
 
   blockoff -= 123;
   if(blockoff < blocksize){ //indirect
     if (!is_write && inode->data.indirect == -1)  return -1; 
-    if (inode->data.indirect == -1) create_sector(&inode->data.indirect, 0);    // inner direct block
+    if (inode->data.indirect == -1) {                            
+      inode->data.indirect = create_sector(&inode->data.indirect, 0);
+      block_write(fs_device, inode->sector, &inode->data);
+    }
 
     uint32_t indirectblock[blocksize]; // 참조해서 새로운 inode block 가져오고
     block_read(fs_device, inode->data.indirect, indirectblock);
 
-    if (is_write && indirectblock[blockoff] == -1) return create_sector(&indirectblock[blockoff], 1);
+    if (is_write && indirectblock[blockoff] == -1) {
+      indirectblock[blockoff] = create_sector(&indirectblock[blockoff], 1);     // 현 tmp buffer에 sector에 새 sector 있다고 기록.
+      block_write(fs_device, inode->data.indirect, indirectblock);    // 상위 sector에 바뀐 buffer 반영.
+    }
+    
     return indirectblock[blockoff];  // 직접참조.
   }
 
   blockoff -= blocksize;
   if (blockoff < blocksize * blocksize) { // dindirect
     if (!is_write && inode->data.dindirect == -1)  return -1; 
-    if (inode->data.dindirect == -1) create_sector(&inode->data.dindirect, 0);    // 1st inner indirect block
+    if (inode->data.dindirect == -1) {
+      inode->data.dindirect = create_sector(&inode->data.dindirect, 0);    // 1st inner indirect block
+      block_write(fs_device, inode->sector, &inode->data);
+    }
 
     uint32_t dindirectblock[blocksize];
     block_read(fs_device, inode->data.dindirect, dindirectblock);
     if (!is_write && dindirectblock[blockoff / blocksize] == -1)  return -1;
-    if (dindirectblock[blockoff / blocksize] == -1) create_sector(&dindirectblock[blockoff / blocksize], 0);    // 2nd inner indirect block
-
+    if (dindirectblock[blockoff / blocksize] == -1) {
+      dindirectblock[blockoff / blocksize] = create_sector(&dindirectblock[blockoff / blocksize], 0);    // 2nd inner indirect block
+      block_write(fs_device, inode->data.dindirect, dindirectblock);
+    }
 
     uint32_t indirectblock[blocksize];
     block_read(fs_device, dindirectblock[blockoff / blocksize], indirectblock);
 
-    if (is_write && indirectblock[blockoff % blocksize] == -1) return create_sector(&indirectblock[blockoff % blocksize], 1);
+    if (is_write && indirectblock[blockoff % blocksize] == -1) {
+      indirectblock[blockoff % blocksize] = create_sector(&indirectblock[blockoff % blocksize], 1);
+      block_write(fs_device, dindirectblock[blockoff / blocksize], indirectblock);
+    }
+    
     return indirectblock[blockoff % blocksize];
+
   }else{
     PANIC("버그\n");
     return -1;
@@ -282,7 +297,7 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
   while (size > 0) 
     {
       /* Disk sector to read, starting byte offset within sector. */
-      block_sector_t sector_idx = byte_to_sector (inode, offset);
+      block_sector_t sector_idx = byte_to_sector (inode, offset, false);
       int sector_ofs = offset % BLOCK_SECTOR_SIZE;
 
       /* Bytes left in inode, bytes left in sector, lesser of the two. */
@@ -341,9 +356,11 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,           
     return 0;
 
 
-  if (offset > inode_length(inode)) { // 더 쓰면 디스크의 최대길이 늘려
-      inode->data.length = offset;
+  if (offset + size > inode_length(inode)) { // 더 쓰면 디스크의 최대길이 늘려
+      inode->data.length = offset + size;
+      block_write(fs_device, inode->sector, &inode->data);
   }
+  
 
   while (size > 0) //여기서 다 처리함.
     {
@@ -355,7 +372,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,           
 
       /* Bytes left in inode, bytes left in sector, lesser of the two. */
       off_t inode_left = inode_length (inode) - offset;
-      int sector_left = BLOCK_SECTOR_SIZE - sector_ofs;
+      int sector_left = BLOCK_SECTOR_SIZE - sector_ofs;     // page 아니고, chunk 중간부터 시작 가능 = 시작이 chunk 일부면 그거 먼저 덜어내고, 작성 시작.
       // int min_left = inode_left < sector_left ? inode_left : sector_left; 이제는 걍 쓰면됌 확장해야해
 
       /* Number of bytes to actually write into this sector. */
