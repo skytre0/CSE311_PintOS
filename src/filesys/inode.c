@@ -305,6 +305,7 @@ inode_close (struct inode *inode){
             inode_free(&inode->data);
             free_map_release(inode->sector, 1);
         }
+        else block_write(fs_device, inode->sector, &inode->data);
         free (inode); 
     }
 }

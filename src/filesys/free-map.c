@@ -7,6 +7,7 @@
 
 static struct file *free_map_file;   /* Free map file. */
 static struct bitmap *free_map;      /* Free map, one bit per sector. */
+static bool firsttry;
 
 /* Initializes the free map. */
 void
@@ -28,7 +29,7 @@ bool
 free_map_allocate (size_t cnt, block_sector_t *sectorp)
 {
   block_sector_t sector = bitmap_scan_and_flip (free_map, 0, cnt, false);
-  if (sector != BITMAP_ERROR
+  if (!firsttry && sector != BITMAP_ERROR
       && free_map_file != NULL
       && !bitmap_write (free_map, free_map_file))
     {
@@ -80,6 +81,8 @@ free_map_create (void)
   free_map_file = file_open (inode_open (FREE_MAP_SECTOR));
   if (free_map_file == NULL)
     PANIC ("can't open free map");
+  firsttry = true;              // 첫 할당에서 무한 루프 문제 = 첫 할당만 강제로 통과시키기.
   if (!bitmap_write (free_map, free_map_file))
     PANIC ("can't write free map");
+  firsttry = false;
 }
