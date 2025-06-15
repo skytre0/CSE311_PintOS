@@ -47,7 +47,7 @@ uint32_t create_sector(block_sector_t *sectorp, bool datablock) {
   off_t new_sector;
   int blocksize = BLOCK_SECTOR_SIZE / sizeof(uint32_t);
   uint32_t initblock[blocksize];
-  memset (initblock, (uint32_t)(datablock-1), BLOCK_SECTOR_SIZE);
+  memset (initblock, (uint32_t)(datablock-1), BLOCK_SECTOR_SIZE);     // memset이 byte 단위 동작이기에 실제 개수가 아닌 전체 byte = 용량 단위 초기화 해야 함.
   free_map_allocate(1, sectorp);
   block_write(fs_device, *sectorp, initblock);
   return *sectorp;
