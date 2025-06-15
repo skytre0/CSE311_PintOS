@@ -47,7 +47,7 @@ uint32_t create_sector(block_sector_t *sectorp, bool datablock) {
   off_t new_sector;
   int blocksize = BLOCK_SECTOR_SIZE / sizeof(uint32_t);
   uint32_t initblock[blocksize];
-  memset (initblock, (uint32_t)datablock-1, blocksize);
+  memset (initblock, (uint32_t)(datablock-1), BLOCK_SECTOR_SIZE);
   free_map_allocate(1, sectorp);
   block_write(fs_device, *sectorp, initblock);
   return *sectorp;
@@ -376,7 +376,10 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
       if (chunk_size <= 0)
         break;
 
-      if (sector_ofs == 0 && chunk_size == BLOCK_SECTOR_SIZE)
+
+      if (sector_idx == (block_sector_t)(-1))
+        memset(buffer + bytes_read, 0, chunk_size);
+      else if (sector_ofs == 0 && chunk_size == BLOCK_SECTOR_SIZE)
         {
           /* Read full sector directly into caller's buffer. */
           block_read (fs_device, sector_idx, buffer + bytes_read);
