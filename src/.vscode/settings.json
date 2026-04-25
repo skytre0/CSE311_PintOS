@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "syscall.h": "c",
-        "interrupt.h": "c",
-        "thread.h": "c",
-        "synch.h": "c",
-        "debug.h": "c"
-    }
-}

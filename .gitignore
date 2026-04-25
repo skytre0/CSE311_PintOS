@@ -1,0 +1,23 @@
+# Local editor settings
+.vscode/
+
+# Local Codex/session files
+.codex
+
+# PintOS build outputs
+build/
+src/*/build/
+*.o
+*.d
+*.a
+*.bin
+*.elf
+*.map
+*.out
+kernel.bin
+loader.bin
+
+# Python/Perl cache and local OS files
+__pycache__/
+*.pyc
+.DS_Store
